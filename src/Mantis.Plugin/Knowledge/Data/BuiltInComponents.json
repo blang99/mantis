@@ -1,0 +1,1564 @@
+[
+  {
+    "guid": "57da07bd-ecab-415d-9d86-af36d7073abc",
+    "name": "Construct Point",
+    "nickName": "Pt",
+    "category": "Vector",
+    "subcategory": "Point",
+    "description": "Create a point from {x}, {y}, {z} coordinates",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "X coordinate", "nickName": "X", "typeName": "Number", "access": "Item", "optional": true, "defaultValue": "0" },
+      { "name": "Y coordinate", "nickName": "Y", "typeName": "Number", "access": "Item", "optional": true, "defaultValue": "0" },
+      { "name": "Z coordinate", "nickName": "Z", "typeName": "Number", "access": "Item", "optional": true, "defaultValue": "0" }
+    ],
+    "outputs": [
+      { "name": "Point", "nickName": "Pt", "typeName": "Point" }
+    ]
+  },
+  {
+    "guid": "3581f42a-9592-4549-bd6b-1c0fc39d067b",
+    "name": "Deconstruct Point",
+    "nickName": "DePt",
+    "category": "Vector",
+    "subcategory": "Point",
+    "description": "Deconstruct a point into its component parts",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Point", "nickName": "P", "typeName": "Point", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "X component", "nickName": "X", "typeName": "Number" },
+      { "name": "Y component", "nickName": "Y", "typeName": "Number" },
+      { "name": "Z component", "nickName": "Z", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "a4a871e5-9c8e-46a2-8c15-7c7e1e0e13f3",
+    "name": "Unit X",
+    "nickName": "X",
+    "category": "Vector",
+    "subcategory": "Vector",
+    "description": "Unit vector parallel to world {x} axis",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Factor", "nickName": "F", "typeName": "Number", "access": "Item", "optional": true, "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Unit vector", "nickName": "V", "typeName": "Vector" }
+    ]
+  },
+  {
+    "guid": "d4a871e5-9c8e-46a2-8c15-7c7e1e0e13f4",
+    "name": "Unit Y",
+    "nickName": "Y",
+    "category": "Vector",
+    "subcategory": "Vector",
+    "description": "Unit vector parallel to world {y} axis",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Factor", "nickName": "F", "typeName": "Number", "access": "Item", "optional": true, "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Unit vector", "nickName": "V", "typeName": "Vector" }
+    ]
+  },
+  {
+    "guid": "e4a871e5-9c8e-46a2-8c15-7c7e1e0e13f5",
+    "name": "Unit Z",
+    "nickName": "Z",
+    "category": "Vector",
+    "subcategory": "Vector",
+    "description": "Unit vector parallel to world {z} axis",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Factor", "nickName": "F", "typeName": "Number", "access": "Item", "optional": true, "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Unit vector", "nickName": "V", "typeName": "Vector" }
+    ]
+  },
+  {
+    "guid": "b7798b74-037e-4f0c-8ac7-dc1e37d0c3e4",
+    "name": "Vector XYZ",
+    "nickName": "Vec",
+    "category": "Vector",
+    "subcategory": "Vector",
+    "description": "Create a vector from {x}, {y}, {z} components",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "X component", "nickName": "X", "typeName": "Number", "access": "Item", "optional": true, "defaultValue": "0" },
+      { "name": "Y component", "nickName": "Y", "typeName": "Number", "access": "Item", "optional": true, "defaultValue": "0" },
+      { "name": "Z component", "nickName": "Z", "typeName": "Number", "access": "Item", "optional": true, "defaultValue": "0" }
+    ],
+    "outputs": [
+      { "name": "Vector", "nickName": "V", "typeName": "Vector" },
+      { "name": "Length", "nickName": "L", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "eeafc956-268e-461d-8e73-ee05c6f72c01",
+    "name": "XY Plane",
+    "nickName": "XY",
+    "category": "Vector",
+    "subcategory": "Plane",
+    "description": "World XY plane with origin at {0,0,0}",
+    "pluginName": "Grasshopper",
+    "inputs": [],
+    "outputs": [
+      { "name": "Plane", "nickName": "P", "typeName": "Plane" }
+    ]
+  },
+  {
+    "guid": "bc3e379e-7206-4e7b-b24e-d09f01a0844d",
+    "name": "Construct Plane",
+    "nickName": "Pl",
+    "category": "Vector",
+    "subcategory": "Plane",
+    "description": "Create a plane from origin point and two direction vectors",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Origin", "nickName": "O", "typeName": "Point", "access": "Item" },
+      { "name": "X direction", "nickName": "X", "typeName": "Vector", "access": "Item" },
+      { "name": "Y direction", "nickName": "Y", "typeName": "Vector", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Plane", "nickName": "Pl", "typeName": "Plane" }
+    ]
+  },
+  {
+    "guid": "d5967b9f-e8ee-436b-a8ad-29fdcecf32d5",
+    "name": "Circle",
+    "nickName": "Circle",
+    "category": "Curve",
+    "subcategory": "Primitive",
+    "description": "Create a circle on a plane (defaults to world XY origin) with a given radius. Preferred over Circle CNR because no explicit center point is required.",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item", "optional": true, "defaultValue": "World XY" },
+      { "name": "Radius", "nickName": "R", "typeName": "Number", "access": "Item", "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Circle", "nickName": "C", "typeName": "Circle" }
+    ]
+  },
+  {
+    "guid": "a0d62394-a118-422d-abb3-6af115c75b25",
+    "name": "Line",
+    "nickName": "Ln",
+    "category": "Curve",
+    "subcategory": "Primitive",
+    "description": "Create a line between two points",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Start Point", "nickName": "A", "typeName": "Point", "access": "Item" },
+      { "name": "End Point", "nickName": "B", "typeName": "Point", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Line", "nickName": "L", "typeName": "Line" }
+    ]
+  },
+  {
+    "guid": "55b9b492-4e42-4c6c-9b23-3b28b58d4b2b",
+    "name": "Line SDL",
+    "nickName": "Line",
+    "category": "Curve",
+    "subcategory": "Primitive",
+    "description": "Create a line from a start point, direction, and length",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Start", "nickName": "S", "typeName": "Point", "access": "Item" },
+      { "name": "Direction", "nickName": "D", "typeName": "Vector", "access": "Item" },
+      { "name": "Length", "nickName": "L", "typeName": "Number", "access": "Item", "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Line", "nickName": "L", "typeName": "Line" }
+    ]
+  },
+  {
+    "guid": "2e2a9fed-77c0-46da-87a7-4a45d9e80bc3",
+    "name": "Rectangle",
+    "nickName": "Rec",
+    "category": "Curve",
+    "subcategory": "Primitive",
+    "description": "Create a rectangle on a plane",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item" },
+      { "name": "X Size", "nickName": "X", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Y Size", "nickName": "Y", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Radius", "nickName": "R", "typeName": "Number", "access": "Item", "optional": true, "defaultValue": "0" }
+    ],
+    "outputs": [
+      { "name": "Rectangle", "nickName": "R", "typeName": "Rectangle" },
+      { "name": "Length", "nickName": "L", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "fbb1a57d-1acf-4ddd-b57d-3b4a25e22a32",
+    "name": "Polygon",
+    "nickName": "Polygon",
+    "category": "Curve",
+    "subcategory": "Primitive",
+    "description": "Create a polygon with a given number of segments",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item" },
+      { "name": "Radius", "nickName": "R", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Segments", "nickName": "S", "typeName": "Integer", "access": "Item", "defaultValue": "6" }
+    ],
+    "outputs": [
+      { "name": "Polygon", "nickName": "P", "typeName": "Curve" }
+    ]
+  },
+  {
+    "guid": "c9b2d725-6f87-4b07-af90-bd9aab3224f3",
+    "name": "Arc",
+    "nickName": "Arc",
+    "category": "Curve",
+    "subcategory": "Primitive",
+    "description": "Create an arc defined by plane, radius, and angle",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item" },
+      { "name": "Radius", "nickName": "R", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Angle", "nickName": "A", "typeName": "Number", "access": "Item", "defaultValue": "3.14159" }
+    ],
+    "outputs": [
+      { "name": "Arc", "nickName": "A", "typeName": "Arc" }
+    ]
+  },
+  {
+    "guid": "59e0b89a-e487-49f8-bab8-b5bab16be14c",
+    "name": "Interpolate",
+    "nickName": "IntCrv",
+    "category": "Curve",
+    "subcategory": "Spline",
+    "description": "Create an interpolated curve through a set of points",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Vertices", "nickName": "V", "typeName": "Point", "access": "List" },
+      { "name": "Degree", "nickName": "D", "typeName": "Integer", "access": "Item", "optional": true, "defaultValue": "3" },
+      { "name": "Periodic", "nickName": "P", "typeName": "Boolean", "access": "Item", "optional": true, "defaultValue": "false" }
+    ],
+    "outputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve" },
+      { "name": "Length", "nickName": "L", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "1c9dece6-4936-4b21-a91e-45b3c2cbb6a5",
+    "name": "Polyline",
+    "nickName": "PLine",
+    "category": "Curve",
+    "subcategory": "Spline",
+    "description": "Create a polyline through a set of points",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Vertices", "nickName": "V", "typeName": "Point", "access": "List" },
+      { "name": "Closed", "nickName": "C", "typeName": "Boolean", "access": "Item", "optional": true, "defaultValue": "false" }
+    ],
+    "outputs": [
+      { "name": "Polyline", "nickName": "Pl", "typeName": "Curve" }
+    ]
+  },
+  {
+    "guid": "d5564928-4ee8-4bc8-b4ff-e6c5c4a8e41c",
+    "name": "Nurbs Curve",
+    "nickName": "NurbsCrv",
+    "category": "Curve",
+    "subcategory": "Spline",
+    "description": "Construct a nurbs curve from control points",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Vertices", "nickName": "V", "typeName": "Point", "access": "List" },
+      { "name": "Degree", "nickName": "D", "typeName": "Integer", "access": "Item", "optional": true, "defaultValue": "3" }
+    ],
+    "outputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve" }
+    ]
+  },
+  {
+    "guid": "b4a27220-55e3-429d-9ec1-ac5d64c1e8f2",
+    "name": "Divide Curve",
+    "nickName": "DivCrv",
+    "category": "Curve",
+    "subcategory": "Division",
+    "description": "Divide a curve into equal length segments",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve", "access": "Item" },
+      { "name": "Count", "nickName": "N", "typeName": "Integer", "access": "Item", "defaultValue": "10" }
+    ],
+    "outputs": [
+      { "name": "Points", "nickName": "P", "typeName": "Point" },
+      { "name": "Tangents", "nickName": "T", "typeName": "Vector" },
+      { "name": "Parameters", "nickName": "t", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "7f5c6c42-3a98-4b76-8248-9e35b6c9f1b1",
+    "name": "Evaluate Curve",
+    "nickName": "EvalCrv",
+    "category": "Curve",
+    "subcategory": "Analysis",
+    "description": "Evaluate a curve at a specified parameter",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve", "access": "Item" },
+      { "name": "Parameter", "nickName": "t", "typeName": "Number", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Point", "nickName": "P", "typeName": "Point" },
+      { "name": "Tangent", "nickName": "T", "typeName": "Vector" }
+    ]
+  },
+  {
+    "guid": "ce9c0c52-015d-4dda-85a5-4a47e7fefbed",
+    "name": "Offset Curve",
+    "nickName": "Offset",
+    "category": "Curve",
+    "subcategory": "Util",
+    "description": "Offset a curve by a given distance",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve", "access": "Item" },
+      { "name": "Distance", "nickName": "D", "typeName": "Number", "access": "Item" },
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item", "optional": true }
+    ],
+    "outputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve" }
+    ]
+  },
+  {
+    "guid": "feb15e0e-3d94-4e53-b5ff-5e6718254a15",
+    "name": "Fillet",
+    "nickName": "Fillet",
+    "category": "Curve",
+    "subcategory": "Util",
+    "description": "Fillet a curve at all discontinuities",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve", "access": "Item" },
+      { "name": "Radius", "nickName": "R", "typeName": "Number", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve" }
+    ]
+  },
+  {
+    "guid": "0a1e3af4-c230-4c33-bf36-ab1e31c6e6bf",
+    "name": "Extrude",
+    "nickName": "Extr",
+    "category": "Surface",
+    "subcategory": "Freeform",
+    "description": "Extrude curves along a direction vector",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Base", "nickName": "B", "typeName": "Curve", "access": "Item" },
+      { "name": "Direction", "nickName": "D", "typeName": "Vector", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Extrusion", "nickName": "E", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "e14a32c5-d6be-41ee-a9c7-4b3e5a8263e2",
+    "name": "Extrude Point",
+    "nickName": "ExtrPt",
+    "category": "Surface",
+    "subcategory": "Freeform",
+    "description": "Extrude a curve to a point (creates a cone-like surface)",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Base", "nickName": "B", "typeName": "Curve", "access": "Item" },
+      { "name": "Point", "nickName": "P", "typeName": "Point", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Extrusion", "nickName": "E", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "9a22c08d-ebee-4543-84b3-98e98d31c121",
+    "name": "Loft",
+    "nickName": "Loft",
+    "category": "Surface",
+    "subcategory": "Freeform",
+    "description": "Create a lofted surface through a set of section curves",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curves", "nickName": "C", "typeName": "Curve", "access": "List" },
+      { "name": "Options", "nickName": "O", "typeName": "Integer", "access": "Item", "optional": true }
+    ],
+    "outputs": [
+      { "name": "Loft", "nickName": "L", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "c3fce7dd-0e98-4e2e-a50f-a3eb3db56fd7",
+    "name": "Sweep1",
+    "nickName": "Swp1",
+    "category": "Surface",
+    "subcategory": "Freeform",
+    "description": "Sweep a section curve along a rail curve",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Rail", "nickName": "R", "typeName": "Curve", "access": "Item" },
+      { "name": "Sections", "nickName": "S", "typeName": "Curve", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Brep", "nickName": "B", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "55c90247-a614-4ad3-979c-9e17f3ed87e6",
+    "name": "Surface from Points",
+    "nickName": "SrfPt",
+    "category": "Surface",
+    "subcategory": "Freeform",
+    "description": "Create a surface from a grid of points",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Points", "nickName": "P", "typeName": "Point", "access": "List" },
+      { "name": "U Count", "nickName": "U", "typeName": "Integer", "access": "Item" },
+      { "name": "Interpolate", "nickName": "I", "typeName": "Boolean", "access": "Item", "optional": true, "defaultValue": "true" }
+    ],
+    "outputs": [
+      { "name": "Surface", "nickName": "S", "typeName": "Surface" }
+    ]
+  },
+  {
+    "guid": "17b7152b-d30d-4d50-b9ef-c9fe25576fc5",
+    "name": "Boundary Surfaces",
+    "nickName": "BSrf",
+    "category": "Surface",
+    "subcategory": "Freeform",
+    "description": "Create a planar surface from closed boundary curves",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Edges", "nickName": "E", "typeName": "Curve", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Brep", "nickName": "B", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "3f4057d4-d04e-4c38-87f5-c7f2bdc9b04d",
+    "name": "Evaluate Surface",
+    "nickName": "EvalSrf",
+    "category": "Surface",
+    "subcategory": "Analysis",
+    "description": "Evaluate a surface at {uv} coordinate",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Surface", "nickName": "S", "typeName": "Surface", "access": "Item" },
+      { "name": "Point", "nickName": "uv", "typeName": "Point", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Point", "nickName": "P", "typeName": "Point" },
+      { "name": "Normal", "nickName": "N", "typeName": "Vector" },
+      { "name": "Frame", "nickName": "F", "typeName": "Plane" }
+    ]
+  },
+  {
+    "guid": "1536d03f-e0ac-4afc-b9a7-c7be5c8a2fa6",
+    "name": "Divide Surface",
+    "nickName": "DivSrf",
+    "category": "Surface",
+    "subcategory": "Util",
+    "description": "Generate a grid of points on a surface",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Surface", "nickName": "S", "typeName": "Surface", "access": "Item" },
+      { "name": "U Count", "nickName": "U", "typeName": "Integer", "access": "Item", "defaultValue": "10" },
+      { "name": "V Count", "nickName": "V", "typeName": "Integer", "access": "Item", "defaultValue": "10" }
+    ],
+    "outputs": [
+      { "name": "Points", "nickName": "P", "typeName": "Point" },
+      { "name": "Normals", "nickName": "N", "typeName": "Vector" },
+      { "name": "Parameters", "nickName": "uv", "typeName": "Point" }
+    ]
+  },
+  {
+    "guid": "26e26587-f8ce-4ee9-9ce4-5237f0064430",
+    "name": "Move",
+    "nickName": "Move",
+    "category": "Transform",
+    "subcategory": "Euclidean",
+    "description": "Translate (move) an object along a vector",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry", "access": "Item" },
+      { "name": "Motion", "nickName": "T", "typeName": "Vector", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry" },
+      { "name": "Transform", "nickName": "X", "typeName": "Transform" }
+    ]
+  },
+  {
+    "guid": "4d1e1a4d-6e48-4e8e-ad98-7a3a6a7b9b7a",
+    "name": "Scale",
+    "nickName": "Scale",
+    "category": "Transform",
+    "subcategory": "Euclidean",
+    "description": "Scale an object uniformly from a center point",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry", "access": "Item" },
+      { "name": "Center", "nickName": "C", "typeName": "Point", "access": "Item" },
+      { "name": "Factor", "nickName": "F", "typeName": "Number", "access": "Item", "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry" },
+      { "name": "Transform", "nickName": "X", "typeName": "Transform" }
+    ]
+  },
+  {
+    "guid": "5c4fce78-2e5b-423e-aa29-f69b13e0ea7e",
+    "name": "Rotate",
+    "nickName": "Rot",
+    "category": "Transform",
+    "subcategory": "Euclidean",
+    "description": "Rotate an object in a plane",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry", "access": "Item" },
+      { "name": "Angle", "nickName": "A", "typeName": "Number", "access": "Item" },
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry" },
+      { "name": "Transform", "nickName": "X", "typeName": "Transform" }
+    ]
+  },
+  {
+    "guid": "8f25abef-6a0d-4e97-99dc-4aa0d1ed0a8f",
+    "name": "Mirror",
+    "nickName": "Mirror",
+    "category": "Transform",
+    "subcategory": "Euclidean",
+    "description": "Mirror an object about a plane",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry", "access": "Item" },
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry" },
+      { "name": "Transform", "nickName": "X", "typeName": "Transform" }
+    ]
+  },
+  {
+    "guid": "e0ae5e20-1b4b-4e7c-bc71-5a3b3e92f25d",
+    "name": "Orient",
+    "nickName": "Orient",
+    "category": "Transform",
+    "subcategory": "Euclidean",
+    "description": "Orient an object from one plane to another",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry", "access": "Item" },
+      { "name": "Source", "nickName": "A", "typeName": "Plane", "access": "Item" },
+      { "name": "Target", "nickName": "B", "typeName": "Plane", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry" },
+      { "name": "Transform", "nickName": "X", "typeName": "Transform" }
+    ]
+  },
+  {
+    "guid": "c552a431-af5b-46a9-a8a4-3fcb4730cd90",
+    "name": "Series",
+    "nickName": "Series",
+    "category": "Sets",
+    "subcategory": "Sequence",
+    "description": "Create a series of numbers",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Start", "nickName": "S", "typeName": "Number", "access": "Item", "defaultValue": "0" },
+      { "name": "Step", "nickName": "N", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Count", "nickName": "C", "typeName": "Integer", "access": "Item", "defaultValue": "10" }
+    ],
+    "outputs": [
+      { "name": "Series", "nickName": "S", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "b01011e8-2b48-4d47-9445-6faf95ca23ea",
+    "name": "Range",
+    "nickName": "Range",
+    "category": "Sets",
+    "subcategory": "Sequence",
+    "description": "Create a range of evenly spaced numbers",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Domain", "nickName": "D", "typeName": "Domain", "access": "Item" },
+      { "name": "Steps", "nickName": "N", "typeName": "Integer", "access": "Item", "defaultValue": "10" }
+    ],
+    "outputs": [
+      { "name": "Range", "nickName": "R", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "7a6d613d-9d0a-4f2d-a9c6-5c8beabde5ed",
+    "name": "Random",
+    "nickName": "Random",
+    "category": "Sets",
+    "subcategory": "Sequence",
+    "description": "Generate a list of pseudo-random numbers",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Domain", "nickName": "R", "typeName": "Domain", "access": "Item" },
+      { "name": "Count", "nickName": "N", "typeName": "Integer", "access": "Item", "defaultValue": "10" },
+      { "name": "Seed", "nickName": "S", "typeName": "Integer", "access": "Item", "optional": true, "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Random", "nickName": "R", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "89e32e79-3e17-4a13-a2ae-22ebc6bb09c4",
+    "name": "List Item",
+    "nickName": "Item",
+    "category": "Sets",
+    "subcategory": "List",
+    "description": "Retrieve a specific item from a list",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "List", "nickName": "L", "typeName": "Generic", "access": "List" },
+      { "name": "Index", "nickName": "i", "typeName": "Integer", "access": "Item", "defaultValue": "0" }
+    ],
+    "outputs": [
+      { "name": "Item", "nickName": "i", "typeName": "Generic" }
+    ]
+  },
+  {
+    "guid": "5b9d4892-cf3a-49d6-b8b0-6bd0db5b42d8",
+    "name": "List Length",
+    "nickName": "Lng",
+    "category": "Sets",
+    "subcategory": "List",
+    "description": "Get the number of items in a list",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "List", "nickName": "L", "typeName": "Generic", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Length", "nickName": "L", "typeName": "Integer" }
+    ]
+  },
+  {
+    "guid": "a1cf2c2a-6f7b-4a9e-897b-6bc3d1e6e4e2",
+    "name": "Reverse List",
+    "nickName": "Rev",
+    "category": "Sets",
+    "subcategory": "List",
+    "description": "Reverse the order of a list",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "List", "nickName": "L", "typeName": "Generic", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "List", "nickName": "L", "typeName": "Generic" }
+    ]
+  },
+  {
+    "guid": "dd8be4e2-1ea4-4b5c-a0c3-3e3e6be4e6c3",
+    "name": "Flatten",
+    "nickName": "Flat",
+    "category": "Sets",
+    "subcategory": "Tree",
+    "description": "Flatten a data tree into a single list",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Tree", "nickName": "T", "typeName": "Generic", "access": "Tree" }
+    ],
+    "outputs": [
+      { "name": "List", "nickName": "L", "typeName": "Generic" }
+    ]
+  },
+  {
+    "guid": "2e78987b-9dfb-42a2-8b76-3923ac8bd91a",
+    "name": "Graft Tree",
+    "nickName": "Graft",
+    "category": "Sets",
+    "subcategory": "Tree",
+    "description": "Graft a data tree by adding an extra branch at every item",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Tree", "nickName": "T", "typeName": "Generic", "access": "Tree" }
+    ],
+    "outputs": [
+      { "name": "Tree", "nickName": "T", "typeName": "Generic" }
+    ]
+  },
+  {
+    "guid": "d7b7aa5c-c45e-430c-bf2c-4d0493c87503",
+    "name": "Addition",
+    "nickName": "A+B",
+    "category": "Maths",
+    "subcategory": "Operators",
+    "description": "Mathematical addition",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "A", "nickName": "A", "typeName": "Number", "access": "Item" },
+      { "name": "B", "nickName": "B", "typeName": "Number", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "R", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "ce46b74e-00c6-4ca5-bb65-9d5b6e43ee9d",
+    "name": "Subtraction",
+    "nickName": "A-B",
+    "category": "Maths",
+    "subcategory": "Operators",
+    "description": "Mathematical subtraction",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "A", "nickName": "A", "typeName": "Number", "access": "Item" },
+      { "name": "B", "nickName": "B", "typeName": "Number", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "R", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "a3371040-e552-4bc8-b0ff-10a840258e87",
+    "name": "Multiplication",
+    "nickName": "A*B",
+    "category": "Maths",
+    "subcategory": "Operators",
+    "description": "Mathematical multiplication",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "A", "nickName": "A", "typeName": "Number", "access": "Item" },
+      { "name": "B", "nickName": "B", "typeName": "Number", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "R", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "bd831fda-042a-4ebe-8a40-8b1f2bc79e45",
+    "name": "Division",
+    "nickName": "A/B",
+    "category": "Maths",
+    "subcategory": "Operators",
+    "description": "Mathematical division",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "A", "nickName": "A", "typeName": "Number", "access": "Item" },
+      { "name": "B", "nickName": "B", "typeName": "Number", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "R", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "15a2d1e3-3c62-4c4a-bfb7-edf37f6a34a3",
+    "name": "Negative",
+    "nickName": "Neg",
+    "category": "Maths",
+    "subcategory": "Operators",
+    "description": "Negate a numeric value",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Value", "nickName": "x", "typeName": "Number", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "y", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "8ca98c7f-c535-4496-af02-3fd5e41d2484",
+    "name": "Power",
+    "nickName": "Pow",
+    "category": "Maths",
+    "subcategory": "Operators",
+    "description": "Raise a value to a power",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Base", "nickName": "A", "typeName": "Number", "access": "Item" },
+      { "name": "Exponent", "nickName": "B", "typeName": "Number", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "R", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "b4b97232-f254-4325-a6a5-5a0873cd342a",
+    "name": "Absolute",
+    "nickName": "Abs",
+    "category": "Maths",
+    "subcategory": "Operators",
+    "description": "Compute the absolute value",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Value", "nickName": "x", "typeName": "Number", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "y", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "cc46cb75-dbc2-4ab3-a695-4e7e05c55beb",
+    "name": "Sine",
+    "nickName": "Sin",
+    "category": "Maths",
+    "subcategory": "Trig",
+    "description": "Compute the sine of an angle (in radians)",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Value", "nickName": "x", "typeName": "Number", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "y", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "d3b7ef1a-3f63-4fb3-84e4-6e2aa7c5e6f0",
+    "name": "Cosine",
+    "nickName": "Cos",
+    "category": "Maths",
+    "subcategory": "Trig",
+    "description": "Compute the cosine of an angle (in radians)",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Value", "nickName": "x", "typeName": "Number", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "y", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "57a9e21c-c2a4-42b4-8ad7-7b52ec3d4a22",
+    "name": "Remap Numbers",
+    "nickName": "ReMap",
+    "category": "Maths",
+    "subcategory": "Domain",
+    "description": "Remap numbers from one domain to another",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Value", "nickName": "V", "typeName": "Number", "access": "Item" },
+      { "name": "Source", "nickName": "S", "typeName": "Domain", "access": "Item" },
+      { "name": "Target", "nickName": "T", "typeName": "Domain", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Mapped", "nickName": "R", "typeName": "Number" },
+      { "name": "Clipped", "nickName": "C", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "825ea536-aebb-41e6-97e6-08cb06c3a652",
+    "name": "Construct Domain",
+    "nickName": "Dom",
+    "category": "Maths",
+    "subcategory": "Domain",
+    "description": "Create a numeric domain from two numbers",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Min", "nickName": "A", "typeName": "Number", "access": "Item", "defaultValue": "0" },
+      { "name": "Max", "nickName": "B", "typeName": "Number", "access": "Item", "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Domain", "nickName": "I", "typeName": "Domain" }
+    ]
+  },
+  {
+    "guid": "3f9e43a4-bf3c-4717-a2ad-752c5e31eb5f",
+    "name": "Expression",
+    "nickName": "Expr",
+    "category": "Maths",
+    "subcategory": "Script",
+    "description": "Evaluate a mathematical expression with variable inputs",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "x", "nickName": "x", "typeName": "Number", "access": "Item" },
+      { "name": "y", "nickName": "y", "typeName": "Number", "access": "Item", "optional": true }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "R", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "f12daa2f-4fd5-48c1-8ac3-5dea476912ca",
+    "name": "Solid Union",
+    "nickName": "SUnion",
+    "category": "Intersect",
+    "subcategory": "Boolean",
+    "description": "Boolean union of two or more Breps",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Breps", "nickName": "B", "typeName": "Brep", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "R", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "e3e4e93c-e3e4-4e3e-e4e3-e3e4e93ce3e4",
+    "name": "Solid Difference",
+    "nickName": "SDiff",
+    "category": "Intersect",
+    "subcategory": "Boolean",
+    "description": "Boolean difference (subtraction) of two Breps",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "A", "nickName": "A", "typeName": "Brep", "access": "List" },
+      { "name": "B", "nickName": "B", "typeName": "Brep", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "R", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "f4f4f4f4-f4f4-4f4f-f4f4-f4f4f4f4f4f4",
+    "name": "Solid Intersection",
+    "nickName": "SInt",
+    "category": "Intersect",
+    "subcategory": "Boolean",
+    "description": "Boolean intersection of two Breps",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "A", "nickName": "A", "typeName": "Brep", "access": "List" },
+      { "name": "B", "nickName": "B", "typeName": "Brep", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "R", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "c8c8c8c8-c8c8-4c8c-c8c8-c8c8c8c8c8c8",
+    "name": "Brep | Brep",
+    "nickName": "BBX",
+    "category": "Intersect",
+    "subcategory": "Physical",
+    "description": "Find the intersection curves of two Breps",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Brep A", "nickName": "A", "typeName": "Brep", "access": "Item" },
+      { "name": "Brep B", "nickName": "B", "typeName": "Brep", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Curves", "nickName": "C", "typeName": "Curve" },
+      { "name": "Points", "nickName": "P", "typeName": "Point" }
+    ]
+  },
+  {
+    "guid": "d9d9d9d9-d9d9-4d9d-d9d9-d9d9d9d9d9d9",
+    "name": "Project Point",
+    "nickName": "ProjPt",
+    "category": "Intersect",
+    "subcategory": "Physical",
+    "description": "Project points onto Brep or Mesh surfaces",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Points", "nickName": "P", "typeName": "Point", "access": "List" },
+      { "name": "Direction", "nickName": "D", "typeName": "Vector", "access": "Item" },
+      { "name": "Geometry", "nickName": "G", "typeName": "Brep", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Points", "nickName": "P", "typeName": "Point" },
+      { "name": "Indices", "nickName": "I", "typeName": "Integer" }
+    ]
+  },
+  {
+    "guid": "a1a1a1a1-a1a1-4a1a-a1a1-a1a1a1a1a1a1",
+    "name": "Box",
+    "nickName": "Box",
+    "category": "Surface",
+    "subcategory": "Primitive",
+    "description": "Create a box from a base plane and dimensions",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Base", "nickName": "B", "typeName": "Plane", "access": "Item" },
+      { "name": "X", "nickName": "X", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Y", "nickName": "Y", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Z", "nickName": "Z", "typeName": "Number", "access": "Item", "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Box", "nickName": "B", "typeName": "Box" }
+    ]
+  },
+  {
+    "guid": "b2b2b2b2-b2b2-4b2b-b2b2-b2b2b2b2b2b2",
+    "name": "Sphere",
+    "nickName": "Sph",
+    "category": "Surface",
+    "subcategory": "Primitive",
+    "description": "Create a sphere from a base plane and radius",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Base", "nickName": "B", "typeName": "Plane", "access": "Item" },
+      { "name": "Radius", "nickName": "R", "typeName": "Number", "access": "Item", "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Sphere", "nickName": "S", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "c3c3c3c3-c3c3-4c3c-c3c3-c3c3c3c3c3c3",
+    "name": "Cylinder",
+    "nickName": "Cyl",
+    "category": "Surface",
+    "subcategory": "Primitive",
+    "description": "Create a cylinder from a base circle and height",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Base", "nickName": "B", "typeName": "Plane", "access": "Item" },
+      { "name": "Radius", "nickName": "R", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Length", "nickName": "L", "typeName": "Number", "access": "Item", "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Cylinder", "nickName": "C", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "e5e5e5e5-e5e5-4e5e-e5e5-e5e5e5e5e5e5",
+    "name": "Cap Holes",
+    "nickName": "Cap",
+    "category": "Surface",
+    "subcategory": "Util",
+    "description": "Cap all planar holes in a Brep",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Brep", "nickName": "B", "typeName": "Brep", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Brep", "nickName": "B", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "f6f6f6f6-f6f6-4f6f-f6f6-f6f6f6f6f6f6",
+    "name": "Mesh Brep",
+    "nickName": "MeshB",
+    "category": "Mesh",
+    "subcategory": "Util",
+    "description": "Create a mesh from a Brep shape",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Brep", "nickName": "B", "typeName": "Brep", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Mesh", "nickName": "M", "typeName": "Mesh" }
+    ]
+  },
+  {
+    "guid": "a7a7a7a7-a7a7-4a7a-a7a7-a7a7a7a7a7a7",
+    "name": "Construct Mesh",
+    "nickName": "CMesh",
+    "category": "Mesh",
+    "subcategory": "Primitive",
+    "description": "Create a mesh from vertices and face lists",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Vertices", "nickName": "V", "typeName": "Point", "access": "List" },
+      { "name": "Faces", "nickName": "F", "typeName": "Integer", "access": "Tree" }
+    ],
+    "outputs": [
+      { "name": "Mesh", "nickName": "M", "typeName": "Mesh" }
+    ]
+  },
+  {
+    "guid": "b8b8b8b8-b8b8-4b8b-b8b8-b8b8b8b8b8b8",
+    "name": "Mesh Join",
+    "nickName": "MJoin",
+    "category": "Mesh",
+    "subcategory": "Util",
+    "description": "Join multiple meshes into one",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Meshes", "nickName": "M", "typeName": "Mesh", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Mesh", "nickName": "M", "typeName": "Mesh" }
+    ]
+  },
+  {
+    "guid": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+    "name": "Linear Array",
+    "nickName": "ArrLin",
+    "category": "Transform",
+    "subcategory": "Array",
+    "description": "Create a linear array of geometry",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry", "access": "Item" },
+      { "name": "Direction", "nickName": "D", "typeName": "Vector", "access": "Item" },
+      { "name": "Count", "nickName": "N", "typeName": "Integer", "access": "Item", "defaultValue": "5" }
+    ],
+    "outputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry" },
+      { "name": "Transform", "nickName": "X", "typeName": "Transform" }
+    ]
+  },
+  {
+    "guid": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e",
+    "name": "Polar Array",
+    "nickName": "ArrPol",
+    "category": "Transform",
+    "subcategory": "Array",
+    "description": "Create a polar (rotational) array of geometry",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry", "access": "Item" },
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item" },
+      { "name": "Count", "nickName": "N", "typeName": "Integer", "access": "Item", "defaultValue": "6" }
+    ],
+    "outputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry" },
+      { "name": "Transform", "nickName": "X", "typeName": "Transform" }
+    ]
+  },
+  {
+    "guid": "3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f",
+    "name": "Bake",
+    "nickName": "Bake",
+    "category": "Params",
+    "subcategory": "Util",
+    "description": "Bake geometry into the Rhino document",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry", "access": "Item" }
+    ],
+    "outputs": []
+  },
+  {
+    "guid": "4d5e6f7a-8b9c-4d0e-1f2a-3b4c5d6e7f8a",
+    "name": "Colour Swatch",
+    "nickName": "Swatch",
+    "category": "Params",
+    "subcategory": "Input",
+    "description": "A colour (ARGB) swatch parameter",
+    "pluginName": "Grasshopper",
+    "inputs": [],
+    "outputs": [
+      { "name": "Colour", "nickName": "C", "typeName": "Colour" }
+    ]
+  },
+  {
+    "guid": "5e6f7a8b-9c0d-4e1f-2a3b-4c5d6e7f8a9b",
+    "name": "Custom Preview",
+    "nickName": "Preview",
+    "category": "Display",
+    "subcategory": "Preview",
+    "description": "Preview geometry with custom materials",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry", "access": "List" },
+      { "name": "Material", "nickName": "M", "typeName": "Material", "access": "Item" }
+    ],
+    "outputs": []
+  },
+  {
+    "guid": "6f7a8b9c-0d1e-4f2a-3b4c-5d6e7f8a9b0c",
+    "name": "Curve | Curve",
+    "nickName": "CCX",
+    "category": "Intersect",
+    "subcategory": "Physical",
+    "description": "Find the intersection points of two curves",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curve A", "nickName": "A", "typeName": "Curve", "access": "Item" },
+      { "name": "Curve B", "nickName": "B", "typeName": "Curve", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Points", "nickName": "P", "typeName": "Point" },
+      { "name": "Params A", "nickName": "tA", "typeName": "Number" },
+      { "name": "Params B", "nickName": "tB", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "7a8b9c0d-1e2f-4a3b-4c5d-6e7f8a9b0c1d",
+    "name": "Region Union",
+    "nickName": "RUnion",
+    "category": "Curve",
+    "subcategory": "Util",
+    "description": "Boolean union of closed planar curves",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curves", "nickName": "C", "typeName": "Curve", "access": "List" },
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item", "optional": true }
+    ],
+    "outputs": [
+      { "name": "Result", "nickName": "R", "typeName": "Curve" }
+    ]
+  },
+  {
+    "guid": "8b9c0d1e-2f3a-4b4c-5d6e-7f8a9b0c1d2e",
+    "name": "Area",
+    "nickName": "Area",
+    "category": "Surface",
+    "subcategory": "Analysis",
+    "description": "Compute the area and centroid of a surface or Brep",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Brep", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Area", "nickName": "A", "typeName": "Number" },
+      { "name": "Centroid", "nickName": "C", "typeName": "Point" }
+    ]
+  },
+  {
+    "guid": "9c0d1e2f-3a4b-4c5d-6e7f-8a9b0c1d2e3f",
+    "name": "Volume",
+    "nickName": "Vol",
+    "category": "Surface",
+    "subcategory": "Analysis",
+    "description": "Compute the volume and centroid of a closed Brep",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Brep", "nickName": "B", "typeName": "Brep", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Volume", "nickName": "V", "typeName": "Number" },
+      { "name": "Centroid", "nickName": "C", "typeName": "Point" }
+    ]
+  },
+  {
+    "guid": "0d1e2f3a-4b5c-4d6e-7f8a-9b0c1d2e3f4a",
+    "name": "Dispatch",
+    "nickName": "Dispatch",
+    "category": "Sets",
+    "subcategory": "List",
+    "description": "Dispatch the items in a list based on a boolean pattern",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "List", "nickName": "L", "typeName": "Generic", "access": "List" },
+      { "name": "Pattern", "nickName": "P", "typeName": "Boolean", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "List A", "nickName": "A", "typeName": "Generic" },
+      { "name": "List B", "nickName": "B", "typeName": "Generic" }
+    ]
+  },
+  {
+    "guid": "1e2f3a4b-5c6d-4e7f-8a9b-0c1d2e3f4a5b",
+    "name": "Cull Pattern",
+    "nickName": "Cull",
+    "category": "Sets",
+    "subcategory": "List",
+    "description": "Cull (remove) elements from a list using a boolean pattern",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "List", "nickName": "L", "typeName": "Generic", "access": "List" },
+      { "name": "Pattern", "nickName": "P", "typeName": "Boolean", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "List", "nickName": "L", "typeName": "Generic" }
+    ]
+  },
+  {
+    "guid": "2f3a4b5c-6d7e-4f8a-9b0c-1d2e3f4a5b6c",
+    "name": "Join Curves",
+    "nickName": "Join",
+    "category": "Curve",
+    "subcategory": "Util",
+    "description": "Join as many curves as possible",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curves", "nickName": "C", "typeName": "Curve", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Curves", "nickName": "C", "typeName": "Curve" }
+    ]
+  },
+  {
+    "guid": "3a4b5c6d-7e8f-4a9b-0c1d-2e3f4a5b6c7d",
+    "name": "Explode",
+    "nickName": "Explode",
+    "category": "Curve",
+    "subcategory": "Util",
+    "description": "Explode a curve into its component segments",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve", "access": "Item" },
+      { "name": "Recursive", "nickName": "R", "typeName": "Boolean", "access": "Item", "optional": true, "defaultValue": "true" }
+    ],
+    "outputs": [
+      { "name": "Segments", "nickName": "S", "typeName": "Curve" },
+      { "name": "Vertices", "nickName": "V", "typeName": "Point" }
+    ]
+  },
+  {
+    "guid": "4b5c6d7e-8f9a-4b0c-1d2e-3f4a5b6c7d8e",
+    "name": "Brep Join",
+    "nickName": "BJoin",
+    "category": "Surface",
+    "subcategory": "Util",
+    "description": "Join a set of Breps together",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Breps", "nickName": "B", "typeName": "Brep", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Breps", "nickName": "B", "typeName": "Brep" },
+      { "name": "Closed", "nickName": "C", "typeName": "Boolean" }
+    ]
+  },
+  {
+    "guid": "5c6d7e8f-9a0b-4c1d-2e3f-4a5b6c7d8e9f",
+    "name": "Deconstruct Brep",
+    "nickName": "DeBrep",
+    "category": "Surface",
+    "subcategory": "Analysis",
+    "description": "Deconstruct a Brep into its constituent parts",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Brep", "nickName": "B", "typeName": "Brep", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Faces", "nickName": "F", "typeName": "Surface" },
+      { "name": "Edges", "nickName": "E", "typeName": "Curve" },
+      { "name": "Vertices", "nickName": "V", "typeName": "Point" }
+    ]
+  },
+  {
+    "guid": "6d7e8f9a-0b1c-4d2e-3f4a-5b6c7d8e9f0a",
+    "name": "Pipe",
+    "nickName": "Pipe",
+    "category": "Surface",
+    "subcategory": "Freeform",
+    "description": "Create a pipe surface along a rail curve",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve", "access": "Item" },
+      { "name": "Radius", "nickName": "R", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Caps", "nickName": "E", "typeName": "Integer", "access": "Item", "optional": true, "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Pipe", "nickName": "P", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "7e8f9a0b-1c2d-4e3f-4a5b-6c7d8e9f0a1b",
+    "name": "Planar Srf",
+    "nickName": "PSrf",
+    "category": "Surface",
+    "subcategory": "Freeform",
+    "description": "Create planar surfaces from closed boundary curves",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Boundary", "nickName": "B", "typeName": "Curve", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Surface", "nickName": "S", "typeName": "Brep" }
+    ]
+  },
+  {
+    "guid": "8f9a0b1c-2d3e-4f4a-5b6c-7d8e9f0a1b2c",
+    "name": "Closest Point",
+    "nickName": "CP",
+    "category": "Vector",
+    "subcategory": "Point",
+    "description": "Find the closest point in a collection",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Point", "nickName": "P", "typeName": "Point", "access": "Item" },
+      { "name": "Cloud", "nickName": "C", "typeName": "Point", "access": "List" }
+    ],
+    "outputs": [
+      { "name": "Closest Point", "nickName": "CP", "typeName": "Point" },
+      { "name": "Index", "nickName": "CI", "typeName": "Integer" },
+      { "name": "Distance", "nickName": "D", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "9a0b1c2d-3e4f-4a5b-6c7d-8e9f0a1b2c3d",
+    "name": "Distance",
+    "nickName": "Dist",
+    "category": "Vector",
+    "subcategory": "Point",
+    "description": "Compute the distance between two points",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Point A", "nickName": "A", "typeName": "Point", "access": "Item" },
+      { "name": "Point B", "nickName": "B", "typeName": "Point", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Distance", "nickName": "D", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "0b1c2d3e-4f5a-4b6c-7d8e-9f0a1b2c3d4e",
+    "name": "Populate 2D",
+    "nickName": "Pop2D",
+    "category": "Vector",
+    "subcategory": "Grid",
+    "description": "Populate a 2D region with random points",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Region", "nickName": "R", "typeName": "Rectangle", "access": "Item" },
+      { "name": "Count", "nickName": "N", "typeName": "Integer", "access": "Item", "defaultValue": "20" },
+      { "name": "Seed", "nickName": "S", "typeName": "Integer", "access": "Item", "optional": true, "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Population", "nickName": "P", "typeName": "Point" }
+    ]
+  },
+  {
+    "guid": "1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f",
+    "name": "Rectangular Grid",
+    "nickName": "RecGrid",
+    "category": "Vector",
+    "subcategory": "Grid",
+    "description": "Create a rectangular grid of points",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item" },
+      { "name": "Size X", "nickName": "Sx", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Size Y", "nickName": "Sy", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Count X", "nickName": "Ex", "typeName": "Integer", "access": "Item", "defaultValue": "10" },
+      { "name": "Count Y", "nickName": "Ey", "typeName": "Integer", "access": "Item", "defaultValue": "10" }
+    ],
+    "outputs": [
+      { "name": "Points", "nickName": "P", "typeName": "Point" },
+      { "name": "Cells", "nickName": "C", "typeName": "Rectangle" }
+    ]
+  },
+  {
+    "guid": "2d3e4f5a-6b7c-4d8e-9f0a-1b2c3d4e5f6a",
+    "name": "Hexagonal Grid",
+    "nickName": "HexGrid",
+    "category": "Vector",
+    "subcategory": "Grid",
+    "description": "Create a hexagonal grid of points",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item" },
+      { "name": "Size", "nickName": "S", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Count X", "nickName": "Ex", "typeName": "Integer", "access": "Item", "defaultValue": "5" },
+      { "name": "Count Y", "nickName": "Ey", "typeName": "Integer", "access": "Item", "defaultValue": "5" }
+    ],
+    "outputs": [
+      { "name": "Points", "nickName": "P", "typeName": "Point" },
+      { "name": "Cells", "nickName": "C", "typeName": "Curve" }
+    ]
+  },
+  {
+    "guid": "3e4f5a6b-7c8d-4e9f-0a1b-2c3d4e5f6a7b",
+    "name": "Voronoi",
+    "nickName": "Voronoi",
+    "category": "Mesh",
+    "subcategory": "Triangulation",
+    "description": "Create a Voronoi diagram from a set of points",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Points", "nickName": "P", "typeName": "Point", "access": "List" },
+      { "name": "Boundary", "nickName": "B", "typeName": "Rectangle", "access": "Item", "optional": true }
+    ],
+    "outputs": [
+      { "name": "Cells", "nickName": "C", "typeName": "Curve" }
+    ]
+  },
+  {
+    "guid": "4f5a6b7c-8d9e-4f0a-1b2c-3d4e5f6a7b8c",
+    "name": "Delaunay Mesh",
+    "nickName": "Delaunay",
+    "category": "Mesh",
+    "subcategory": "Triangulation",
+    "description": "Create a Delaunay triangulation mesh from points",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Points", "nickName": "P", "typeName": "Point", "access": "List" },
+      { "name": "Plane", "nickName": "Pl", "typeName": "Plane", "access": "Item", "optional": true }
+    ],
+    "outputs": [
+      { "name": "Mesh", "nickName": "M", "typeName": "Mesh" }
+    ]
+  },
+  {
+    "guid": "5a6b7c8d-9e0f-4a1b-2c3d-4e5f6a7b8c9d",
+    "name": "Scale NU",
+    "nickName": "ScaleNU",
+    "category": "Transform",
+    "subcategory": "Euclidean",
+    "description": "Scale an object non-uniformly along different axes",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry", "access": "Item" },
+      { "name": "Plane", "nickName": "P", "typeName": "Plane", "access": "Item" },
+      { "name": "X Factor", "nickName": "X", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Y Factor", "nickName": "Y", "typeName": "Number", "access": "Item", "defaultValue": "1" },
+      { "name": "Z Factor", "nickName": "Z", "typeName": "Number", "access": "Item", "defaultValue": "1" }
+    ],
+    "outputs": [
+      { "name": "Geometry", "nickName": "G", "typeName": "Geometry" },
+      { "name": "Transform", "nickName": "X", "typeName": "Transform" }
+    ]
+  },
+  {
+    "guid": "6b7c8d9e-0f1a-4b2c-3d4e-5f6a7b8c9d0e",
+    "name": "Curve Length",
+    "nickName": "CrvLen",
+    "category": "Curve",
+    "subcategory": "Analysis",
+    "description": "Measure the length of a curve",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Length", "nickName": "L", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "7c8d9e0f-1a2b-4c3d-4e5f-6a7b8c9d0e1f",
+    "name": "End Points",
+    "nickName": "End",
+    "category": "Curve",
+    "subcategory": "Analysis",
+    "description": "Extract the end points of a curve",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Curve", "nickName": "C", "typeName": "Curve", "access": "Item" }
+    ],
+    "outputs": [
+      { "name": "Start", "nickName": "S", "typeName": "Point" },
+      { "name": "End", "nickName": "E", "typeName": "Point" }
+    ]
+  },
+  {
+    "guid": "8d9e0f1a-2b3c-4d4e-5f6a-7b8c9d0e1f2a",
+    "name": "Graph Mapper",
+    "nickName": "Graph",
+    "category": "Params",
+    "subcategory": "Input",
+    "description": "Remap values through a user-defined graph",
+    "pluginName": "Grasshopper",
+    "inputs": [],
+    "outputs": [
+      { "name": "Graph", "nickName": "G", "typeName": "Number" }
+    ]
+  },
+  {
+    "guid": "9e0f1a2b-3c4d-4e5f-6a7b-8c9d0e1f2a3b",
+    "name": "Cluster Input",
+    "nickName": "CIn",
+    "category": "Params",
+    "subcategory": "Util",
+    "description": "Input parameter for a cluster",
+    "pluginName": "Grasshopper",
+    "inputs": [],
+    "outputs": [
+      { "name": "Data", "nickName": "D", "typeName": "Generic" }
+    ]
+  },
+  {
+    "guid": "0f1a2b3c-4d5e-4f6a-7b8c-9d0e1f2a3b4c",
+    "name": "Cluster Output",
+    "nickName": "COut",
+    "category": "Params",
+    "subcategory": "Util",
+    "description": "Output parameter for a cluster",
+    "pluginName": "Grasshopper",
+    "inputs": [
+      { "name": "Data", "nickName": "D", "typeName": "Generic", "access": "Item" }
+    ],
+    "outputs": []
+  }
+]

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--
+  Square logo tile — 800×800. food4rhino thumbnail / icon / avatar.
+  EXPORT: headless chrome --screenshot --window-size=800,800 --force-device-scale-factor=2
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    :root{ --mantis:#5CDB7A; --mantis-bright:#7AE99A; --ink:#EAF4ED; --muted:#8CAA96; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{width:800px;height:800px;overflow:hidden;}
+    body{
+        background:
+            radial-gradient(620px 540px at 50% 42%, rgba(92,219,122,0.20), transparent 62%),
+            radial-gradient(520px 480px at 88% 96%, rgba(92,219,122,0.07), transparent 60%),
+            #050c07;
+        font-family:'Orbitron',sans-serif; color:var(--ink); position:relative;
+    }
+    .grid{position:absolute; inset:0;
+        background-image:
+            linear-gradient(rgba(92,219,122,0.05) 1px,transparent 1px),
+            linear-gradient(90deg, rgba(92,219,122,0.05) 1px,transparent 1px);
+        background-size:50px 50px;
+        mask-image:radial-gradient(560px 520px at 50% 44%,#000 26%,transparent 82%);}
+    .wrap{position:relative; z-index:2; height:100%; display:flex; flex-direction:column;
+        align-items:center; justify-content:center; gap:38px;}
+    .mark{width:340px;height:340px;filter:drop-shadow(0 0 34px rgba(92,219,122,0.55));}
+    .wordmark{font-weight:900; font-size:96px; letter-spacing:0.16em; color:var(--mantis);
+        text-shadow:0 0 30px rgba(92,219,122,0.35); margin-left:0.16em;}
+    .tag{font-family:'JetBrains Mono',monospace; font-size:23px; color:var(--muted);
+        letter-spacing:0.06em; margin-top:-14px;}
+</style>
+</head>
+<body>
+    <div class="grid"></div>
+    <div class="wrap">
+        <svg class="mark" viewBox="0 0 36 36" fill="none">
+            <line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.1" opacity="0.75"/>
+            <line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.1" opacity="0.75"/>
+            <line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.1" opacity="0.75"/>
+            <line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.1" opacity="0.75"/>
+            <line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.1" opacity="0.75"/>
+            <circle cx="18" cy="5" r="3.5" fill="#7AE99A"/>
+            <circle cx="5" cy="15" r="2.6" fill="#5CDB7A"/>
+            <circle cx="31" cy="15" r="2.6" fill="#5CDB7A"/>
+            <circle cx="10" cy="28" r="2.6" fill="#5CDB7A"/>
+            <circle cx="26" cy="28" r="2.6" fill="#5CDB7A"/>
+            <circle cx="18" cy="18" r="4.4" fill="#7AE99A"/>
+        </svg>
+        <div class="wordmark">MANTIS</div>
+        <div class="tag">Talk to Grasshopper. Build anything.</div>
+    </div>
+</body>
+</html>

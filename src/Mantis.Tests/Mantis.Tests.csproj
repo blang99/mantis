@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+    <PackageReference Include="xunit" Version="2.*" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.*">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Text.Json" Version="7.*" />
+    <PackageReference Include="System.Drawing.Common" Version="7.*" />
+  </ItemGroup>
+
+  <!-- Link source files directly to avoid inheriting Grasshopper's dependency tree -->
+  <ItemGroup>
+    <Compile Include="..\Mantis.Plugin\ScriptBuilder\ScriptDefinition.cs" Link="Linked\ScriptDefinition.cs" />
+    <Compile Include="..\Mantis.Plugin\ScriptBuilder\LayoutEngine.cs" Link="Linked\LayoutEngine.cs" />
+    <Compile Include="..\Mantis.Plugin\AI\ResponseParser.cs" Link="Linked\ResponseParser.cs" />
+    <Compile Include="..\Mantis.Plugin\AI\ConversationManager.cs" Link="Linked\ConversationManager.cs" />
+    <Compile Include="..\Mantis.Plugin\AI\ClaudeClient.cs" Link="Linked\ClaudeClient.cs" />
+    <Compile Include="..\Mantis.Plugin\AI\ILlmClient.cs" Link="Linked\ILlmClient.cs" />
+  </ItemGroup>
+
+</Project>

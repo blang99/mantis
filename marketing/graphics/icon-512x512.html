@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--
+  Pure-mark icon — 512×512. Avatar / favicon / small thumbnail.
+  EXPORT: headless chrome --screenshot --window-size=512,512 --force-device-scale-factor=2
+-->
+<style>
+    :root{ --mantis:#5CDB7A; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{width:512px;height:512px;overflow:hidden;}
+    body{
+        background:
+            radial-gradient(420px 380px at 50% 46%, rgba(92,219,122,0.22), transparent 64%),
+            #050c07;
+        position:relative; display:flex; align-items:center; justify-content:center;
+    }
+    .grid{position:absolute; inset:0;
+        background-image:
+            linear-gradient(rgba(92,219,122,0.055) 1px,transparent 1px),
+            linear-gradient(90deg, rgba(92,219,122,0.055) 1px,transparent 1px);
+        background-size:42px 42px;
+        mask-image:radial-gradient(360px 340px at 50% 48%,#000 24%,transparent 84%);}
+    .mark{width:340px;height:340px;filter:drop-shadow(0 0 40px rgba(92,219,122,0.6));position:relative;z-index:2;}
+</style>
+</head>
+<body>
+    <div class="grid"></div>
+    <svg class="mark" viewBox="0 0 36 36" fill="none">
+        <line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.8"/>
+        <line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.8"/>
+        <line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.8"/>
+        <line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.8"/>
+        <line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.8"/>
+        <circle cx="18" cy="5" r="3.6" fill="#7AE99A"/>
+        <circle cx="5" cy="15" r="2.7" fill="#5CDB7A"/>
+        <circle cx="31" cy="15" r="2.7" fill="#5CDB7A"/>
+        <circle cx="10" cy="28" r="2.7" fill="#5CDB7A"/>
+        <circle cx="26" cy="28" r="2.7" fill="#5CDB7A"/>
+        <circle cx="18" cy="18" r="4.6" fill="#7AE99A"/>
+    </svg>
+</body>
+</html>

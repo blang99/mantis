@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>0.1.1</Version>
+    <AssemblyTitle>MANTIS</AssemblyTitle>
+    <Product>MANTIS</Product>
+    <Authors>MANTIS</Authors>
+    <Description>AI-powered natural language to Grasshopper script builder</Description>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grasshopper" Version="8.30.26103.11001" ExcludeAssets="runtime" />
+    <PackageReference Include="RhinoCommon" Version="8.30.26103.11001" ExcludeAssets="runtime" />
+    <PackageReference Include="Eto.Forms" Version="2.8.*" ExcludeAssets="runtime" />
+    <PackageReference Include="System.Text.Json" Version="7.*" />
+    <!-- Build-time reference only — Rhino provides the runtime shim on both platforms -->
+    <PackageReference Include="System.Drawing.Common" Version="8.*" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <!-- MANTIS ships as a single .rhp (Rhino loads it at startup; Grasshopper still
+       discovers the components inside the same assembly). Packaging into a .yak and
+       deploying to the Rhino packages folder for local testing is done explicitly
+       outside the build, so the build itself stays pure and never scatters a stale
+       .gha into the Grasshopper Libraries folder (which would double-load). -->
+
+  <!-- Embed prompts, knowledge base, and brand fonts as resources -->
+  <ItemGroup>
+    <EmbeddedResource Include="AI\Prompts\*.txt" />
+    <EmbeddedResource Include="AI\Prompts\*.json" />
+    <EmbeddedResource Include="Knowledge\Data\*.json" />
+    <EmbeddedResource Include="Resources\Fonts\*.ttf" />
+  </ItemGroup>
+
+</Project>

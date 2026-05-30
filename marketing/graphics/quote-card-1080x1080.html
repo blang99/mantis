@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--
+  Quote / manifesto card — 1080×1080. Swap the .statement text to reuse for any quotable line.
+  EXPORT: size browser to 1080×1080, screenshot. Or Preview MCP resize 1080×1080 → screenshot.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    :root{ --mantis:#5CDB7A; --mantis-bright:#7AE99A; --ink:#EAF4ED; --muted:#8CAA96; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{width:1080px;height:1080px;overflow:hidden;}
+    body{
+        background:
+            radial-gradient(820px 620px at 50% 30%, rgba(92,219,122,0.16), transparent 62%),
+            radial-gradient(700px 560px at 90% 100%, rgba(92,219,122,0.06), transparent 60%),
+            #050c07;
+        font-family:'Space Grotesk',sans-serif; color:var(--ink); position:relative;
+    }
+    .grid{position:absolute; inset:0;
+        background-image:
+            linear-gradient(rgba(92,219,122,0.045) 1px,transparent 1px),
+            linear-gradient(90deg, rgba(92,219,122,0.045) 1px,transparent 1px);
+        background-size:60px 60px;
+        mask-image:radial-gradient(760px 600px at 50% 42%,#000 28%,transparent 80%);}
+    /* big faint constellation behind text */
+    .ghost{position:absolute; top:50%; left:50%; width:760px; height:760px; transform:translate(-50%,-54%);
+        opacity:0.10; filter:drop-shadow(0 0 30px rgba(92,219,122,0.5));}
+    .wrap{position:relative; z-index:2; height:100%; display:flex; flex-direction:column;
+        justify-content:center; padding:0 96px;}
+    .qmark{font-family:'Orbitron',sans-serif; font-weight:800; font-size:120px; color:var(--mantis);
+        line-height:0.6; opacity:0.85; margin-bottom:24px;}
+    .statement{font-size:66px; font-weight:700; line-height:1.08; letter-spacing:-0.02em; max-width:880px;}
+    .statement .a{color:var(--mantis);}
+    .rule{width:96px; height:4px; background:var(--mantis); margin:42px 0 26px; border-radius:2px;
+        box-shadow:0 0 18px rgba(92,219,122,0.6);}
+    .attrib{font-family:'JetBrains Mono',monospace; font-size:24px; color:var(--muted); letter-spacing:0.02em; line-height:1.5;}
+    .brand{position:absolute; bottom:54px; left:96px; z-index:3; display:flex; align-items:center; gap:18px;}
+    .mark{width:48px;height:48px;filter:drop-shadow(0 0 14px rgba(92,219,122,0.5));}
+    .wordmark{font-family:'Orbitron',sans-serif; font-weight:800; font-size:30px; letter-spacing:0.18em; color:var(--mantis);}
+    .url{position:absolute; bottom:60px; right:96px; z-index:3; font-family:'JetBrains Mono',monospace;
+        font-size:20px; color:var(--muted); letter-spacing:0.04em;}
+</style>
+</head>
+<body>
+    <div class="grid"></div>
+    <svg class="ghost" viewBox="0 0 36 36" fill="none">
+        <line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="0.8"/>
+        <line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="0.8"/>
+        <line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="0.8"/>
+        <line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="0.8"/>
+        <line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="0.8"/>
+        <circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/>
+        <circle cx="5" cy="15" r="2.5" fill="#5CDB7A"/>
+        <circle cx="31" cy="15" r="2.5" fill="#5CDB7A"/>
+        <circle cx="10" cy="28" r="2.5" fill="#5CDB7A"/>
+        <circle cx="26" cy="28" r="2.5" fill="#5CDB7A"/>
+        <circle cx="18" cy="18" r="4" fill="#5CDB7A"/>
+    </svg>
+    <div class="wrap">
+        <div class="qmark">&ldquo;</div>
+        <div class="statement">It&rsquo;s not code generation.<br>It&rsquo;s <span class="a">real Grasshopper</span> &mdash; built from a sentence.</div>
+        <div class="rule"></div>
+        <div class="attrib">Every component is native and editable.<br>The craft stays yours. We just delete the boilerplate.</div>
+    </div>
+    <div class="brand">
+        <svg class="mark" viewBox="0 0 36 36" fill="none">
+            <line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/>
+            <line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/>
+            <line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/>
+            <line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/>
+            <line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/>
+            <circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/>
+            <circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/>
+            <circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/>
+            <circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/>
+            <circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/>
+            <circle cx="18" cy="18" r="4" fill="#5CDB7A"/>
+        </svg>
+        <div class="wordmark">MANTIS</div>
+    </div>
+    <div class="url">free &amp; open source</div>
+</body>
+</html>

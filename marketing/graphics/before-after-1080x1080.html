@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--
+  Before/After comparison — 1080×1080 (Instagram / X square).
+  EXPORT: size browser to 1080×1080, screenshot. Or Preview MCP resize 1080×1080 → screenshot.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    :root{ --mantis:#5CDB7A; --mantis-bright:#7AE99A; --ink:#DCEBE1; --muted:#8CAA96; --red:#e06a5a; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{width:1080px;height:1080px;overflow:hidden;}
+    body{ background:#050c07; font-family:'Space Grotesk',sans-serif; color:var(--ink); position:relative;}
+    .header{ position:absolute; top:0; left:0; right:0; height:150px; z-index:3;
+        display:flex; flex-direction:column; align-items:center; justify-content:center;
+        background:linear-gradient(180deg,#071009,transparent);}
+    .kicker{font-family:'JetBrains Mono',monospace; font-size:20px; color:var(--muted); letter-spacing:0.22em; text-transform:uppercase;}
+    .title{font-family:'Orbitron',sans-serif; font-weight:800; font-size:46px; letter-spacing:0.04em; margin-top:8px;}
+    .title .a{color:var(--mantis);}
+    .split{position:absolute; top:150px; bottom:170px; left:0; right:0; display:flex;}
+    .pane{flex:1; position:relative; padding:40px 38px;}
+    .pane.before{ background:rgba(224,106,90,0.045); }
+    .pane.after{ background:rgba(92,219,122,0.05); }
+    .divider{width:2px; background:linear-gradient(180deg,transparent,rgba(92,219,122,0.5),transparent);}
+    .pane h2{font-size:26px; font-weight:600; margin-bottom:6px;}
+    .pane .meta{font-family:'JetBrains Mono',monospace; font-size:17px; margin-bottom:22px;}
+    .before h2{color:#e8a89c;} .before .meta{color:var(--red);}
+    .after h2{color:var(--mantis-bright);} .after .meta{color:var(--mantis);}
+    .board{position:absolute; left:38px; right:38px; bottom:40px; top:130px;
+        border:1px solid rgba(255,255,255,0.06); border-radius:14px; overflow:hidden;
+        background:rgba(0,0,0,0.25);}
+    .board .dots{position:absolute; inset:0;
+        background-image:radial-gradient(rgba(255,255,255,0.08) 1.2px,transparent 1.2px);
+        background-size:26px 26px;}
+    .n{position:absolute; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:11px;
+        padding:6px 8px; white-space:nowrap;}
+    .before .n{ background:#1c1210; border:1px solid rgba(224,106,90,0.5); color:#e8a89c;}
+    .after .n{ background:#0c1a11; border:1px solid rgba(92,219,122,0.55); color:var(--mantis-bright);
+        box-shadow:0 4px 14px rgba(0,0,0,0.4);}
+    svg.w{position:absolute; inset:0; width:100%; height:100%;}
+    .timer{position:absolute; top:40px; right:38px; font-family:'Orbitron',sans-serif; font-weight:800;
+        font-size:40px; letter-spacing:0.02em;}
+    .before .timer{color:var(--red);} .after .timer{color:var(--mantis);}
+    .footer{position:absolute; bottom:0; left:0; right:0; height:170px; z-index:3;
+        display:flex; flex-direction:column; align-items:center; justify-content:center;
+        background:linear-gradient(0deg,#071009,transparent);}
+    .punch{font-size:34px; font-weight:700; text-align:center; line-height:1.2;}
+    .punch .a{color:var(--mantis);}
+    .brandline{margin-top:14px; font-family:'JetBrains Mono',monospace; font-size:18px; color:var(--muted); letter-spacing:0.06em;}
+    .brandline b{color:var(--mantis); font-weight:500;}
+</style>
+</head>
+<body>
+    <div class="header">
+        <div class="kicker">Voronoi facade · same result</div>
+        <div class="title">The wiring tax, <span class="a">deleted</span></div>
+    </div>
+    <div class="split">
+        <div class="pane before">
+            <h2>The normal way</h2>
+            <div class="meta">hand-wire 30+ components</div>
+            <div class="timer">~45:00</div>
+            <div class="board">
+                <div class="dots"></div>
+                <svg class="w" viewBox="0 0 420 520" preserveAspectRatio="none">
+                    <g stroke="#e06a5a" stroke-width="1.4" fill="none" opacity="0.5">
+                        <path d="M60 60 C 140 80, 90 150, 180 140"/>
+                        <path d="M70 110 C 160 120, 120 60, 210 90"/>
+                        <path d="M180 140 C 250 150, 200 230, 300 210"/>
+                        <path d="M210 90 C 280 100, 240 180, 320 160"/>
+                        <path d="M60 200 C 150 210, 120 280, 200 270"/>
+                        <path d="M300 210 C 360 220, 320 300, 250 320"/>
+                        <path d="M200 270 C 270 280, 230 360, 320 350"/>
+                        <path d="M120 320 C 200 330, 160 420, 260 410"/>
+                        <path d="M320 160 C 370 250, 300 300, 250 320"/>
+                        <path d="M90 380 C 180 390, 150 450, 240 450"/>
+                    </g>
+                </svg>
+                <div class="n" style="top:48px; left:40px;">Pts</div>
+                <div class="n" style="top:96px; left:48px;">Pop2D</div>
+                <div class="n" style="top:128px; left:160px;">Voronoi</div>
+                <div class="n" style="top:78px; left:188px;">Bnd</div>
+                <div class="n" style="top:198px; left:38px;">Cull</div>
+                <div class="n" style="top:200px; left:282px;">Region</div>
+                <div class="n" style="top:152px; left:300px;">Offset</div>
+                <div class="n" style="top:262px; left:178px;">Scale</div>
+                <div class="n" style="top:310px; left:300px;">Bound</div>
+                <div class="n" style="top:312px; left:100px;">Area</div>
+                <div class="n" style="top:372px; left:70px;">Extr</div>
+                <div class="n" style="top:438px; left:222px;">Join</div>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="pane after">
+            <h2>With MANTIS</h2>
+            <div class="meta">one sentence, auto-laid-out</div>
+            <div class="timer">~00:12</div>
+            <div class="board">
+                <div class="dots"></div>
+                <svg class="w" viewBox="0 0 420 520" preserveAspectRatio="none">
+                    <g stroke="#5CDB7A" stroke-width="2" fill="none" opacity="0.6">
+                        <path d="M70 150 C 130 150, 130 120, 190 120"/>
+                        <path d="M70 230 C 130 230, 130 200, 190 200"/>
+                        <path d="M70 310 C 130 310, 130 280, 190 280"/>
+                        <path d="M300 120 C 340 150, 340 230, 300 270"/>
+                        <path d="M300 200 C 320 230, 320 250, 300 270"/>
+                    </g>
+                </svg>
+                <div class="n" style="top:138px; left:30px;">Surface</div>
+                <div class="n" style="top:218px; left:30px;">Count</div>
+                <div class="n" style="top:298px; left:30px;">Seed</div>
+                <div class="n" style="top:108px; left:190px;">Populate</div>
+                <div class="n" style="top:188px; left:190px;">Voronoi</div>
+                <div class="n" style="top:258px; left:282px;">Offset &rarr;</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="punch">Same result. <span class="a">One was a sentence.</span></div>
+        <div class="brandline">MANTIS · <b>free &amp; open source</b> for Rhino 8</div>
+    </div>
+</body>
+</html>

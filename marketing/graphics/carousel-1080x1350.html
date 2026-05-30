@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--
+  Instagram / LinkedIn carousel — 6 slides, each 1080×1350 (portrait 4:5).
+  EXPORT each slide: set viewport to 1080×1350, then screenshot at scrollY = 0, 1350, 2700, 4050, 5400, 6750.
+  (Preview MCP: resize 1080×1350 → eval window.scrollTo(0,Y) → screenshot, per slide.)
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    :root{ --mantis:#5CDB7A; --mantis-bright:#7AE99A; --ink:#EAF4ED; --muted:#8CAA96; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{width:1080px; overflow-x:hidden;}
+    body{background:#050c07; font-family:'Space Grotesk',sans-serif; color:var(--ink);}
+    .slide{
+        width:1080px; height:1350px; position:relative; overflow:hidden;
+        padding:96px 90px; display:flex; flex-direction:column;
+        background:
+            radial-gradient(820px 640px at 78% 14%, rgba(92,219,122,0.14), transparent 60%),
+            radial-gradient(720px 560px at 6% 102%, rgba(92,219,122,0.06), transparent 60%),
+            #050c07;
+    }
+    .grid{position:absolute; inset:0; z-index:0;
+        background-image:
+            linear-gradient(rgba(92,219,122,0.045) 1px,transparent 1px),
+            linear-gradient(90deg, rgba(92,219,122,0.045) 1px,transparent 1px);
+        background-size:64px 64px;
+        mask-image:radial-gradient(820px 700px at 60% 40%,#000 25%,transparent 82%);}
+    .slide > *{position:relative; z-index:2;}
+    .top{display:flex; align-items:center; justify-content:space-between;}
+    .badge{font-family:'Orbitron',sans-serif; font-weight:800; font-size:30px; color:var(--mantis);
+        border:2px solid rgba(92,219,122,0.5); border-radius:999px; width:74px; height:74px;
+        display:flex; align-items:center; justify-content:center; box-shadow:0 0 22px rgba(92,219,122,0.2);}
+    .tag{font-family:'JetBrains Mono',monospace; font-size:20px; color:var(--muted); letter-spacing:0.18em; text-transform:uppercase;}
+    .body{flex:1; display:flex; flex-direction:column; justify-content:center;}
+    .h{font-size:84px; font-weight:700; line-height:1.04; letter-spacing:-0.02em;}
+    .h .a{color:var(--mantis);}
+    .p{margin-top:34px; font-size:34px; line-height:1.4; color:#C3D6CB; max-width:840px; font-weight:400;}
+    .p b{color:var(--mantis-bright); font-weight:600;}
+    .foot{display:flex; align-items:center; gap:16px;}
+    .mark{width:42px;height:42px;filter:drop-shadow(0 0 12px rgba(92,219,122,0.5));}
+    .wm{font-family:'Orbitron',sans-serif; font-weight:800; font-size:26px; letter-spacing:0.18em; color:var(--mantis);}
+    .swipe{margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:22px; color:var(--muted);}
+    /* cover specifics */
+    .cover .h{font-size:96px;}
+    .cover .kick{font-family:'JetBrains Mono',monospace; font-size:24px; color:var(--mantis); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:28px;}
+    .bigmark{width:150px;height:150px; margin-bottom:40px; filter:drop-shadow(0 0 28px rgba(92,219,122,0.5));}
+    /* CTA slide */
+    .cta{align-items:center; text-align:center;}
+    .cta .h{font-size:92px;}
+    .pill{display:inline-block; border:1px solid rgba(92,219,122,0.4); background:rgba(92,219,122,0.07);
+        color:var(--mantis-bright); padding:14px 26px; border-radius:999px; font-family:'JetBrains Mono',monospace; font-size:26px; margin:10px 8px 0;}
+    .mini-node{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:22px; color:var(--mantis-bright);
+        background:linear-gradient(180deg,#0c1a11,#081109); border:1px solid rgba(92,219,122,0.5);
+        border-radius:8px; padding:10px 16px; margin:6px;}
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 — cover -->
+<section class="slide cover">
+    <div class="grid"></div>
+    <div class="top"><span></span><span class="tag">MANTIS · 01</span></div>
+    <div class="body">
+        <svg class="bigmark" viewBox="0 0 36 36" fill="none">
+            <line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/>
+            <line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/>
+            <line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/>
+            <line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/>
+            <line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/>
+            <circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/>
+            <circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/>
+            <circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/>
+        </svg>
+        <div class="kick">For Rhino 8 · Grasshopper</div>
+        <div class="h">You can just<br><span class="a">talk</span> to Grasshopper now.</div>
+        <div class="p">Describe what you want to build. Watch it happen. <b>Swipe →</b></div>
+    </div>
+    <div class="foot"><span class="wm">MANTIS</span><span class="swipe">free &amp; open source</span></div>
+</section>
+
+<!-- SLIDE 2 -->
+<section class="slide">
+    <div class="grid"></div>
+    <div class="top"><div class="badge">01</div><span class="tag">describe → build</span></div>
+    <div class="body">
+        <div class="h">Type it. It <span class="a">wires itself.</span></div>
+        <div class="p">Native, editable components appear on your canvas and connect automatically. <b>Not code</b> — a real definition you can rewire and learn from.</div>
+        <div style="margin-top:40px;">
+            <span class="mini-node">Slider</span><span class="mini-node">Circle</span><span class="mini-node">Move</span><span class="mini-node">Loft &rarr;</span>
+        </div>
+    </div>
+    <div class="foot"><svg class="mark" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="4" fill="#5CDB7A"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.45"/></svg><span class="wm">MANTIS</span><span class="swipe">→</span></div>
+</section>
+
+<!-- SLIDE 3 -->
+<section class="slide">
+    <div class="grid"></div>
+    <div class="top"><div class="badge">02</div><span class="tag">offline · private</span></div>
+    <div class="body">
+        <div class="h">Runs on <span class="a">your</span> laptop.</div>
+        <div class="p">With Ollama, MANTIS works fully offline. <b>No API key. No cost. Nothing leaves your machine</b> — built for NDAs and locked-down labs.</div>
+    </div>
+    <div class="foot"><svg class="mark" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="4" fill="#5CDB7A"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/></svg><span class="wm">MANTIS</span><span class="swipe">→</span></div>
+</section>
+
+<!-- SLIDE 4 -->
+<section class="slide">
+    <div class="grid"></div>
+    <div class="top"><div class="badge">03</div><span class="tag">explain mode</span></div>
+    <div class="body">
+        <div class="h">Decode <span class="a">any</span> definition.</div>
+        <div class="p">Click any component chain and get a plain-language description of what it does. <b>Your built-in Grasshopper tutor</b> — perfect for inherited files.</div>
+    </div>
+    <div class="foot"><svg class="mark" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="4" fill="#5CDB7A"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/></svg><span class="wm">MANTIS</span><span class="swipe">→</span></div>
+</section>
+
+<!-- SLIDE 5 -->
+<section class="slide">
+    <div class="grid"></div>
+    <div class="top"><div class="badge">04</div><span class="tag">multi-solution</span></div>
+    <div class="body">
+        <div class="h">Compare <span class="a">approaches.</span></div>
+        <div class="p">Ask something open-ended and get <b>2–3 distinct strategies</b> as tabs — loft vs. extrude vs. morph — so you choose before committing one to the canvas.</div>
+    </div>
+    <div class="foot"><svg class="mark" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="4" fill="#5CDB7A"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/></svg><span class="wm">MANTIS</span><span class="swipe">→</span></div>
+</section>
+
+<!-- SLIDE 6 — CTA -->
+<section class="slide cta">
+    <div class="grid"></div>
+    <div class="top" style="width:100%;"><span></span><span class="tag">MANTIS · 06</span></div>
+    <div class="body">
+        <div class="h">Free.<br><span class="a">Open source.</span><br>Yours.</div>
+        <div class="p" style="margin-bottom:8px;">Talk to Grasshopper. Build anything.</div>
+        <div>
+            <span class="pill">native components</span>
+            <span class="pill">5 AI providers</span>
+            <span class="pill">Rhino 8</span>
+        </div>
+    </div>
+    <div class="foot" style="justify-content:center;"><span class="wm" style="font-size:34px;">★ link in bio</span></div>
+</section>
+
+</body>
+</html>

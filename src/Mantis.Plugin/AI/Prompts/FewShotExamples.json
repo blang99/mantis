@@ -1,0 +1,85 @@
+[
+  {
+    "userPrompt": "Create a circle with radius 5",
+    "response": {
+      "solutionName": "Simple Circle",
+      "solutionDescription": "A circle on the XY plane with adjustable radius",
+      "components": [
+        { "id": 1, "name": "Number Slider", "nickName": "Radius", "inputValues": { "0": { "min": 0, "max": 20, "value": 5, "decimals": 1 } } },
+        { "id": 2, "name": "Circle CNR" }
+      ],
+      "connections": [
+        { "fromComponent": 1, "fromOutput": 0, "toComponent": 2, "toInput": 1 }
+      ],
+      "advice": "Adjust the Radius slider to change the circle size. The circle is centered at the world origin on the XY plane."
+    }
+  },
+  {
+    "userPrompt": "Make a box 10x10x5 and extrude a circle through it",
+    "response": {
+      "solutionName": "Box with Circular Hole",
+      "solutionDescription": "Creates a box and subtracts a cylindrical hole through it",
+      "components": [
+        { "id": 1, "name": "Number Slider", "nickName": "Box Size", "inputValues": { "0": { "min": 1, "max": 50, "value": 10, "decimals": 0 } } },
+        { "id": 2, "name": "Number Slider", "nickName": "Height", "inputValues": { "0": { "min": 1, "max": 20, "value": 5, "decimals": 0 } } },
+        { "id": 3, "name": "Number Slider", "nickName": "Hole Radius", "inputValues": { "0": { "min": 0.5, "max": 8, "value": 3, "decimals": 1 } } },
+        { "id": 4, "name": "Box" },
+        { "id": 5, "name": "Circle CNR" },
+        { "id": 6, "name": "Unit Z" },
+        { "id": 7, "name": "Extrude" },
+        { "id": 8, "name": "Cap Holes" },
+        { "id": 9, "name": "Solid Difference" }
+      ],
+      "connections": [
+        { "fromComponent": 1, "fromOutput": 0, "toComponent": 4, "toInput": 1 },
+        { "fromComponent": 1, "fromOutput": 0, "toComponent": 4, "toInput": 2 },
+        { "fromComponent": 2, "fromOutput": 0, "toComponent": 4, "toInput": 3 },
+        { "fromComponent": 3, "fromOutput": 0, "toComponent": 5, "toInput": 1 },
+        { "fromComponent": 2, "fromOutput": 0, "toComponent": 6, "toInput": 0 },
+        { "fromComponent": 5, "fromOutput": 0, "toComponent": 7, "toInput": 0 },
+        { "fromComponent": 6, "fromOutput": 0, "toComponent": 7, "toInput": 1 },
+        { "fromComponent": 7, "fromOutput": 0, "toComponent": 8, "toInput": 0 },
+        { "fromComponent": 4, "fromOutput": 0, "toComponent": 9, "toInput": 0 },
+        { "fromComponent": 8, "fromOutput": 0, "toComponent": 9, "toInput": 1 }
+      ],
+      "advice": "Use the Box Size slider for the base dimensions, Height for the box height, and Hole Radius to control the cylindrical subtraction."
+    }
+  },
+  {
+    "userPrompt": "Generate a parametric tower with tapering floors",
+    "response": {
+      "solutionName": "Parametric Tapering Tower",
+      "solutionDescription": "Creates a tower by lofting scaled floor plates at increasing heights",
+      "components": [
+        { "id": 1, "name": "Number Slider", "nickName": "Floors", "inputValues": { "0": { "min": 3, "max": 30, "value": 10, "decimals": 0 } } },
+        { "id": 2, "name": "Number Slider", "nickName": "Floor Height", "inputValues": { "0": { "min": 2, "max": 6, "value": 3.5, "decimals": 1 } } },
+        { "id": 3, "name": "Number Slider", "nickName": "Base Size", "inputValues": { "0": { "min": 5, "max": 50, "value": 20, "decimals": 0 } } },
+        { "id": 4, "name": "Number Slider", "nickName": "Top Taper", "inputValues": { "0": { "min": 0.3, "max": 1, "value": 0.6, "decimals": 2 } } },
+        { "id": 5, "name": "Series" },
+        { "id": 6, "name": "Unit Z" },
+        { "id": 7, "name": "Move" },
+        { "id": 8, "name": "Rectangle" },
+        { "id": 9, "name": "Construct Domain" },
+        { "id": 10, "name": "Range" },
+        { "id": 11, "name": "Scale" },
+        { "id": 12, "name": "Loft" }
+      ],
+      "connections": [
+        { "fromComponent": 2, "fromOutput": 0, "toComponent": 5, "toInput": 1 },
+        { "fromComponent": 1, "fromOutput": 0, "toComponent": 5, "toInput": 2 },
+        { "fromComponent": 5, "fromOutput": 0, "toComponent": 6, "toInput": 0 },
+        { "fromComponent": 8, "fromOutput": 0, "toComponent": 7, "toInput": 0 },
+        { "fromComponent": 6, "fromOutput": 0, "toComponent": 7, "toInput": 1 },
+        { "fromComponent": 3, "fromOutput": 0, "toComponent": 8, "toInput": 1 },
+        { "fromComponent": 3, "fromOutput": 0, "toComponent": 8, "toInput": 2 },
+        { "fromComponent": 4, "fromOutput": 0, "toComponent": 9, "toInput": 1 },
+        { "fromComponent": 1, "fromOutput": 0, "toComponent": 10, "toInput": 1 },
+        { "fromComponent": 9, "fromOutput": 0, "toComponent": 10, "toInput": 0 },
+        { "fromComponent": 7, "fromOutput": 0, "toComponent": 11, "toInput": 0 },
+        { "fromComponent": 10, "fromOutput": 0, "toComponent": 11, "toInput": 2 },
+        { "fromComponent": 11, "fromOutput": 0, "toComponent": 12, "toInput": 0 }
+      ],
+      "advice": "The tower tapers from base to top. Adjust 'Floors' for the number of levels, 'Floor Height' for spacing, 'Base Size' for the footprint, and 'Top Taper' for how much the top floor shrinks relative to the base."
+    }
+  }
+]

@@ -1,0 +1,23 @@
+# Build output
+bin/
+obj/
+*.pdb
+*.user
+
+# Packaged / distribution artifacts (built locally, published via Package Manager + Releases)
+dist/
+*.yak
+marketing/downloads/
+
+# Local tooling / editor
+.claude/
+.vs/
+.idea/
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (marketing tooling, if any)
+node_modules/

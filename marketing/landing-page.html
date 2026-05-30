@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MANTIS — AI-Powered Grasshopper Scripting for Rhino 8</title>
+    <meta name="description" content="Convert natural language into native Grasshopper components. Free, open source, multi-model AI plugin for Rhino 8.">
+    <link rel="canonical" href="https://blang99.github.io/mantis/">
+    <meta name="theme-color" content="#0E1610">
+
+    <!-- ── Open Graph (Facebook, LinkedIn, Discord, etc.) ── -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MANTIS">
+    <meta property="og:title" content="MANTIS — AI-Powered Grasshopper Scripting for Rhino 8">
+    <meta property="og:description" content="Describe what you want in plain language; watch native Grasshopper components appear on your canvas — live. Free, open source, 5 AI providers.">
+    <meta property="og:url" content="https://blang99.github.io/mantis/">
+    <meta property="og:image" content="https://blang99.github.io/mantis/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- ── Twitter / X card ── -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MANTIS — AI-Powered Grasshopper Scripting for Rhino 8">
+    <meta name="twitter:description" content="Describe what you want in plain language; watch native Grasshopper components appear on your canvas — live. Free, open source, 5 AI providers.">
+    <meta name="twitter:image" content="https://blang99.github.io/mantis/og-image.png">
+
+    <!-- ── Favicon: the MANTIS constellation mark, inline so no extra request ── -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230E1610'/%3E%3Cline x1='18' y1='5' x2='18' y2='18' stroke='%235CDB7A' stroke-width='1.2' opacity='0.4'/%3E%3Cline x1='5' y1='15' x2='18' y2='18' stroke='%235CDB7A' stroke-width='1.2' opacity='0.4'/%3E%3Cline x1='31' y1='15' x2='18' y2='18' stroke='%235CDB7A' stroke-width='1.2' opacity='0.4'/%3E%3Cline x1='10' y1='28' x2='18' y2='18' stroke='%235CDB7A' stroke-width='1.2' opacity='0.4'/%3E%3Cline x1='26' y1='28' x2='18' y2='18' stroke='%235CDB7A' stroke-width='1.2' opacity='0.4'/%3E%3Ccircle cx='18' cy='5' r='3.5' fill='%235CDB7A'/%3E%3Ccircle cx='5' cy='15' r='2.5' fill='%235CDB7A' opacity='0.7'/%3E%3Ccircle cx='31' cy='15' r='2.5' fill='%235CDB7A' opacity='0.7'/%3E%3Ccircle cx='10' cy='28' r='2.5' fill='%235CDB7A' opacity='0.7'/%3E%3Ccircle cx='26' cy='28' r='2.5' fill='%235CDB7A' opacity='0.7'/%3E%3Ccircle cx='18' cy='18' r='4' fill='%235CDB7A'/%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mantis: #5CDB7A;
+            --mantis-bright: #7AE99A;
+            --mantis-dim: #3a9b55;
+            --mantis-glow: rgba(92,219,122,0.25);
+            --mantis-glow-strong: rgba(92,219,122,0.45);
+            --bg-deep: #040a06;
+            --bg-card: #0a120d;
+            --bg-surface: #0f1a13;
+            --bg-elevated: #152019;
+            --text-primary: #e8f0ea;
+            --text-secondary: #8fa898;
+            --text-dim: #405848;
+            --border: #152a1d;
+            --border-light: #1e3828;
+            --amber: #e8b84d;
+            --red: #e85454;
+            --blue: #54a8e8;
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .mono { font-family: var(--font-mono); }
+
+        /* ── Scroll reveal + directional variants ── */
+        .reveal { opacity: 0; transform: translateY(48px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
+        .reveal.visible { opacity: 1; transform: none; }
+        .reveal-left { opacity: 0; transform: translateX(-60px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
+        .reveal-left.visible { opacity: 1; transform: none; }
+        .reveal-right { opacity: 0; transform: translateX(60px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
+        .reveal-right.visible { opacity: 1; transform: none; }
+        .reveal-scale { opacity: 0; transform: scale(0.9); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
+        .reveal-scale.visible { opacity: 1; transform: none; }
+        .reveal-clip { opacity: 0; clip-path: inset(0 100% 0 0); transition: opacity 0.6s ease, clip-path 1s var(--ease-out); }
+        .reveal-clip.visible { opacity: 1; clip-path: inset(0 0 0 0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* ── Reduced-motion: honor the OS "minimize animation" setting ── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+            .reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-clip {
+                opacity: 1 !important; transform: none !important; clip-path: none !important;
+            }
+            #cursor-glow { display: none !important; }
+        }
+
+        /* ── Unified effects canvas (clouds + grid + swarm) ── */
+        #fx-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+        /* ── Cursor glow ── */
+        #cursor-glow {
+            position: fixed; top: 0; left: 0; width: 540px; height: 540px;
+            margin: -270px 0 0 -270px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(92,219,122,0.10) 0%, transparent 60%);
+            mix-blend-mode: screen; pointer-events: none; z-index: 1;
+            opacity: 0; transition: opacity 0.5s ease;
+            will-change: transform;
+        }
+
+        /* ── Scanline overlay ── */
+        .scanlines {
+            position: fixed; inset: 0; z-index: 9998; pointer-events: none;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+        }
+
+        /* ── Scroll progress bar ── */
+        #scroll-progress {
+            position: fixed; top: 0; left: 0; height: 2px; width: 0;
+            background: linear-gradient(90deg, var(--mantis-dim), var(--mantis), var(--mantis-bright));
+            box-shadow: 0 0 12px var(--mantis-glow-strong); z-index: 200;
+            transition: width 0.1s linear;
+        }
+
+        /* ── Chapter rail ── */
+        .chapter-rail {
+            position: fixed; right: 26px; top: 50%; transform: translateY(-50%);
+            z-index: 150; display: flex; flex-direction: column; gap: 18px;
+        }
+        .chapter-dot {
+            position: relative; width: 9px; height: 9px; border-radius: 50%;
+            border: 1px solid var(--border-light); background: transparent;
+            cursor: pointer; transition: all 0.35s var(--ease-out); padding: 0;
+        }
+        .chapter-dot::after {
+            content: attr(data-label); position: absolute; right: 20px; top: 50%;
+            transform: translateY(-50%) translateX(8px);
+            font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--text-secondary); white-space: nowrap;
+            opacity: 0; pointer-events: none; transition: all 0.3s ease;
+        }
+        .chapter-dot:hover::after { opacity: 1; transform: translateY(-50%) translateX(0); }
+        .chapter-dot.active {
+            background: var(--mantis); border-color: var(--mantis);
+            box-shadow: 0 0 14px var(--mantis-glow-strong); transform: scale(1.35);
+        }
+        .chapter-dot.active::after { opacity: 1; color: var(--mantis); transform: translateY(-50%) translateX(0); }
+
+        /* ═══ NAV ═══ */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            transition: background 0.3s, backdrop-filter 0.3s, border-color 0.3s;
+            border-bottom: 1px solid transparent;
+        }
+        nav.scrolled { background: rgba(4,10,6,0.92); backdrop-filter: blur(24px); border-bottom-color: var(--border); }
+        .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+        .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .nav-logo-mark { width: 34px; height: 34px; }
+        .nav-logo span { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.2em; color: var(--mantis); }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--mantis); }
+        .btn-nav {
+            background: var(--mantis) !important; color: var(--bg-deep) !important;
+            padding: 10px 22px !important; border-radius: 6px;
+            font-family: var(--font-display) !important; font-weight: 700 !important;
+            font-size: 0.75rem !important; letter-spacing: 0.1em !important;
+            transition: transform 0.2s, box-shadow 0.2s !important;
+        }
+        .btn-nav:hover { transform: translateY(-2px) !important; box-shadow: 0 6px 30px var(--mantis-glow-strong) !important; }
+
+        /* ═══ HERO ═══ */
+        .hero {
+            position: relative; z-index: 2; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; padding: 100px 2rem 60px;
+        }
+        .hero-glow {
+            position: absolute; width: 900px; height: 900px; border-radius: 50%;
+            background: radial-gradient(circle, var(--mantis-glow-strong) 0%, rgba(92,219,122,0.08) 38%, transparent 64%);
+            top: 42%; left: 50%; transform: translate(-50%, -50%);
+            animation: glowPulse 7s ease-in-out infinite; pointer-events: none;
+        }
+        @keyframes glowPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+            50% { transform: translate(-50%, -52%) scale(1.12); opacity: 0.72; }
+        }
+        .hero-content { position: relative; max-width: 950px; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(92,219,122,0.06); border: 1px solid rgba(92,219,122,0.15);
+            padding: 8px 20px; border-radius: 100px; font-family: var(--font-mono);
+            font-size: 0.8rem; color: var(--mantis); margin-bottom: 2.5rem; letter-spacing: 0.05em;
+        }
+        .hero-badge .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mantis); animation: pulseDot 2s ease-in-out infinite; }
+        @keyframes pulseDot {
+            0%, 100% { box-shadow: 0 0 0 0 var(--mantis-glow-strong); }
+            50% { box-shadow: 0 0 0 8px transparent; }
+        }
+        .hero h1 {
+            font-family: var(--font-display); font-size: clamp(2.8rem, 6.5vw, 5rem);
+            font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem;
+            letter-spacing: 0.02em; text-transform: uppercase;
+        }
+        .hero h1 .line2 {
+            display: block;
+            background: linear-gradient(135deg, var(--mantis) 0%, var(--mantis-bright) 50%, #a0f0b0 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; position: relative;
+        }
+        /* kinetic word reveal */
+        .kinetic { display: inline-block; }
+        .kinetic .word { display: inline-block; opacity: 0; transform: translateY(0.5em) rotateX(40deg); transform-origin: bottom; animation: wordIn 0.8s var(--ease-out) forwards; }
+        @keyframes wordIn { to { opacity: 1; transform: none; } }
+        /* Glitch effect */
+        .glitch { position: relative; display: inline-block; }
+        .glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
+        .glitch::before { color: var(--mantis-bright); z-index: -1; animation: glitch1 3s infinite linear alternate-reverse; }
+        .glitch::after { color: var(--blue); z-index: -2; animation: glitch2 2.5s infinite linear alternate-reverse; }
+        @keyframes glitch1 {
+            0%, 95% { clip-path: inset(0 0 0 0); transform: translate(0); }
+            96% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 1px); }
+            97% { clip-path: inset(50% 0 30% 0); transform: translate(3px, -1px); }
+            98% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 0); }
+            100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+        }
+        @keyframes glitch2 {
+            0%, 93% { clip-path: inset(0 0 0 0); transform: translate(0); }
+            94% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+            96% { clip-path: inset(30% 0 40% 0); transform: translate(-2px, 1px); }
+            98% { clip-path: inset(0 0 0 0); transform: translate(0); }
+        }
+        .hero-sub { font-size: 1.2rem; color: var(--text-secondary); max-width: 650px; margin: 0 auto 3rem; line-height: 1.7; font-weight: 300; }
+        .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2.2rem; }
+        .btn-hero { padding: 16px 36px; border-radius: 8px; font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; text-decoration: none; border: none; cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase; transition: all 0.3s; }
+        .btn-hero-primary { background: var(--mantis); color: var(--bg-deep); box-shadow: 0 0 30px rgba(92,219,122,0.2); }
+        .btn-hero-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 50px var(--mantis-glow-strong); }
+        .btn-hero-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border-light); }
+        .btn-hero-secondary:hover { border-color: var(--mantis-dim); box-shadow: 0 0 20px rgba(92,219,122,0.1); }
+        .hero-install { display: inline-flex; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 24px; font-family: var(--font-mono); font-size: 0.85rem; }
+        .hero-install .cmd-label { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        .hero-install .cmd-text { color: var(--mantis); }
+        .hero-install .cmd-copy { background: none; border: none; cursor: pointer; color: var(--text-dim); padding: 4px; transition: color 0.2s; font-size: 1rem; }
+        .hero-install .cmd-copy:hover { color: var(--mantis); }
+        .scroll-cue {
+            position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.2em;
+            text-transform: uppercase; color: var(--text-dim);
+        }
+        .scroll-cue .mouse { width: 22px; height: 34px; border: 1px solid var(--border-light); border-radius: 12px; position: relative; }
+        .scroll-cue .mouse::after { content: ''; position: absolute; top: 6px; left: 50%; width: 3px; height: 6px; border-radius: 2px; background: var(--mantis); transform: translateX(-50%); animation: scrollWheel 1.8s ease-in-out infinite; }
+        @keyframes scrollWheel { 0%,100% { opacity: 0; transform: translate(-50%, 0); } 40% { opacity: 1; } 80% { opacity: 0; transform: translate(-50%, 10px); } }
+
+        /* ── Prompt ticker ── */
+        .ticker-wrap { position: relative; z-index: 2; overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: rgba(10,18,13,0.55); backdrop-filter: blur(8px); padding: 12px 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+        .ticker { display: flex; gap: 2.5rem; width: max-content; animation: tickerScroll 38s linear infinite; }
+        .ticker:hover { animation-play-state: paused; }
+        .ticker span { font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-secondary); white-space: nowrap; display: inline-flex; align-items: center; gap: 0.7rem; }
+        .ticker span::before { content: '›'; color: var(--mantis); font-weight: 700; }
+        @keyframes tickerScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        /* ═══ STATS BAR ═══ */
+        .stats-bar { position: relative; z-index: 2; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: rgba(10,18,13,0.8); backdrop-filter: blur(10px); }
+        .stats-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); padding: 2.5rem 2rem; }
+        .stat-item { text-align: center; }
+        .stat-num { font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; color: var(--mantis); text-shadow: 0 0 30px rgba(92,219,122,0.3); }
+        .stat-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.12em; margin-top: 0.3rem; }
+
+        /* ═══ PROBLEM → CLARITY (pinned narrative act) ═══ */
+        .problem-section { position: relative; z-index: 2; height: 240vh; }
+        .problem-sticky { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; text-align: center; }
+        .problem-stage { position: relative; width: 100%; max-width: 900px; padding: 0 2rem; }
+        /* The wall of nodes — chaotic, fades/blurs as you scroll */
+        .node-wall { position: absolute; inset: -40% -10%; display: grid; grid-template-columns: repeat(10, 1fr); gap: 14px; opacity: 0.5; filter: blur(0px); transition: none; pointer-events: none; }
+        .wall-node { height: 26px; border-radius: 5px; background: var(--bg-elevated); border: 1px solid var(--border-light); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .wall-node::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--mantis-dim); margin: 9px 0 0 6px; opacity: 0.5; }
+        /* The story text layers */
+        .problem-line { position: relative; z-index: 3; }
+        .problem-eyebrow { font-family: var(--font-display); font-size: 0.7rem; color: var(--mantis); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 1.5rem; }
+        .problem-headline { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: 1.15; letter-spacing: 0.01em; }
+        .problem-headline .muted { color: var(--text-dim); }
+        .problem-headline .accent { background: linear-gradient(135deg, var(--mantis), var(--mantis-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .problem-sub { margin-top: 1.4rem; font-size: 1.15rem; color: var(--text-secondary); font-weight: 300; max-width: 620px; margin-left: auto; margin-right: auto; }
+        /* the typed sentence that "assembles" */
+        .problem-typed { font-family: var(--font-mono); font-size: clamp(1rem, 2.4vw, 1.5rem); color: var(--mantis); margin-top: 2rem; min-height: 1.6em; }
+        .problem-typed .caret { display: inline-block; width: 2px; height: 1.1em; background: var(--mantis); margin-left: 2px; vertical-align: text-bottom; animation: caretBlink 1s step-end infinite; }
+        @keyframes caretBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* ═══ DEMO ═══ */
+        .demo-section { position: relative; z-index: 2; padding: 6rem 2rem; }
+        .demo-browser { max-width: 1100px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 1px rgba(92,219,122,0.1); }
+        .demo-chrome { display: flex; align-items: center; gap: 8px; padding: 12px 18px; background: var(--bg-surface); border-bottom: 1px solid var(--border); }
+        .demo-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .demo-dot.r { background: #ff5f57; } .demo-dot.y { background: #febc2e; } .demo-dot.g { background: #28c840; }
+        .demo-chrome-title { margin-left: auto; font-size: 0.75rem; color: var(--text-dim); font-family: var(--font-mono); }
+        .demo-layout { display: grid; grid-template-columns: 1fr 340px; min-height: 460px; }
+        .demo-canvas { position: relative; padding: 2rem; background: radial-gradient(ellipse at 30% 50%, rgba(92,219,122,0.03) 0%, transparent 60%), linear-gradient(rgba(21,42,29,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(21,42,29,0.3) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; }
+        .gh-node { position: absolute; background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 6px; padding: 8px 14px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-primary); box-shadow: 0 4px 12px rgba(0,0,0,0.3); opacity: 0; transform: scale(0.8) translateY(8px); transition: opacity 0.5s ease, transform 0.5s ease; white-space: nowrap; }
+        .gh-node.placed { opacity: 1; transform: scale(1) translateY(0); box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 15px rgba(92,219,122,0.08); }
+        .gh-node.flash { box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 22px var(--mantis-glow-strong); border-color: var(--mantis); }
+        .gh-node .gh-cat { font-size: 0.6rem; color: var(--mantis-dim); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 2px; }
+        .gh-ports { display: flex; justify-content: space-between; margin-top: 6px; gap: 20px; }
+        .gh-port { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--text-dim); }
+        .gh-port-dot { width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--mantis-dim); }
+        .gh-port-dot.out { background: var(--mantis-dim); }
+        .demo-wires { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .demo-wires path { fill: none; stroke: var(--mantis); stroke-width: 1.5; opacity: 0; stroke-dasharray: 200; stroke-dashoffset: 200; transition: stroke-dashoffset 0.8s ease, opacity 0.3s; }
+        .demo-wires path.drawn { opacity: 0.4; stroke-dashoffset: 0; }
+        .demo-chat { border-left: 1px solid var(--border); background: var(--bg-deep); padding: 1.5rem; display: flex; flex-direction: column; }
+        .demo-chat-header { font-family: var(--font-display); font-size: 0.7rem; color: var(--mantis); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+        .demo-msgs { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+        .demo-msg { padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; opacity: 0; transform: translateY(10px); transition: opacity 0.4s, transform 0.4s; }
+        .demo-msg.show { opacity: 1; transform: translateY(0); }
+        .demo-msg-user { background: rgba(92,219,122,0.08); border: 1px solid rgba(92,219,122,0.15); align-self: flex-end; max-width: 90%; }
+        .demo-msg-ai { background: var(--bg-surface); border: 1px solid var(--border); max-width: 90%; }
+        .demo-msg-sender { font-family: var(--font-display); font-size: 0.6rem; color: var(--mantis); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+        .demo-typing { display: flex; gap: 4px; padding: 12px; opacity: 0; transition: opacity 0.3s; }
+        .demo-typing.show { opacity: 1; }
+        .demo-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--mantis-dim); animation: typingBounce 1.2s infinite; }
+        .demo-typing span:nth-child(2) { animation-delay: 0.15s; }
+        .demo-typing span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+        .demo-status-bar { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim); }
+
+        /* ═══ SECTION HEADERS ═══ */
+        .section-label { font-family: var(--font-display); font-size: 0.7rem; color: var(--mantis); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem; }
+        .section-title { font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; letter-spacing: 0.02em; margin-bottom: 1rem; line-height: 1.2; }
+        .section-desc { font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; line-height: 1.7; font-weight: 300; }
+        /* ═══ HOW IT WORKS ═══ */
+        .how-section { position: relative; z-index: 2; padding: 8rem 0; }
+        .how-section .section-desc { margin: 0 auto; }
+        .how-header { text-align: center; margin-bottom: 4rem; }
+        .how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .how-step { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s; }
+        .how-step:hover { border-color: var(--mantis-dim); box-shadow: 0 0 40px rgba(92,219,122,0.08); transform: translateY(-4px); }
+        .how-step-num { font-family: var(--font-display); font-size: 2.5rem; font-weight: 900; color: var(--mantis); opacity: 0.2; margin-bottom: 0.5rem; text-shadow: 0 0 20px rgba(92,219,122,0.3); }
+        .how-step h3 { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.04em; margin-bottom: 0.8rem; }
+        .how-step p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem; }
+        .how-step-code { font-family: var(--font-mono); font-size: 0.78rem; color: var(--mantis); background: rgba(92,219,122,0.05); border: 1px solid rgba(92,219,122,0.1); border-radius: 6px; padding: 10px 14px; line-height: 1.6; }
+        .how-step-code .dim { color: var(--text-dim); }
+
+        /* ═══ FEATURES BENTO ═══ */
+        .features-section { position: relative; z-index: 2; padding: 4rem 0 8rem; }
+        .features-header { text-align: center; margin-bottom: 3rem; }
+        .features-header .section-desc { margin: 0 auto; }
+        .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.2rem; }
+        .bento-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s; position: relative; overflow: hidden; }
+        .bento-card::after { content: ''; position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(92,219,122,0.10), transparent 60%); top: var(--my, 50%); left: var(--mx, 50%); transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.4s; pointer-events: none; }
+        .bento-card:hover::after { opacity: 1; }
+        .bento-card:hover { border-color: var(--mantis-dim); box-shadow: 0 0 40px rgba(92,219,122,0.06), inset 0 0 40px rgba(92,219,122,0.02); transform: translateY(-3px); }
+        .b-1 { grid-column: span 7; } .b-2 { grid-column: span 5; } .b-3 { grid-column: span 5; }
+        .b-4 { grid-column: span 7; } .b-5 { grid-column: span 6; } .b-6 { grid-column: span 6; }
+        .bento-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(92,219,122,0.08); border: 1px solid rgba(92,219,122,0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; position: relative; z-index: 1; }
+        .bento-card h3 { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.04em; margin-bottom: 0.6rem; position: relative; z-index: 1; }
+        .bento-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; position: relative; z-index: 1; }
+        .stream-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.2rem; position: relative; z-index: 1; }
+        .stream-chip { font-family: var(--font-mono); font-size: 0.72rem; padding: 6px 12px; border-radius: 6px; background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-secondary); animation: chipFade 3.5s infinite; }
+        .stream-chip.active { border-color: var(--mantis-dim); color: var(--mantis); box-shadow: 0 0 12px rgba(92,219,122,0.15); }
+        @keyframes chipFade { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* ═══ MODELS ═══ */
+        .models-section { position: relative; z-index: 2; padding: 8rem 0; background: linear-gradient(180deg, transparent 0%, rgba(92,219,122,0.02) 50%, transparent 100%); }
+        .models-header { text-align: center; margin-bottom: 3rem; }
+        .models-header .section-desc { margin: 0 auto; }
+        .provider-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.2rem; }
+        .provider-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.8rem; transition: all 0.3s; }
+        .provider-card:hover { border-color: var(--mantis-dim); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 30px rgba(92,219,122,0.05); }
+        .provider-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; }
+        .provider-card-head h4 { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; }
+        .provider-badge { font-family: var(--font-mono); font-size: 0.6rem; padding: 3px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+        .badge-free { background: rgba(92,219,122,0.12); color: var(--mantis); border: 1px solid rgba(92,219,122,0.2); }
+        .badge-local { background: rgba(84,168,232,0.12); color: var(--blue); border: 1px solid rgba(84,168,232,0.2); }
+        .badge-paid { background: rgba(232,184,77,0.12); color: var(--amber); border: 1px solid rgba(232,184,77,0.2); }
+        .provider-card .desc { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.5; }
+        .provider-models { list-style: none; }
+        .provider-models li { font-family: var(--font-mono); font-size: 0.78rem; padding: 6px 0; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; color: var(--text-secondary); }
+        .model-tag { font-size: 0.58rem; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.08em; font-weight: 600; }
+        .tag-free { background: rgba(92,219,122,0.1); color: var(--mantis); }
+        .tag-paid { background: rgba(232,184,77,0.1); color: var(--amber); }
+
+        /* ═══ COMPARISON TABLE ═══ */
+        .compare-section { position: relative; z-index: 2; padding: 4rem 0 8rem; }
+        .compare-header { text-align: center; margin-bottom: 3rem; }
+        .compare-header .section-desc { margin: 0 auto; }
+        .compare-table-wrap { overflow-x: auto; }
+        .compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .compare-table th, .compare-table td { padding: 14px 20px; text-align: left; border-bottom: 1px solid var(--border); }
+        .compare-table thead th { background: var(--bg-card); font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; }
+        .compare-table thead th:nth-child(2) { color: var(--mantis); }
+        .compare-table tbody td { background: var(--bg-deep); }
+        .compare-table tbody tr { transition: background 0.2s; }
+        .compare-table tbody tr:hover td { background: rgba(92,219,122,0.03); }
+        .compare-table tbody td:first-child { font-weight: 500; color: var(--text-secondary); }
+        .check-yes { color: var(--mantis); font-weight: 700; text-align: center; }
+        .check-no { color: var(--text-dim); text-align: center; }
+        .check-special { color: var(--mantis-bright); font-weight: 600; text-align: center; }
+
+        /* ═══ INSTALL CTA ═══ */
+        .install-section { position: relative; z-index: 2; padding: 4rem 0 8rem; }
+        .install-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 4rem; text-align: center; position: relative; overflow: hidden; }
+        .install-card::before { content: ''; position: absolute; inset: -1px; border-radius: 17px; padding: 1px; background: linear-gradient(135deg, rgba(92,219,122,0.2), transparent 50%, rgba(92,219,122,0.1)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+        .install-card .section-desc { margin: 0 auto 3rem; }
+        .install-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 3rem; text-align: left; }
+        .install-step { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; }
+        .install-step-num { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; color: var(--mantis); opacity: 0.3; margin-bottom: 0.5rem; }
+        .install-step h4 { font-family: var(--font-display); font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+        .install-step p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem; }
+        .install-step code { display: block; font-family: var(--font-mono); font-size: 0.78rem; color: var(--mantis); background: rgba(92,219,122,0.05); border: 1px solid rgba(92,219,122,0.1); border-radius: 6px; padding: 8px 12px; }
+        .install-links { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+        .install-links a { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+        .install-links a:hover { color: var(--mantis); }
+
+        /* ═══ FOOTER ═══ */
+        footer { position: relative; z-index: 2; border-top: 1px solid var(--border); padding: 2.5rem 2rem; }
+        .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .footer-left span { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; color: var(--mantis); letter-spacing: 0.15em; }
+        .footer-left p { font-size: 0.8rem; color: var(--text-dim); margin-top: 4px; }
+        .footer-links { display: flex; gap: 2rem; }
+        .footer-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--mantis); }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 1100px) { .chapter-rail { display: none; } }
+        @media (max-width: 900px) {
+            .how-steps { grid-template-columns: 1fr; }
+            .bento { grid-template-columns: 1fr; }
+            .b-1,.b-2,.b-3,.b-4,.b-5,.b-6 { grid-column: span 1; }
+            .provider-grid { grid-template-columns: repeat(2, 1fr); }
+            .install-steps { grid-template-columns: 1fr; }
+            .demo-layout { grid-template-columns: 1fr; }
+            .demo-chat { border-left: none; border-top: 1px solid var(--border); }
+            .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+            .problem-section { height: 200vh; }
+        }
+        @media (max-width: 600px) {
+            .nav-links a:not(.btn-nav) { display: none; }
+            .provider-grid { grid-template-columns: 1fr; }
+            .stats-inner { grid-template-columns: repeat(2, 1fr); }
+            .footer-inner { flex-direction: column; gap: 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="fx-canvas"></canvas>
+<div id="cursor-glow"></div>
+<div class="scanlines"></div>
+<div id="scroll-progress"></div>
+
+<div class="chapter-rail" id="chapter-rail">
+    <button class="chapter-dot active" data-target="#top" data-label="Promise"></button>
+    <button class="chapter-dot" data-target="#problem" data-label="The Wall"></button>
+    <button class="chapter-dot" data-target="#demo" data-label="The Build"></button>
+    <button class="chapter-dot" data-target="#how" data-label="The Flow"></button>
+    <button class="chapter-dot" data-target="#features" data-label="The Edge"></button>
+    <button class="chapter-dot" data-target="#models" data-label="The Engine"></button>
+    <button class="chapter-dot" data-target="#compare" data-label="The Verdict"></button>
+    <button class="chapter-dot" data-target="#install" data-label="Begin"></button>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<nav id="nav">
+    <div class="nav-inner">
+        <a href="#" class="nav-logo">
+            <svg class="nav-logo-mark" viewBox="0 0 36 36" fill="none">
+                <circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/>
+                <circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/>
+                <circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/>
+                <circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/>
+                <circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/>
+                <circle cx="18" cy="18" r="4" fill="#5CDB7A"/>
+                <line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
+                <line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
+                <line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
+                <line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
+                <line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
+            </svg>
+            <span>MANTIS</span>
+        </a>
+        <div class="nav-links">
+            <a href="#how">How It Works</a>
+            <a href="#features">Features</a>
+            <a href="#models">Models</a>
+            <a href="#compare">Compare</a>
+            <a href="#install" class="btn-nav">Install Free</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="top">
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+        <div class="hero-badge">
+            <div class="pulse-dot"></div>
+            Open source &middot; Free to start &middot; Rhino 8
+        </div>
+        <h1>
+            <span class="glitch" data-text="Talk to Grasshopper.">Talk to Grasshopper.</span><br/>
+            <span class="line2">Build anything.</span>
+        </h1>
+        <p class="hero-sub">Describe what you want in plain English. MANTIS places native Grasshopper components on your canvas — wired, laid out, and editable — exactly as an expert would build them.</p>
+        <div class="hero-actions">
+            <a href="#install" class="btn-hero btn-hero-primary">Install in Rhino</a>
+            <a href="#demo" class="btn-hero btn-hero-secondary">Watch it build</a>
+        </div>
+        <div class="hero-install">
+            <div>
+                <div class="cmd-label">In Rhino command line</div>
+                <span class="cmd-text">_PackageManager</span> <span style="color:var(--text-dim)">&rarr; search</span> <span class="cmd-text">"MANTIS"</span>
+            </div>
+            <button class="cmd-copy" onclick="navigator.clipboard.writeText('_PackageManager');this.textContent='Done';setTimeout(()=>this.textContent='Copy',1500)" title="Copy command">Copy</button>
+        </div>
+    </div>
+    <div class="scroll-cue"><div class="mouse"></div>Scroll</div>
+</section>
+
+<!-- ═══ PROMPT TICKER ═══ -->
+<div class="ticker-wrap">
+    <div class="ticker" id="ticker">
+        <span>parametric tower with tapering floors</span>
+        <span>voronoi facade panel</span>
+        <span>spiral staircase, adjustable rise</span>
+        <span>waffle structure from a surface</span>
+        <span>hexagonal screen with attractor</span>
+        <span>diagrid skin on a tower</span>
+        <span>twisted ribbon canopy</span>
+        <span>parametric tower with tapering floors</span>
+        <span>voronoi facade panel</span>
+        <span>spiral staircase, adjustable rise</span>
+        <span>waffle structure from a surface</span>
+        <span>hexagonal screen with attractor</span>
+        <span>diagrid skin on a tower</span>
+        <span>twisted ribbon canopy</span>
+    </div>
+</div>
+
+<!-- ═══ STATS BAR ═══ -->
+<div class="stats-bar reveal">
+    <div class="stats-inner">
+        <div class="stat-item">
+            <div class="stat-num" data-target="5">0</div>
+            <div class="stat-label">AI Providers</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num" data-target="15">0</div>
+            <div class="stat-label">AI Models</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num" data-target="200">0</div>
+            <div class="stat-label">GH Components</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num" data-target="0">0</div>
+            <div class="stat-label">Cost to Start</div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ PROBLEM → CLARITY (scroll narrative) ═══ -->
+<section class="problem-section" id="problem">
+    <div class="problem-sticky">
+        <div class="node-wall" id="node-wall"></div>
+        <div class="problem-stage">
+            <div class="problem-line">
+                <div class="problem-eyebrow">The wall every designer hits</div>
+                <h2 class="problem-headline">
+                    <span class="muted">Grasshopper can build anything.</span><br/>
+                    <span class="accent">Learning how is the hard part.</span>
+                </h2>
+                <p class="problem-sub">Hundreds of components. Cryptic names. A canvas that punishes a single wrong wire. The idea in your head is simple — the graph is not.</p>
+                <div class="problem-typed" id="problem-typed"><span class="caret"></span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ DEMO ═══ -->
+<section class="demo-section reveal" id="demo">
+    <div class="demo-browser">
+        <div class="demo-chrome">
+            <div class="demo-dot r"></div>
+            <div class="demo-dot y"></div>
+            <div class="demo-dot g"></div>
+            <span class="demo-chrome-title">Grasshopper &mdash; parametric-tower.gh</span>
+        </div>
+        <div class="demo-layout">
+            <div class="demo-canvas" id="demo-canvas">
+                <svg class="demo-wires" id="demo-wires">
+                    <path id="wire1" d="M160,65 C200,65 200,100 245,100"/>
+                    <path id="wire2" d="M160,150 C200,150 200,140 245,140"/>
+                    <path id="wire3" d="M160,235 C200,235 200,185 245,185"/>
+                    <path id="wire4" d="M360,125 C420,125 420,120 460,120"/>
+                    <path id="wire5" d="M360,175 C420,175 420,165 460,165"/>
+                </svg>
+                <div class="gh-node" id="n1" style="top:35px; left:25px;">
+                    <span class="gh-cat">Params</span>Number Slider
+                    <div class="gh-ports"><span></span><span class="gh-port"><span class="gh-port-dot out"></span>20.0</span></div>
+                </div>
+                <div class="gh-node" id="n2" style="top:120px; left:25px;">
+                    <span class="gh-cat">Params</span>Number Slider
+                    <div class="gh-ports"><span></span><span class="gh-port"><span class="gh-port-dot out"></span>8.0</span></div>
+                </div>
+                <div class="gh-node" id="n3" style="top:205px; left:25px;">
+                    <span class="gh-cat">Params</span>Number Slider
+                    <div class="gh-ports"><span></span><span class="gh-port"><span class="gh-port-dot out"></span>15</span></div>
+                </div>
+                <div class="gh-node" id="n4" style="top:80px; left:240px;">
+                    <span class="gh-cat">Curve</span>Circle CNR
+                    <div class="gh-ports"><span class="gh-port"><span class="gh-port-dot"></span>R</span><span class="gh-port"><span class="gh-port-dot out"></span>C</span></div>
+                </div>
+                <div class="gh-node" id="n5" style="top:95px; left:455px;">
+                    <span class="gh-cat">Surface</span>Loft
+                    <div class="gh-ports"><span class="gh-port"><span class="gh-port-dot"></span>C</span><span class="gh-port"><span class="gh-port-dot out"></span>S</span></div>
+                </div>
+                <div class="gh-node" id="n6" style="top:200px; left:455px;">
+                    <span class="gh-cat">Transform</span>Move
+                    <div class="gh-ports"><span class="gh-port"><span class="gh-port-dot"></span>G</span><span class="gh-port"><span class="gh-port-dot out"></span>G</span></div>
+                </div>
+            </div>
+            <div class="demo-chat">
+                <div class="demo-chat-header">MANTIS Chat</div>
+                <div class="demo-msgs">
+                    <div class="demo-msg demo-msg-user" id="msg1">
+                        <div class="demo-msg-sender">You</div>
+                        Create a parametric tower with circular floors that taper from 20m at base to 8m at top, 15 floors
+                    </div>
+                    <div class="demo-typing" id="demo-typing">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="demo-msg demo-msg-ai" id="msg2">
+                        <div class="demo-msg-sender">MANTIS</div>
+                        Building tower with 3 sliders (base radius, top radius, floors), Circle CNR for floor plates, Loft for surface...
+                    </div>
+                </div>
+                <div class="demo-status-bar">
+                    <span id="demo-status">Waiting...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="how-section container" id="how">
+    <div class="how-header reveal">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">Three steps. Zero complexity.</h2>
+        <p class="section-desc">From idea to parametric model in the time it takes to describe it.</p>
+    </div>
+    <div class="how-steps">
+        <div class="how-step reveal">
+            <div class="how-step-num">01</div>
+            <h3>Install from Package Manager</h3>
+            <p>Open Rhino, type the command, search MANTIS. One click install.</p>
+            <div class="how-step-code"><span class="dim">Rhino:</span> _PackageManager<br><span class="dim">Search:</span> MANTIS</div>
+        </div>
+        <div class="how-step reveal reveal-delay-1">
+            <div class="how-step-num">02</div>
+            <h3>Choose your AI model</h3>
+            <p>5 providers, 15+ models. Start free with Gemini or go local with Ollama.</p>
+            <div class="how-step-code"><span class="dim">Free:</span> Gemini Flash, Ollama<br><span class="dim">Pro:</span> Claude Opus, Gemini Pro</div>
+        </div>
+        <div class="how-step reveal reveal-delay-2">
+            <div class="how-step-num">03</div>
+            <h3>Describe what you want</h3>
+            <p>Type in plain language. Watch native components appear on your canvas — live.</p>
+            <div class="how-step-code"><span class="dim">"</span>Voronoi facade with<br>adjustable cell size<span class="dim">"</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="features-section container" id="features">
+    <div class="features-header reveal">
+        <div class="section-label">Features</div>
+        <h2 class="section-title">Built for how you actually design</h2>
+        <p class="section-desc">Every feature designed for architects and computational designers.</p>
+    </div>
+    <div class="bento">
+        <div class="bento-card b-1 reveal">
+            <div class="bento-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <h3>Live Streaming Build</h3>
+            <p>Components appear one-by-one as the AI generates them. Not a code dump — a live build process you can follow and learn from.</p>
+            <div class="stream-preview" id="stream-chips">
+                <div class="stream-chip" style="animation-delay:0s">Slider: radius</div>
+                <div class="stream-chip" style="animation-delay:0.3s">Slider: height</div>
+                <div class="stream-chip active" style="animation-delay:0.6s">Circle CNR</div>
+                <div class="stream-chip" style="animation-delay:0.9s">Unit Z</div>
+                <div class="stream-chip" style="animation-delay:1.2s">Extrude</div>
+                <div class="stream-chip" style="animation-delay:1.5s">Wire: 4 conn.</div>
+            </div>
+        </div>
+        <div class="bento-card b-2 reveal reveal-delay-1">
+            <div class="bento-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><rect x="2" y="3" width="8" height="8" rx="1"/><rect x="14" y="3" width="8" height="8" rx="1"/><rect x="8" y="13" width="8" height="8" rx="1"/></svg>
+            </div>
+            <h3>Multi-Solution Explore</h3>
+            <p>Generate 2-3 alternative approaches at once. Loft vs. Extrude vs. Sweep — compare and pick the best.</p>
+        </div>
+        <div class="bento-card b-3 reveal">
+            <div class="bento-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <h3>Error Self-Healing</h3>
+            <p>Red components? MANTIS reads the errors, traces data flow, and offers AI-powered one-click fixes.</p>
+        </div>
+        <div class="bento-card b-4 reveal reveal-delay-1">
+            <div class="bento-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            </div>
+            <h3>Explain Mode</h3>
+            <p>Click any component chain. Get a plain-language explanation of what it does, why each piece matters, and how data flows.</p>
+        </div>
+        <div class="bento-card b-5 reveal">
+            <div class="bento-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <h3>100% Native Components</h3>
+            <p>No GHPython black boxes. Every output is real Grasshopper components — editable, modifiable, learnable.</p>
+        </div>
+        <div class="bento-card b-6 reveal reveal-delay-1">
+            <div class="bento-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3>Multi-Model Freedom</h3>
+            <p>Claude, OpenAI, Gemini, OpenRouter, Ollama. 5 providers, 15+ models. Start free, go pro when ready.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ MODELS ═══ -->
+<section class="models-section" id="models">
+    <div class="container">
+        <div class="models-header reveal">
+            <div class="section-label">AI Models</div>
+            <h2 class="section-title">Choose your engine</h2>
+            <p class="section-desc">5 providers. 15+ models. Start free, switch anytime.</p>
+        </div>
+        <div class="provider-grid">
+            <div class="provider-card reveal">
+                <div class="provider-card-head"><h4>Gemini</h4><span class="provider-badge badge-free">Free</span></div>
+                <p class="desc">Google's fastest models. Free tier with generous limits.</p>
+                <ul class="provider-models">
+                    <li>Gemini 2.0 Flash <span class="model-tag tag-free">FREE</span></li>
+                    <li>Gemini 2.5 Flash <span class="model-tag tag-free">FREE</span></li>
+                    <li>Gemini 2.5 Pro <span class="model-tag tag-paid">PAID</span></li>
+                </ul>
+            </div>
+            <div class="provider-card reveal reveal-delay-1">
+                <div class="provider-card-head"><h4>Ollama</h4><span class="provider-badge badge-local">Local</span></div>
+                <p class="desc">Run AI entirely on your machine. Zero cost, full privacy.</p>
+                <ul class="provider-models">
+                    <li>Llama 3.1 8B <span class="model-tag tag-free">FREE</span></li>
+                    <li>Qwen 2.5 14B <span class="model-tag tag-free">FREE</span></li>
+                    <li>Mistral 7B <span class="model-tag tag-free">FREE</span></li>
+                </ul>
+            </div>
+            <div class="provider-card reveal reveal-delay-2">
+                <div class="provider-card-head"><h4>OpenRouter</h4><span class="provider-badge badge-free">Free+</span></div>
+                <p class="desc">One key, 200+ models. Free models or pay-per-token premium.</p>
+                <ul class="provider-models">
+                    <li>Gemini Flash <span class="model-tag tag-free">FREE</span></li>
+                    <li>Llama 4 Maverick <span class="model-tag tag-free">FREE</span></li>
+                    <li>Claude, GPT, more <span class="model-tag tag-paid">PAID</span></li>
+                </ul>
+            </div>
+            <div class="provider-card reveal reveal-delay-3">
+                <div class="provider-card-head"><h4>Claude</h4><span class="provider-badge badge-paid">Pro</span></div>
+                <p class="desc">Anthropic's flagship. Best for complex parametric scripts.</p>
+                <ul class="provider-models">
+                    <li>Claude Sonnet 4.7 <span class="model-tag tag-paid">PAID</span></li>
+                    <li>Claude Opus 4.7 <span class="model-tag tag-paid">PAID</span></li>
+                    <li>Claude Haiku 4.7 <span class="model-tag tag-paid">PAID</span></li>
+                </ul>
+            </div>
+            <div class="provider-card reveal reveal-delay-4">
+                <div class="provider-card-head"><h4>OpenAI</h4><span class="provider-badge badge-paid">Pro</span></div>
+                <p class="desc">GPT-4o and the o-series reasoning models. Reliable, widely available.</p>
+                <ul class="provider-models">
+                    <li>GPT-4o <span class="model-tag tag-paid">PAID</span></li>
+                    <li>GPT-4o mini <span class="model-tag tag-paid">PAID</span></li>
+                    <li>o3-mini <span class="model-tag tag-paid">PAID</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ COMPARISON ═══ -->
+<section class="compare-section container" id="compare">
+    <div class="compare-header reveal">
+        <div class="section-label">Comparison</div>
+        <h2 class="section-title">MANTIS vs. Alternatives</h2>
+        <p class="section-desc">See how MANTIS stacks up against other AI Grasshopper tools.</p>
+    </div>
+    <div class="compare-table-wrap reveal">
+        <table class="compare-table">
+            <thead><tr><th>Feature</th><th>MANTIS</th><th>Raven</th><th>GHPT</th></tr></thead>
+            <tbody>
+                <tr><td>Native GH components</td><td class="check-yes">&#10003;</td><td class="check-yes">&#10003;</td><td class="check-yes">&#10003;</td></tr>
+                <tr><td>Live streaming build</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
+                <tr><td>Multi-solution explore</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
+                <tr><td>Error self-healing</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
+                <tr><td>Explain mode</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
+                <tr><td>AI providers</td><td class="check-special">5 providers</td><td class="check-no">1</td><td class="check-no">1</td></tr>
+                <tr><td>Free to use</td><td class="check-yes">&#10003;</td><td class="check-no">Paid</td><td class="check-no">Paid</td></tr>
+                <tr><td>Open source</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-yes">&#10003;</td></tr>
+                <tr><td>Offline / local AI</td><td class="check-special">Ollama</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ═══ INSTALL CTA ═══ -->
+<section class="install-section container" id="install">
+    <div class="install-card reveal">
+        <div class="section-label">Get Started</div>
+        <h2 class="section-title">Install in 30 seconds</h2>
+        <p class="section-desc">No zip files. No folder copying. One command in Rhino.</p>
+        <div class="install-steps">
+            <div class="install-step">
+                <div class="install-step-num">01</div>
+                <h4>Open Package Manager</h4>
+                <p>Type in the Rhino command line:</p>
+                <code>_PackageManager</code>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">02</div>
+                <h4>Search &amp; Install</h4>
+                <p>Search "MANTIS", click Install. Restart Rhino.</p>
+                <code>Search: MANTIS &rarr; Install</code>
+            </div>
+            <div class="install-step">
+                <div class="install-step-num">03</div>
+                <h4>Start Building</h4>
+                <p>Open Grasshopper. MANTIS auto-launches. Pick a model. Go.</p>
+                <code>Grasshopper &rarr; MANTIS panel</code>
+            </div>
+        </div>
+        <div class="install-links">
+            <a href="https://github.com/blang99/mantis">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                Star on GitHub
+            </a>
+            <a href="https://www.food4rhino.com/">View on food4rhino</a>
+            <a href="https://discourse.mcneel.com/c/grasshopper">Grasshopper Forum</a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-inner">
+        <div class="footer-left">
+            <span>MANTIS</span>
+            <p>Open source AI for Grasshopper &middot; MIT License</p>
+        </div>
+        <div class="footer-links">
+            <a href="https://github.com/blang99/mantis">GitHub</a>
+            <a href="https://www.food4rhino.com/">food4rhino</a>
+            <a href="https://discourse.mcneel.com/c/grasshopper">Forum</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Respect the user's reduced-motion preference across every animation.
+const PREFERS_REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let scrollPos = window.scrollY || 0;      // shared scroll value (updated by controller)
+
+// ════════════════════════════════════════════════════════════════
+//  Unified FX canvas:  volumetric clouds + parallax grid + swarm
+//  The swarm periodically self-organises into the MANTIS constellation
+//  behind the hero, then disperses — the signature brand motion.
+// ════════════════════════════════════════════════════════════════
+(function() {
+    const c = document.getElementById('fx-canvas');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    let W = 0, H = 0;
+    const DPR = Math.min(devicePixelRatio || 1, 2);
+
+    // Pre-render a soft "puff" sprite once — cheap to stamp many times.
+    const puff = document.createElement('canvas');
+    puff.width = puff.height = 256;
+    (function() {
+        const p = puff.getContext('2d');
+        const g = p.createRadialGradient(128, 128, 0, 128, 128, 128);
+        g.addColorStop(0, 'rgba(92,219,122,0.55)');
+        g.addColorStop(0.4, 'rgba(92,219,122,0.16)');
+        g.addColorStop(1, 'rgba(92,219,122,0)');
+        p.fillStyle = g; p.fillRect(0, 0, 256, 256);
+    })();
+
+    let clouds = [], parts = [], homes = [], links = [];
+    const SW = 64, LINK = 150;
+
+    function buildClouds() {
+        clouds = [];
+        const n = Math.round(Math.min(18, Math.max(8, W / 110)));
+        for (let i = 0; i < n; i++) clouds.push({
+            x: Math.random() * W, y: Math.random() * H,
+            r: 120 + Math.random() * 260, a: 0.04 + Math.random() * 0.06,
+            vx: (Math.random() - 0.5) * 0.06, vy: (Math.random() - 0.5) * 0.04,
+            ph: Math.random() * Math.PI * 2, sp: 0.004 + Math.random() * 0.008,
+            depth: 0.1 + Math.random() * 0.5
+        });
+    }
+    function buildParts() {
+        parts = [];
+        for (let i = 0; i < SW; i++) parts.push({
+            x: Math.random() * W, y: Math.random() * H,
+            vx: (Math.random() - 0.5) * 0.32, vy: (Math.random() - 0.5) * 0.32,
+            r: Math.random() * 1.8 + 0.7
+        });
+    }
+    function buildHomes() {
+        const cx = W / 2, cy = H * 0.40, s = Math.min(W, H) * 0.16 / 18;
+        const pts = [[18,5],[5,15],[31,15],[10,28],[26,28],[18,18]];
+        homes = pts.map(p => ({ x: cx + (p[0]-18)*s, y: cy + (p[1]-18)*s }));
+        links = [[0,5],[1,5],[2,5],[3,5],[4,5]];
+    }
+    function resize() {
+        W = innerWidth; H = innerHeight;
+        c.width = W * DPR; c.height = H * DPR;
+        c.style.width = W + 'px'; c.style.height = H + 'px';
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        buildClouds(); buildHomes();
+        if (!parts.length) buildParts();
+    }
+
+    const t0 = performance.now();
+    function formationStrength(now) {
+        if (scrollPos > H * 0.85) return 0;          // only while the hero is in view
+        const t = ((now - t0) % 11000) / 11000;
+        if (t < 0.45) return 0;                       // roam
+        if (t < 0.62) return (t - 0.45) / 0.17;       // converge
+        if (t < 0.80) return 1;                       // hold the constellation
+        if (t < 0.93) return 1 - (t - 0.80) / 0.13;   // disperse
+        return 0;
+    }
+
+    let running = false, raf = null;
+    function frame(now) {
+        ctx.clearRect(0, 0, W, H);
+        const par = scrollPos;
+
+        // 1) Volumetric clouds (additive glow, slow parallax)
+        ctx.globalCompositeOperation = 'lighter';
+        for (const cl of clouds) {
+            if (running) {
+                cl.x += cl.vx; cl.y += cl.vy; cl.ph += cl.sp;
+                if (cl.x < -cl.r) cl.x = W + cl.r; else if (cl.x > W + cl.r) cl.x = -cl.r;
+                if (cl.y < -cl.r) cl.y = H + cl.r; else if (cl.y > H + cl.r) cl.y = -cl.r;
+            }
+            const pulse = 0.85 + Math.sin(cl.ph) * 0.15;
+            const r = cl.r * pulse;
+            const y = cl.y - par * cl.depth * 0.15;
+            ctx.globalAlpha = cl.a * pulse;
+            ctx.drawImage(puff, cl.x - r, y - r, r * 2, r * 2);
+        }
+        ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+
+        // 2) Parallax grid
+        const g = 84, off = (-(par * 0.3) % g + g) % g;
+        ctx.strokeStyle = 'rgba(92,219,122,0.035)'; ctx.lineWidth = 0.5;
+        for (let x = off - g; x < W + g; x += g) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+        for (let y = off - g; y < H + g; y += g) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+        // 3) Swarm + constellation formation
+        const fs = formationStrength(now);
+        const py = -par * 0.5;
+        for (let i = 0; i < parts.length; i++) {
+            const p = parts[i];
+            if (running) {
+                if (fs > 0 && i < homes.length) {
+                    p.x += (homes[i].x - p.x) * 0.06 * fs;
+                    p.y += (homes[i].y - p.y) * 0.06 * fs;
+                }
+                p.x += p.vx * (1 - fs); p.y += p.vy * (1 - fs);
+                if (p.x < 0 || p.x > W) p.vx *= -1;
+                if (p.y < 0 || p.y > H) p.vy *= -1;
+            }
+        }
+        ctx.lineWidth = 0.8;
+        for (let i = 0; i < parts.length; i++) for (let j = i + 1; j < parts.length; j++) {
+            const dx = parts[i].x - parts[j].x, dy = parts[i].y - parts[j].y;
+            const d = Math.hypot(dx, dy);
+            if (d < LINK) {
+                ctx.strokeStyle = 'rgba(92,219,122,' + ((1 - d / LINK) * 0.13) + ')';
+                ctx.beginPath(); ctx.moveTo(parts[i].x, parts[i].y + py); ctx.lineTo(parts[j].x, parts[j].y + py); ctx.stroke();
+            }
+        }
+        if (fs > 0.02) {
+            ctx.strokeStyle = 'rgba(122,233,154,' + (fs * 0.55) + ')'; ctx.lineWidth = 1.2;
+            for (const l of links) { const a = parts[l[0]], b = parts[l[1]]; ctx.beginPath(); ctx.moveTo(a.x, a.y + py); ctx.lineTo(b.x, b.y + py); ctx.stroke(); }
+        }
+        for (let i = 0; i < parts.length; i++) {
+            const p = parts[i], home = (fs > 0 && i < homes.length);
+            ctx.fillStyle = home ? 'rgba(122,233,154,' + (0.4 + fs * 0.5) + ')' : 'rgba(92,219,122,0.4)';
+            const rr = home ? p.r + fs * 1.6 : p.r;
+            ctx.beginPath(); ctx.arc(p.x, p.y + py, rr, 0, Math.PI * 2); ctx.fill();
+            if (home && fs > 0.5) { ctx.fillStyle = 'rgba(122,233,154,' + (fs * 0.18) + ')'; ctx.beginPath(); ctx.arc(p.x, p.y + py, rr + 5, 0, Math.PI * 2); ctx.fill(); }
+        }
+        if (running) raf = requestAnimationFrame(frame);
+    }
+    function start() { if (!running) { running = true; raf = requestAnimationFrame(frame); } }
+    function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
+
+    resize(); addEventListener('resize', resize);
+    if (PREFERS_REDUCED_MOTION) { frame(performance.now()); }
+    else { start(); document.addEventListener('visibilitychange', () => document.hidden ? stop() : start()); }
+})();
+// ── Cursor glow (pointer-following light; desktop + fine pointers only) ──
+(function() {
+    const glow = document.getElementById('cursor-glow');
+    if (!glow || PREFERS_REDUCED_MOTION) return;
+    if (!matchMedia('(pointer: fine)').matches) return;
+    let x = innerWidth / 2, y = innerHeight / 2, tx = x, ty = y, shown = false;
+    addEventListener('pointermove', e => {
+        tx = e.clientX; ty = e.clientY;
+        if (!shown) { shown = true; glow.style.opacity = '1'; }
+    });
+    (function loop() {
+        x += (tx - x) * 0.12; y += (ty - y) * 0.12;
+        glow.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+        requestAnimationFrame(loop);
+    })();
+})();
+
+// ── Master scroll controller: progress bar, nav, chapter rail, parallax ──
+(function() {
+    const nav = document.getElementById('nav');
+    const bar = document.getElementById('scroll-progress');
+    const dots = Array.from(document.querySelectorAll('.chapter-dot'));
+    const sections = dots.map(d => document.querySelector(d.dataset.target)).filter(Boolean);
+    let ticking = false;
+
+    function update() {
+        ticking = false;
+        const y = window.scrollY || 0;
+        scrollPos = y;                                   // feed the FX canvas
+        const docH = document.documentElement.scrollHeight - innerHeight;
+        if (bar) bar.style.width = (docH > 0 ? (y / docH) * 100 : 0) + '%';
+        if (nav) nav.classList.toggle('scrolled', y > 40);
+
+        // active chapter = last section whose top is above the viewport mid-line
+        const mid = y + innerHeight * 0.4;
+        let active = 0;
+        sections.forEach((s, i) => { if (s.offsetTop <= mid) active = i; });
+        dots.forEach((d, i) => d.classList.toggle('active', i === active));
+    }
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update);
+    dots.forEach(d => d.addEventListener('click', () => {
+        const t = document.querySelector(d.dataset.target);
+        if (t) t.scrollIntoView({ behavior: PREFERS_REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
+    }));
+    update();
+})();
+
+// ── Scroll reveal (all directional variants) ──
+const revealObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-clip').forEach(el => revealObs.observe(el));
+
+// ── Animated stat counters ──
+let statsCounted = false;
+const statsObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if (e.isIntersecting && !statsCounted) {
+            statsCounted = true;
+            document.querySelectorAll('.stat-num').forEach(el => {
+                const target = parseInt(el.dataset.target);
+                const prefix = target === 0 ? '$' : '';
+                const start = Date.now();
+                (function tick() {
+                    const progress = Math.min((Date.now() - start) / 1500, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    el.textContent = prefix + Math.round(eased * target) + (target >= 100 ? '+' : '');
+                    if (progress < 1) requestAnimationFrame(tick);
+                })();
+            });
+        }
+    });
+}, { threshold: 0.5 });
+const statsBar = document.querySelector('.stats-bar');
+if (statsBar) statsObs.observe(statsBar);
+// ── Build the "wall of nodes" backdrop for the narrative act ──
+(function() {
+    const wall = document.getElementById('node-wall');
+    if (!wall) return;
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < 90; i++) {
+        const n = document.createElement('div');
+        n.className = 'wall-node';
+        n.style.opacity = (0.35 + Math.random() * 0.5).toFixed(2);
+        frag.appendChild(n);
+    }
+    wall.appendChild(frag);
+})();
+
+// ── Scroll-scrubbed narrative: wall dissolves as the sentence assembles ──
+(function() {
+    const section = document.getElementById('problem');
+    const wall = document.getElementById('node-wall');
+    const typed = document.getElementById('problem-typed');
+    if (!section || !typed) return;
+    const SENTENCE = '"a tower that tapers as it rises"   →   built in seconds';
+
+    if (PREFERS_REDUCED_MOTION) {
+        typed.innerHTML = SENTENCE.replace(/→/g, '&rarr;');
+        if (wall) wall.style.opacity = '0.12';
+        return;
+    }
+
+    let ticking = false;
+    function update() {
+        ticking = false;
+        const rect = section.getBoundingClientRect();
+        const total = section.offsetHeight - innerHeight;
+        const p = Math.min(Math.max(-rect.top / total, 0), 1);   // 0 → 1 through the act
+
+        if (wall) {
+            wall.style.opacity = (0.5 * (1 - p)).toFixed(3);
+            wall.style.filter = 'blur(' + (p * 16).toFixed(1) + 'px)';
+            wall.style.transform = 'scale(' + (1 + p * 0.08).toFixed(3) + ')';
+        }
+        // Type the sentence across the first 75% of the scroll.
+        const n = Math.round(Math.min(p / 0.75, 1) * SENTENCE.length);
+        typed.innerHTML = SENTENCE.slice(0, n).replace(/→/g, '&rarr;') + '<span class="caret"></span>';
+    }
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update);
+    update();
+})();
+
+// ── Demo build animation ──
+(function() {
+    const nodes = ['n1','n2','n3','n4','n5','n6'];
+    const wires = ['wire1','wire2','wire3','wire4','wire5'];
+    let triggered = false;
+    const demoObs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting && !triggered) { triggered = true; runDemo(); } });
+    }, { threshold: 0.3 });
+    const dc = document.getElementById('demo-canvas');
+    if (dc) demoObs.observe(dc);
+
+    function runDemo() {
+        const status = document.getElementById('demo-status');
+        const typing = document.getElementById('demo-typing');
+        setTimeout(() => { document.getElementById('msg1').classList.add('show'); }, 200);
+        setTimeout(() => { typing.classList.add('show'); status.textContent = 'Generating...'; }, 800);
+        setTimeout(() => {
+            typing.classList.remove('show');
+            document.getElementById('msg2').classList.add('show');
+            status.textContent = 'Building...';
+        }, 2000);
+        nodes.forEach((id, i) => {
+            setTimeout(() => {
+                const el = document.getElementById(id);
+                el.classList.add('placed', 'flash');
+                setTimeout(() => el.classList.remove('flash'), 450);
+                status.textContent = 'Placed: ' + el.querySelector('.gh-cat').nextSibling.textContent.trim();
+            }, 2500 + i * 400);
+        });
+        wires.forEach((id, i) => {
+            setTimeout(() => { document.getElementById(id).classList.add('drawn'); }, 4800 + i * 300);
+        });
+        setTimeout(() => { status.textContent = '6 components, 5 wires'; status.style.color = '#5CDB7A'; }, 6500);
+    }
+})();
+
+// ── Bento cards: glow tracks the pointer ──
+if (!PREFERS_REDUCED_MOTION) {
+    document.querySelectorAll('.bento-card').forEach(card => {
+        card.addEventListener('pointermove', e => {
+            const r = card.getBoundingClientRect();
+            card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+            card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        });
+    });
+}
+
+// ── Smooth scroll for in-page anchors ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+        const href = a.getAttribute('href');
+        if (href === '#') return;
+        const t = document.querySelector(href);
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: PREFERS_REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' }); }
+    });
+});
+</script>
+</body>
+</html>

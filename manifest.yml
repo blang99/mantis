@@ -1,0 +1,16 @@
+name: mantis
+version: 0.1.1
+authors:
+  - MANTIS
+description: >
+  AI-powered natural language to native Grasshopper scripts.
+  Describe what you want to build and MANTIS generates real components,
+  wired and ready on your canvas. Supports Claude, Gemini, OpenRouter, and Ollama.
+url: https://blang99.github.io/mantis/
+keywords:
+  - AI
+  - parametric
+  - natural-language
+  - generative-design
+  - grasshopper
+  - computational-design
