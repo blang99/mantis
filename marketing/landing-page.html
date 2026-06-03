@@ -48,6 +48,8 @@
             --amber: #e8b84d;
             --red: #e85454;
             --blue: #54a8e8;
+            --cyan: #5ED6DC;
+            --cyan-bg: rgba(14,28,30,0.85);
             --font-display: 'Orbitron', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
@@ -159,6 +161,7 @@
         .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
         .nav-logo-mark { width: 34px; height: 34px; }
         .nav-logo span { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.2em; color: var(--mantis); }
+        .nav-tagline { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); padding-left: 0.9rem; margin-left: 0.3rem; border-left: 1px solid var(--border-light); white-space: nowrap; }
         .nav-links { display: flex; gap: 2rem; align-items: center; }
         .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.2s; }
         .nav-links a:hover { color: var(--mantis); }
@@ -351,6 +354,11 @@
         .bento-card:hover { border-color: var(--mantis-dim); box-shadow: 0 0 40px rgba(92,219,122,0.06), inset 0 0 40px rgba(92,219,122,0.02); transform: translateY(-3px); }
         .b-1 { grid-column: span 7; } .b-2 { grid-column: span 5; } .b-3 { grid-column: span 5; }
         .b-4 { grid-column: span 7; } .b-5 { grid-column: span 6; } .b-6 { grid-column: span 6; }
+        .b-7 { grid-column: span 6; } .b-8 { grid-column: span 6; }
+        .bento-card.is-cyan { border-color: rgba(94,214,220,0.18); }
+        .bento-card.is-cyan:hover { border-color: var(--cyan); box-shadow: 0 0 40px rgba(94,214,220,0.08), inset 0 0 40px rgba(94,214,220,0.02); }
+        .bento-card.is-cyan .bento-icon { background: rgba(94,214,220,0.08); border-color: rgba(94,214,220,0.18); }
+        .bento-card.is-cyan::after { background: radial-gradient(circle, rgba(94,214,220,0.10), transparent 60%); }
         .bento-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(92,219,122,0.08); border: 1px solid rgba(92,219,122,0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; position: relative; z-index: 1; }
         .bento-card h3 { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.04em; margin-bottom: 0.6rem; position: relative; z-index: 1; }
         .bento-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; position: relative; z-index: 1; }
@@ -420,20 +428,97 @@
         .footer-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
         .footer-links a:hover { color: var(--mantis); }
 
+        /* ═══ WAYS (tabbed capability showcase) ═══ */
+        .ways-section { position: relative; z-index: 2; padding: 8rem 0 6rem; }
+        .ways-header { text-align: center; margin-bottom: 3rem; }
+        .ways-header .section-desc { margin: 0 auto; }
+        .ways-tabs { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 3rem; flex-wrap: wrap; }
+        .ways-tab { position: relative; display: flex; align-items: center; gap: 10px; padding: 0.85rem 1.6rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: border-color 0.3s, background 0.3s, transform 0.2s; font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); }
+        .ways-tab .tab-idx { font-family: var(--font-mono); font-size: 0.62rem; color: var(--mantis-dim); }
+        .ways-tab:hover { border-color: var(--mantis-dim); color: var(--text-primary); transform: translateY(-2px); }
+        .ways-tab.active { background: rgba(92,219,122,0.06); border-color: var(--mantis); color: var(--mantis); box-shadow: 0 0 30px rgba(92,219,122,0.10); }
+        .ways-tab.active .tab-idx { color: var(--mantis); }
+        .ways-panels { position: relative; max-width: 1100px; margin: 0 auto; }
+        .ways-panel { display: none; grid-template-columns: 1.05fr 0.95fr; gap: 2.5rem; align-items: center; }
+        .ways-panel.active { display: grid; animation: panelFade 0.5s ease; }
+        @keyframes panelFade { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+        .ways-copy .ways-eyebrow { font-family: var(--font-mono); font-size: 0.72rem; color: var(--mantis); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1rem; }
+        .ways-copy h3 { font-family: var(--font-display); font-size: clamp(1.4rem, 2.4vw, 1.9rem); font-weight: 700; line-height: 1.25; margin-bottom: 1.1rem; letter-spacing: 0.01em; }
+        .ways-copy p { font-size: 1rem; color: var(--text-secondary); line-height: 1.75; margin-bottom: 1.4rem; font-weight: 300; }
+        .ways-points { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+        .ways-points li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+        .ways-points li svg { flex-shrink: 0; margin-top: 2px; }
+        .ways-visual { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.6rem; min-height: 340px; position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
+        .ways-visual::before { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(21,42,29,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(21,42,29,0.25) 1px, transparent 1px); background-size: 34px 34px; pointer-events: none; opacity: 0.6; }
+        .ways-visual-title { position: relative; font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .ways-visual-title::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--mantis); box-shadow: 0 0 10px var(--mantis-glow-strong); }
+
+        /* Wire & Group visual — labelled stage boxes + thought-process card */
+        .stage-map { position: relative; display: flex; flex-direction: column; gap: 10px; }
+        .stage-box { position: relative; border-radius: 8px; padding: 10px 12px 12px; border: 1px solid; }
+        .stage-box .stage-name { font-family: var(--font-display); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; opacity: 0.95; }
+        .stage-nodes { display: flex; flex-wrap: wrap; gap: 6px; }
+        .stage-pill { font-family: var(--font-mono); font-size: 0.64rem; padding: 4px 9px; border-radius: 5px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); color: var(--text-primary); white-space: nowrap; }
+        .stage-s1 { background: rgba(92,219,122,0.07); border-color: rgba(92,219,122,0.30); }
+        .stage-s1 .stage-name { color: var(--mantis); }
+        .stage-s2 { background: rgba(84,168,232,0.07); border-color: rgba(84,168,232,0.30); }
+        .stage-s2 .stage-name { color: var(--blue); }
+        .stage-s3 { background: rgba(232,184,77,0.07); border-color: rgba(232,184,77,0.30); }
+        .stage-s3 .stage-name { color: var(--amber); }
+        .think-card { position: relative; margin-top: 14px; background: var(--cyan-bg); border: 1px solid rgba(94,214,220,0.28); border-left: 3px solid var(--cyan); border-radius: 8px; padding: 12px 14px; }
+        .think-card .think-label { font-family: var(--font-display); font-size: 0.58rem; font-weight: 700; letter-spacing: 0.14em; color: var(--cyan); text-transform: uppercase; margin-bottom: 8px; }
+        .think-card .think-line { font-size: 0.74rem; color: var(--text-secondary); line-height: 1.5; padding: 3px 0; }
+        .think-card .think-line b { color: var(--text-primary); font-weight: 600; }
+        .think-card .think-line .tn { color: var(--cyan); font-family: var(--font-mono); font-size: 0.66rem; }
+
+        /* Generate visual — streaming chips cascade */
+        .gen-stream { position: relative; display: flex; flex-direction: column; gap: 8px; }
+        .gen-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 7px; opacity: 0; animation: genIn 0.5s ease forwards; }
+        .gen-row .gen-tick { width: 16px; height: 16px; border-radius: 4px; background: rgba(92,219,122,0.12); border: 1px solid var(--mantis-dim); display: flex; align-items: center; justify-content: center; color: var(--mantis); font-size: 0.6rem; flex-shrink: 0; }
+        .gen-row .gen-cat { font-family: var(--font-mono); font-size: 0.6rem; color: var(--mantis-dim); text-transform: uppercase; }
+        .gen-row .gen-name { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-primary); }
+        .gen-row .gen-wire { margin-left: auto; font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-dim); }
+        @keyframes genIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Self-Heal visual — error → fix */
+        .heal-row { display: flex; align-items: center; gap: 12px; padding: 11px 13px; border-radius: 8px; margin-bottom: 10px; border: 1px solid; }
+        .heal-row.err { background: rgba(255,95,87,0.06); border-color: rgba(255,95,87,0.3); }
+        .heal-row.fix { background: rgba(92,219,122,0.06); border-color: rgba(92,219,122,0.3); }
+        .heal-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .heal-row.err .heal-dot { background: #ff5f57; box-shadow: 0 0 10px rgba(255,95,87,0.5); }
+        .heal-row.fix .heal-dot { background: var(--mantis); box-shadow: 0 0 10px var(--mantis-glow-strong); }
+        .heal-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45; }
+        .heal-text b { color: var(--text-primary); font-weight: 600; }
+        .heal-text .hc { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); }
+        .heal-arrow { text-align: center; color: var(--cyan); font-size: 1.1rem; margin: 2px 0 8px; opacity: 0.7; }
+        .heal-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; font-family: var(--font-display); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mantis); background: rgba(92,219,122,0.08); border: 1px solid var(--mantis-dim); border-radius: 6px; padding: 6px 12px; }
+
+        /* ═══ BRAND STATEMENT BAND ═══ */
+        .brand-band { position: relative; z-index: 2; padding: 7rem 2rem; text-align: center; overflow: hidden; }
+        .brand-band::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(92,219,122,0.06) 0%, transparent 60%); pointer-events: none; }
+        .brand-band-inner { position: relative; max-width: 900px; margin: 0 auto; }
+        .brand-band h2 { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 900; line-height: 1.12; letter-spacing: 0.01em; }
+        .brand-band h2 .muted { color: var(--text-dim); display: block; }
+        .brand-band h2 .accent { background: linear-gradient(90deg, var(--mantis), var(--mantis-bright)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 40px rgba(92,219,122,0.25); }
+        .brand-band p { margin-top: 1.8rem; font-size: 1.1rem; color: var(--text-secondary); line-height: 1.7; font-weight: 300; max-width: 640px; margin-left: auto; margin-right: auto; }
+
         /* ═══ RESPONSIVE ═══ */
         @media (max-width: 1100px) { .chapter-rail { display: none; } }
         @media (max-width: 900px) {
             .how-steps { grid-template-columns: 1fr; }
             .bento { grid-template-columns: 1fr; }
-            .b-1,.b-2,.b-3,.b-4,.b-5,.b-6 { grid-column: span 1; }
+            .b-1,.b-2,.b-3,.b-4,.b-5,.b-6,.b-7,.b-8 { grid-column: span 1; }
             .provider-grid { grid-template-columns: repeat(2, 1fr); }
             .install-steps { grid-template-columns: 1fr; }
             .demo-layout { grid-template-columns: 1fr; }
             .demo-chat { border-left: none; border-top: 1px solid var(--border); }
             .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
             .problem-section { height: 200vh; }
+            .ways-panel.active { grid-template-columns: 1fr; }
+            .ways-visual { order: -1; }
         }
         @media (max-width: 600px) {
+            .nav-tagline { display: none; }
             .nav-links a:not(.btn-nav) { display: none; }
             .provider-grid { grid-template-columns: 1fr; }
             .stats-inner { grid-template-columns: repeat(2, 1fr); }
@@ -452,6 +537,7 @@
     <button class="chapter-dot active" data-target="#top" data-label="Promise"></button>
     <button class="chapter-dot" data-target="#problem" data-label="The Wall"></button>
     <button class="chapter-dot" data-target="#demo" data-label="The Build"></button>
+    <button class="chapter-dot" data-target="#ways" data-label="The Method"></button>
     <button class="chapter-dot" data-target="#how" data-label="The Flow"></button>
     <button class="chapter-dot" data-target="#features" data-label="The Edge"></button>
     <button class="chapter-dot" data-target="#models" data-label="The Engine"></button>
@@ -477,9 +563,10 @@
                 <line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
             </svg>
             <span>MANTIS</span>
+            <span class="nav-tagline">The AI layer for Grasshopper</span>
         </a>
         <div class="nav-links">
-            <a href="#how">How It Works</a>
+            <a href="#ways">Workflow</a>
             <a href="#features">Features</a>
             <a href="#models">Models</a>
             <a href="#compare">Compare</a>
@@ -642,6 +729,98 @@
     </div>
 </section>
 
+<!-- ═══ WAYS (tabbed capability showcase) ═══ -->
+<section class="ways-section container" id="ways">
+    <div class="ways-header reveal">
+        <div class="section-label">The Workflow</div>
+        <h2 class="section-title">Three ways MANTIS works the canvas</h2>
+        <p class="section-desc">It doesn't just dump components. It reasons out the build, wires it, groups it by intent, and repairs it &mdash; the way an expert would.</p>
+    </div>
+
+    <div class="ways-tabs reveal" id="ways-tabs">
+        <button class="ways-tab active" data-panel="generate"><span class="tab-idx">01</span> Generate</button>
+        <button class="ways-tab" data-panel="wire"><span class="tab-idx">02</span> Wire &amp; Group</button>
+        <button class="ways-tab" data-panel="heal"><span class="tab-idx">03</span> Self-Heal</button>
+    </div>
+
+    <div class="ways-panels reveal">
+        <!-- PANEL 1: GENERATE -->
+        <div class="ways-panel active" data-panel="generate">
+            <div class="ways-copy">
+                <div class="ways-eyebrow">01 &mdash; Generate</div>
+                <h3>From a sentence to a working graph.</h3>
+                <p>Describe the outcome in plain language. MANTIS streams native Grasshopper components onto your canvas one-by-one &mdash; placed, named, and laid out left-to-right exactly as a seasoned modeller would.</p>
+                <ul class="ways-points">
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Live streaming &mdash; you watch it build, not wait on a spinner</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> 100% native components &mdash; no GHPython black boxes</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Every value on a slider &mdash; editable the moment it lands</li>
+                </ul>
+            </div>
+            <div class="ways-visual">
+                <div class="ways-visual-title">Streaming onto canvas</div>
+                <div class="gen-stream">
+                    <div class="gen-row" style="animation-delay:0.0s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Params</span><span class="gen-name">Number Slider &mdash; radius</span><span class="gen-wire">placed</span></div>
+                    <div class="gen-row" style="animation-delay:0.25s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Params</span><span class="gen-name">Number Slider &mdash; height</span><span class="gen-wire">placed</span></div>
+                    <div class="gen-row" style="animation-delay:0.5s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Curve</span><span class="gen-name">Circle CNR</span><span class="gen-wire">placed</span></div>
+                    <div class="gen-row" style="animation-delay:0.75s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Vector</span><span class="gen-name">Unit Z</span><span class="gen-wire">placed</span></div>
+                    <div class="gen-row" style="animation-delay:1.0s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Surface</span><span class="gen-name">Extrude</span><span class="gen-wire">placed</span></div>
+                    <div class="gen-row" style="animation-delay:1.25s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Wires</span><span class="gen-name">4 connections drawn</span><span class="gen-wire">solved</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL 2: WIRE & GROUP (signature feature) -->
+        <div class="ways-panel" data-panel="wire">
+            <div class="ways-copy">
+                <div class="ways-eyebrow">02 &mdash; Wire &amp; Group</div>
+                <h3>Watch it think &mdash; then watch it organize.</h3>
+                <p>Before a single wire is drawn, MANTIS explains its plan stage by stage. Then it wires the graph and wraps each logical stage in a labelled, colour-tinted group &mdash; so the canvas reads like an expert built it, not a machine.</p>
+                <ul class="ways-points">
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5ED6DC" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> <b style="color:var(--text-primary)">Thought-process narration</b> &mdash; the reasoning behind every stage</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Auto-grouped workflow &mdash; tinted, named stage boxes on canvas</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Readable data flow &mdash; understand it, edit it, learn from it</li>
+                </ul>
+            </div>
+            <div class="ways-visual">
+                <div class="ways-visual-title">Grouped by intent</div>
+                <div class="stage-map">
+                    <div class="stage-box stage-s1"><div class="stage-name">Parameters</div><div class="stage-nodes"><span class="stage-pill">Slider: base R</span><span class="stage-pill">Slider: top R</span><span class="stage-pill">Slider: floors</span></div></div>
+                    <div class="stage-box stage-s2"><div class="stage-name">Base Geometry</div><div class="stage-nodes"><span class="stage-pill">Circle CNR</span></div></div>
+                    <div class="stage-box stage-s3"><div class="stage-name">Vertical Array</div><div class="stage-nodes"><span class="stage-pill">Series</span><span class="stage-pill">Move</span><span class="stage-pill">Loft</span></div></div>
+                </div>
+                <div class="think-card">
+                    <div class="think-label">&#9670; Thought Process</div>
+                    <div class="think-line"><span class="tn">1.</span> <b>Parameters</b> &mdash; three sliders expose base radius, top radius and floor count so the whole tower stays adjustable.</div>
+                    <div class="think-line"><span class="tn">2.</span> <b>Base Geometry</b> &mdash; a Circle CNR turns the base radius into the ground-floor plate that feeds the array.</div>
+                    <div class="think-line"><span class="tn">3.</span> <b>Vertical Array</b> &mdash; Series + Move stack the floors; Loft skins them into a single tapering surface.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL 3: SELF-HEAL -->
+        <div class="ways-panel" data-panel="heal">
+            <div class="ways-copy">
+                <div class="ways-eyebrow">03 &mdash; Self-Heal</div>
+                <h3>Errors that resolve themselves.</h3>
+                <p>A red component never makes it to you unnoticed. MANTIS reads the runtime error, traces the data flow that caused it, and offers a one-click fix &mdash; and it back-fills sensible defaults so the graph resolves clean, with zero warnings.</p>
+                <ul class="ways-points">
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Reads real runtime errors &mdash; not guesses</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Auto-fills required inputs &mdash; ships a working file every time</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> One-click apply &mdash; wrapped in undo, always reversible</li>
+                </ul>
+            </div>
+            <div class="ways-visual">
+                <div class="ways-visual-title">Detect &rarr; diagnose &rarr; fix</div>
+                <div class="heal-row err"><span class="heal-dot"></span><span class="heal-text"><b>Extrude</b> &mdash; <span class="hc">1. Solution exception: no direction vector</span></span></div>
+                <div class="heal-arrow">&darr;</div>
+                <div class="heal-row fix"><span class="heal-dot"></span><span class="heal-text"><b>Diagnosis</b> &mdash; the extrude has no Z direction. Add a Unit Z vector into input <span class="hc">D</span>.</span></div>
+                <div class="heal-row fix"><span class="heal-dot"></span><span class="heal-text"><b>Resolved</b> &mdash; Unit Z wired, graph recomputed. <span class="hc">0 errors &middot; 0 warnings</span></span></div>
+                <span class="heal-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Fix applied</span>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- ═══ HOW IT WORKS ═══ -->
 <section class="how-section container" id="how">
     <div class="how-header reveal">
@@ -729,6 +908,20 @@
             <h3>Multi-Model Freedom</h3>
             <p>Claude, OpenAI, Gemini, OpenRouter, Ollama. 5 providers, 15+ models. Start free, go pro when ready.</p>
         </div>
+        <div class="bento-card b-7 is-cyan reveal">
+            <div class="bento-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5ED6DC" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96.44A2.5 2.5 0 014 17.5v-1a2.5 2.5 0 01-1.04-4.55A2.5 2.5 0 014 7.5 2.5 2.5 0 015.04 4.5 2.5 2.5 0 019.5 2z"/><path d="M14.5 2A2.5 2.5 0 0012 4.5"/></svg>
+            </div>
+            <h3>Thought-Process Narration</h3>
+            <p>Before it wires anything, MANTIS explains the plan stage by stage &mdash; what each stage produces and how it feeds the next. You don't just get a graph; you get the reasoning behind it.</p>
+        </div>
+        <div class="bento-card b-8 reveal reveal-delay-1">
+            <div class="bento-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            </div>
+            <h3>Auto-Grouped Workflow</h3>
+            <p>Every logical stage &mdash; parameters, base geometry, transforms, output &mdash; is wrapped in a labelled, colour-tinted group. The generated canvas reads like an expert organized it, not a machine.</p>
+        </div>
     </div>
 </section>
 
@@ -806,6 +999,8 @@
                 <tr><td>Multi-solution explore</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
                 <tr><td>Error self-healing</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
                 <tr><td>Explain mode</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
+                <tr><td>Auto-grouped workflow</td><td class="check-yes">&#10003;</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td></tr>
+                <tr><td>Wiring thought-process</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
                 <tr><td>AI providers</td><td class="check-special">5 providers</td><td class="check-no">1</td><td class="check-no">1</td></tr>
                 <tr><td>Free to use</td><td class="check-yes">&#10003;</td><td class="check-no">Paid</td><td class="check-no">Paid</td></tr>
                 <tr><td>Open source</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-yes">&#10003;</td></tr>
@@ -815,12 +1010,23 @@
     </div>
 </section>
 
+<!-- ═══ BRAND STATEMENT BAND ═══ -->
+<section class="brand-band">
+    <div class="brand-band-inner reveal">
+        <h2>
+            <span class="muted">Native to Grasshopper.</span>
+            <span class="accent">Not a black box.</span>
+        </h2>
+        <p>Every component MANTIS places is real, editable, and yours. No opaque scripts, no lock-in &mdash; just a graph you can read, reshape, and learn from. The AI does the heavy lifting; you keep the control.</p>
+    </div>
+</section>
+
 <!-- ═══ INSTALL CTA ═══ -->
 <section class="install-section container" id="install">
     <div class="install-card reveal">
-        <div class="section-label">Get Started</div>
-        <h2 class="section-title">Install in 30 seconds</h2>
-        <p class="section-desc">No zip files. No folder copying. One command in Rhino.</p>
+        <div class="section-label">Begin</div>
+        <h2 class="section-title">Describe your intent. MANTIS builds the logic.</h2>
+        <p class="section-desc">Install in 30 seconds &mdash; no zip files, no folder copying. One command in Rhino, and the canvas starts thinking with you.</p>
         <div class="install-steps">
             <div class="install-step">
                 <div class="install-step-num">01</div>
@@ -1067,6 +1273,40 @@ const revealObs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-clip').forEach(el => revealObs.observe(el));
+
+// ── Tabbed capability showcase (Generate / Wire & Group / Self-Heal) ──
+(function() {
+    const tabs = Array.from(document.querySelectorAll('.ways-tab'));
+    const panels = Array.from(document.querySelectorAll('.ways-panel'));
+    if (!tabs.length) return;
+    function select(name) {
+        tabs.forEach(t => t.classList.toggle('active', t.dataset.panel === name));
+        panels.forEach(p => p.classList.toggle('active', p.dataset.panel === name));
+    }
+    tabs.forEach(t => t.addEventListener('click', () => select(t.dataset.panel)));
+    // Auto-advance through the three tabs until the user interacts
+    let userTouched = false;
+    tabs.forEach(t => t.addEventListener('click', () => { userTouched = true; }));
+    const order = ['generate', 'wire', 'heal'];
+    let idx = 0;
+    if (!PREFERS_REDUCED_MOTION) {
+        const section = document.getElementById('ways');
+        let started = false;
+        const obs = new IntersectionObserver(es => {
+            es.forEach(e => {
+                if (e.isIntersecting && !started) {
+                    started = true;
+                    setInterval(() => {
+                        if (userTouched) return;
+                        idx = (idx + 1) % order.length;
+                        select(order[idx]);
+                    }, 3800);
+                }
+            });
+        }, { threshold: 0.3 });
+        if (section) obs.observe(section);
+    }
+})();
 
 // ── Animated stat counters ──
 let statsCounted = false;
