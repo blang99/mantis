@@ -158,18 +158,25 @@
         }
         nav.scrolled { background: rgba(4,10,6,0.92); backdrop-filter: blur(24px); border-bottom-color: var(--border); }
         .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px; display: flex; align-items: center; justify-content: space-between; }
-        .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .nav-logo-mark { width: 34px; height: 34px; }
-        .nav-logo span { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.2em; color: var(--mantis); }
-        .nav-tagline { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); padding-left: 0.9rem; margin-left: 0.3rem; border-left: 1px solid var(--border-light); white-space: nowrap; }
-        .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.2s; }
-        .nav-links a:hover { color: var(--mantis); }
+        .nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+        .nav-logo-mark { width: 36px; height: 36px; flex-shrink: 0; }
+        /* Two-line lockup: wordmark primary, tagline secondary beneath — clear hierarchy, no cramped divider */
+        .nav-wordmark { display: flex; flex-direction: column; line-height: 1; }
+        .nav-name { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; letter-spacing: 0.24em; color: var(--mantis); }
+        .nav-tagline { font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-secondary); margin-top: 6px; white-space: nowrap; }
+        .nav-links { display: flex; gap: 2.1rem; align-items: center; }
+        .nav-links a:not(.btn-nav) { position: relative; color: var(--text-secondary); text-decoration: none; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; padding: 8px 0; transition: color 0.25s var(--ease-out); }
+        .nav-links a:not(.btn-nav)::after { content: ''; position: absolute; left: 0; right: 100%; bottom: 0; height: 1.5px; background: var(--mantis); transition: right 0.3s var(--ease-out); }
+        .nav-links a:not(.btn-nav):hover { color: var(--text-primary); }
+        .nav-links a:not(.btn-nav):hover::after { right: 0; }
+        .nav-links a:focus-visible { outline: 2px solid var(--mantis); outline-offset: 5px; border-radius: 3px; }
+        .nav-divider { width: 1px; height: 24px; background: var(--border-light); margin: 0 0.4rem; }
         .btn-nav {
             background: var(--mantis) !important; color: var(--bg-deep) !important;
             padding: 10px 22px !important; border-radius: 6px;
             font-family: var(--font-display) !important; font-weight: 700 !important;
             font-size: 0.75rem !important; letter-spacing: 0.1em !important;
+            white-space: nowrap !important;
             transition: transform 0.2s, box-shadow 0.2s !important;
         }
         .btn-nav:hover { transform: translateY(-2px) !important; box-shadow: 0 6px 30px var(--mantis-glow-strong) !important; }
@@ -387,22 +394,19 @@
         .tag-free { background: rgba(92,219,122,0.1); color: var(--mantis); }
         .tag-paid { background: rgba(232,184,77,0.1); color: var(--amber); }
 
-        /* ═══ COMPARISON TABLE ═══ */
+        /* ═══ CAPABILITIES (MANTIS capability showcase) ═══ */
         .compare-section { position: relative; z-index: 2; padding: 4rem 0 8rem; }
-        .compare-header { text-align: center; margin-bottom: 3rem; }
+        .compare-header { text-align: center; margin-bottom: 3.5rem; }
         .compare-header .section-desc { margin: 0 auto; }
-        .compare-table-wrap { overflow-x: auto; }
-        .compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .compare-table th, .compare-table td { padding: 14px 20px; text-align: left; border-bottom: 1px solid var(--border); }
-        .compare-table thead th { background: var(--bg-card); font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; }
-        .compare-table thead th:nth-child(2) { color: var(--mantis); }
-        .compare-table tbody td { background: var(--bg-deep); }
-        .compare-table tbody tr { transition: background 0.2s; }
-        .compare-table tbody tr:hover td { background: rgba(92,219,122,0.03); }
-        .compare-table tbody td:first-child { font-weight: 500; color: var(--text-secondary); }
-        .check-yes { color: var(--mantis); font-weight: 700; text-align: center; }
-        .check-no { color: var(--text-dim); text-align: center; }
-        .check-special { color: var(--mantis-bright); font-weight: 600; text-align: center; }
+        .cap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+        .cap-card { position: relative; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; transition: transform 0.35s var(--ease-out), border-color 0.3s, background 0.3s; }
+        .cap-card:hover { transform: translateY(-4px); border-color: var(--border-light); background: var(--bg-surface); }
+        .cap-icon { width: 44px; height: 44px; border-radius: 11px; display: flex; align-items: center; justify-content: center; background: rgba(92,219,122,0.08); border: 1px solid rgba(92,219,122,0.18); margin-bottom: 1.15rem; }
+        .cap-icon svg { width: 22px; height: 22px; stroke: var(--mantis); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+        .cap-card h3 { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.02em; color: var(--text-primary); margin-bottom: 0.6rem; line-height: 1.35; }
+        .cap-tag { display: inline-block; font-family: var(--font-mono); font-size: 0.55rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mantis); background: rgba(92,219,122,0.1); border: 1px solid rgba(92,219,122,0.22); border-radius: 100px; padding: 2px 8px; margin-left: 8px; vertical-align: middle; }
+        .cap-card p { font-size: 0.875rem; line-height: 1.65; color: var(--text-secondary); }
+        @media (max-width: 860px) { .cap-grid { grid-template-columns: repeat(2, 1fr); } }
 
         /* ═══ INSTALL CTA ═══ */
         .install-section { position: relative; z-index: 2; padding: 4rem 0 8rem; }
@@ -519,7 +523,10 @@
         }
         @media (max-width: 600px) {
             .nav-tagline { display: none; }
+            .nav-name { letter-spacing: 0.16em; }
             .nav-links a:not(.btn-nav) { display: none; }
+            .nav-divider { display: none; }
+            .cap-grid { grid-template-columns: 1fr; }
             .provider-grid { grid-template-columns: 1fr; }
             .stats-inner { grid-template-columns: repeat(2, 1fr); }
             .footer-inner { flex-direction: column; gap: 1rem; text-align: center; }
@@ -548,8 +555,8 @@
 <!-- ═══ NAV ═══ -->
 <nav id="nav">
     <div class="nav-inner">
-        <a href="#" class="nav-logo">
-            <svg class="nav-logo-mark" viewBox="0 0 36 36" fill="none">
+        <a href="#top" class="nav-logo" aria-label="MANTIS — home">
+            <svg class="nav-logo-mark" viewBox="0 0 36 36" fill="none" aria-hidden="true">
                 <circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/>
                 <circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/>
                 <circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/>
@@ -562,14 +569,17 @@
                 <line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
                 <line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
             </svg>
-            <span>MANTIS</span>
-            <span class="nav-tagline">The AI layer for Grasshopper</span>
+            <span class="nav-wordmark">
+                <span class="nav-name">MANTIS</span>
+                <span class="nav-tagline">The AI layer for Grasshopper</span>
+            </span>
         </a>
         <div class="nav-links">
             <a href="#ways">Workflow</a>
             <a href="#features">Features</a>
             <a href="#models">Models</a>
-            <a href="#compare">Compare</a>
+            <a href="#compare">Capabilities</a>
+            <span class="nav-divider" aria-hidden="true"></span>
             <a href="#install" class="btn-nav">Install Free</a>
         </div>
     </div>
@@ -983,30 +993,59 @@
     </div>
 </section>
 
-<!-- ═══ COMPARISON ═══ -->
+<!-- ═══ CAPABILITIES ═══ -->
 <section class="compare-section container" id="compare">
     <div class="compare-header reveal">
-        <div class="section-label">Comparison</div>
-        <h2 class="section-title">MANTIS vs. Alternatives</h2>
-        <p class="section-desc">See how MANTIS stacks up against other AI Grasshopper tools.</p>
+        <div class="section-label">Capabilities</div>
+        <h2 class="section-title">What MANTIS Does</h2>
+        <p class="section-desc">One assistant that builds, sees, explains, repairs, and adapts — natively on your Grasshopper canvas.</p>
     </div>
-    <div class="compare-table-wrap reveal">
-        <table class="compare-table">
-            <thead><tr><th>Feature</th><th>MANTIS</th><th>Raven</th><th>GHPT</th></tr></thead>
-            <tbody>
-                <tr><td>Native GH components</td><td class="check-yes">&#10003;</td><td class="check-yes">&#10003;</td><td class="check-yes">&#10003;</td></tr>
-                <tr><td>Live streaming build</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
-                <tr><td>Multi-solution explore</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
-                <tr><td>Error self-healing</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
-                <tr><td>Explain mode</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
-                <tr><td>Auto-grouped workflow</td><td class="check-yes">&#10003;</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td></tr>
-                <tr><td>Wiring thought-process</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
-                <tr><td>AI providers</td><td class="check-special">5 providers</td><td class="check-no">1</td><td class="check-no">1</td></tr>
-                <tr><td>Free to use</td><td class="check-yes">&#10003;</td><td class="check-no">Paid</td><td class="check-no">Paid</td></tr>
-                <tr><td>Open source</td><td class="check-yes">&#10003;</td><td class="check-no">&mdash;</td><td class="check-yes">&#10003;</td></tr>
-                <tr><td>Offline / local AI</td><td class="check-special">Ollama</td><td class="check-no">&mdash;</td><td class="check-no">&mdash;</td></tr>
-            </tbody>
-        </table>
+    <div class="cap-grid">
+        <div class="cap-card reveal">
+            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="6" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M8.3 10.9l7.4-3.6M8.3 13.1l7.4 3.6"/></svg></div>
+            <h3>Native components</h3>
+            <p>Real Grasshopper components, wired and laid out on your canvas — editable, readable, never a black box.</p>
+        </div>
+        <div class="cap-card reveal">
+            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg></div>
+            <h3>Live streaming build</h3>
+            <p>Watch the graph assemble component by component, exactly as an expert would wire it.</p>
+        </div>
+        <div class="cap-card reveal">
+            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg></div>
+            <h3>Image-to-script <span class="cap-tag">New</span></h3>
+            <p>Attach a reference photo or sketch and MANTIS reconstructs it as an adjustable parametric definition.</p>
+        </div>
+        <div class="cap-card reveal">
+            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <h3>Self-healing builds</h3>
+            <p>Component names and wires are validated before the canvas paints — and red errors get fixed on request.</p>
+        </div>
+        <div class="cap-card reveal">
+            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 12.5 3 8.5 8.5 0 0 1 21 11.5z"/></svg></div>
+            <h3>Ask mode <span class="cap-tag">New</span></h3>
+            <p>Ask about Grasshopper or your current canvas and get a clear answer — no build, just guidance.</p>
+        </div>
+        <div class="cap-card reveal">
+            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+            <h3>Multi-solution explore</h3>
+            <p>Generate two or three distinct approaches at once, compare them, and build the one that fits.</p>
+        </div>
+        <div class="cap-card reveal">
+            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h11M4 17h7"/></svg></div>
+            <h3>Explained &amp; grouped</h3>
+            <p>Every build is organised into labelled stages with the reasoning shown, so you learn the logic.</p>
+        </div>
+        <div class="cap-card reveal">
+            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></div>
+            <h3>Five AI providers</h3>
+            <p>Claude, OpenAI, Gemini, OpenRouter, or local Ollama — switch models to match the task and budget.</p>
+        </div>
+        <div class="cap-card reveal">
+            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12v8M8.5 16.5 12 20l3.5-3.5"/><path d="M20 16.2A4.5 4.5 0 0 0 17.5 8h-1.26A7 7 0 1 0 4 14.9"/></svg></div>
+            <h3>Free, open &amp; offline</h3>
+            <p>Free to start, open source, and fully offline with local models — your designs never leave your machine.</p>
+        </div>
     </div>
 </section>
 
