@@ -204,8 +204,16 @@ public class OllamaClient : ILlmClient
         {
             new { role = "system", content = systemPrompt }
         };
-        allMessages.AddRange(
-            messages.Select(m => (object)new { role = m.Role, content = m.Content }));
+        allMessages.AddRange(messages.Select(m =>
+        {
+            // Ollama carries images in a top-level `images` array on the message.
+            // Omit the field entirely for text-only turns so the wire shape is
+            // byte-identical to before (a null array would still serialize).
+            var images = VisionPayload.OllamaImages(m);
+            return images is null
+                ? (object)new { role = m.Role, content = m.Content }
+                : (object)new { role = m.Role, content = m.Content, images };
+        }));
 
         var request = new
         {
@@ -374,10 +382,31 @@ public class OllamaClient : ILlmClient
                 Id = name,
                 DisplayName = displayName,
                 Description = desc,
-                IsFree = true
+                IsFree = true,
+                SupportsVision = IsVisionModel(name)
             });
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Best-effort detection of locally-installed vision models by name fragment.
+    /// Ollama's /api/tags doesn't expose modality, so we match the well-known
+    /// multimodal families (llava, qwen-VL, llama3.2-vision, moondream, etc.).
+    /// This is what lights up the attach-image affordance on the offline path —
+    /// MANTIS's unique answer to Raven's cloud-only image-to-script.
+    /// </summary>
+    private static bool IsVisionModel(string name)
+    {
+        var n = name.ToLowerInvariant();
+        return n.Contains("llava")
+            || n.Contains("vision")
+            || n.Contains("-vl")
+            || n.Contains("vl:")
+            || n.Contains("moondream")
+            || n.Contains("bakllava")
+            || n.Contains("minicpm-v")
+            || n.Contains("llama3.2-vision");
     }
 }

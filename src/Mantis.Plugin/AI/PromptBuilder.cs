@@ -21,7 +21,8 @@ public class PromptBuilder
         PromptMode mode,
         string? canvasState = null,
         string? userRequest = null,
-        int contextWindowTokens = int.MaxValue)
+        int contextWindowTokens = int.MaxValue,
+        bool hasImages = false)
     {
         // ADAPTIVE CATALOG: large-context cloud models get the full catalog;
         // small-context local models get a relevance-trimmed catalog so the
@@ -66,6 +67,18 @@ public class PromptBuilder
             sb.AppendLine();
         }
 
+        if (hasImages)
+        {
+            sb.AppendLine("=== REFERENCE IMAGE(S) ATTACHED ===");
+            sb.AppendLine("The user attached one or more reference images. Treat them as the design TARGET and read them carefully:");
+            sb.AppendLine("- Identify the primary geometry (curve / surface / solid), its proportions, and any symmetry.");
+            sb.AppendLine("- COUNT repeated elements (louvers, panels, floors, fins, columns) and reproduce that count with a Number Slider + Series/Range driving a one-to-many array — never hand-duplicate components or eyeball the number.");
+            sb.AppendLine("- Translate the spatial relationships you SEE (stacking, tapering, rotation, offset, gradient, twist) into the matching transform components.");
+            sb.AppendLine("- The image defines INTENT; the catalog defines MEANS. Build the closest faithful parametric reconstruction using ONLY catalog components, exposing the key dimensions as sliders so the user can adjust them.");
+            sb.AppendLine("- If the image shows something the catalog cannot express, approximate it with the nearest catalog approach and state the approximation in the advice field.");
+            sb.AppendLine();
+        }
+
         // ═══════════════════════════════════════════════════
         // CRITICAL RULES GO LAST — highest attention window
         // ═══════════════════════════════════════════════════
@@ -92,10 +105,23 @@ public class PromptBuilder
         sb.AppendLine("- Read input INDICES from the catalog and wire to the exact index. Verify every REQUIRED (no '?') input is satisfied.");
         sb.AppendLine();
 
+        sb.AppendLine("=== WORKFLOW GROUPING & REASONING (REQUIRED) ===");
+        sb.AppendLine("Organize the whole script into 2-5 logical STAGES and emit them in the \"groups\" array. Each group becomes a labelled box on the canvas AND its reasoning is shown to the user as your thought process — so this is how MANTIS explains its wiring.");
+        sb.AppendLine("- Typical stages in left-to-right order: \"Parameters\" (the sliders/toggles) → \"Base Geometry\" → \"Transform / Array\" → \"Combine\" → \"Output\". Name stages for what THIS script does, not generically.");
+        sb.AppendLine("- Every component id MUST appear in exactly ONE group. Do not leave any component ungrouped and never put an id in two groups.");
+        sb.AppendLine("- reasoning = 1-2 sentences, in plain architect/designer language, saying what this stage produces AND how its output feeds the next stage. Describe intent and data flow, not component trivia. Example: \"These sliders expose the tower's radius, floor count and floor height so everything downstream stays adjustable.\"");
+        sb.AppendLine("- color is optional: a hex like \"#5CDB7A\". If omitted, MANTIS auto-assigns a distinct tint per stage.");
+        sb.AppendLine();
+
+        // User's standing preferences (units, favourite plugins, house style). Placed
+        // BEFORE the output-format mandate so the JSON contract still has the last word.
+        AppendCustomInstructions(sb);
+
         sb.AppendLine("=== OUTPUT FORMAT (MANDATORY) ===");
         sb.AppendLine("You MUST output ONLY a single JSON object. No text before or after. No markdown. No code fences. No explanation.");
         sb.AppendLine("Component names MUST exactly match the catalog above (case-sensitive).");
         sb.AppendLine("Connection indices are 0-based: first input = 0, second = 1, etc.");
+        sb.AppendLine("NEVER use a port index the component does not have: fromOutput must be LESS than the count of out: ports listed for that component, and toInput LESS than the count of in: ports. Wiring a port that isn't in the catalog line is invalid and will be rejected.");
         sb.AppendLine("Every Number Slider MUST have inputValues with min, max, value, and decimals.");
         sb.AppendLine("If a task needs plugins not in the catalog, list them in requiredPlugins[].");
         sb.AppendLine();
@@ -111,7 +137,11 @@ public class PromptBuilder
         sb.AppendLine("    {\"fromComponent\": 1, \"fromOutput\": 0, \"toComponent\": 2, \"toInput\": 1}");
         sb.AppendLine("  ],");
         sb.AppendLine("  \"advice\": \"Brief explanation of the script and how to adjust parameters.\",");
-        sb.AppendLine("  \"requiredPlugins\": []");
+        sb.AppendLine("  \"requiredPlugins\": [],");
+        sb.AppendLine("  \"groups\": [");
+        sb.AppendLine("    {\"name\": \"Parameters\", \"componentIds\": [1], \"reasoning\": \"One slider exposes the radius so the circle stays adjustable.\", \"color\": \"#5CDB7A\"},");
+        sb.AppendLine("    {\"name\": \"Base Geometry\", \"componentIds\": [2], \"reasoning\": \"Builds the circle at the origin from that radius — the profile everything downstream uses.\"}");
+        sb.AppendLine("  ]");
         sb.AppendLine("}");
         sb.AppendLine();
 
@@ -128,7 +158,12 @@ public class PromptBuilder
         sb.Append("{\"fromComponent\":3,\"fromOutput\":0,\"toComponent\":4,\"toInput\":0},");
         sb.Append("{\"fromComponent\":2,\"fromOutput\":0,\"toComponent\":5,\"toInput\":0},");
         sb.Append("{\"fromComponent\":4,\"fromOutput\":0,\"toComponent\":5,\"toInput\":1}");
-        sb.Append("],\"advice\":\"Adjust Radius and Height sliders to control the extruded cylinder.\",\"requiredPlugins\":[]}");
+        sb.Append("],\"advice\":\"Adjust Radius and Height sliders to control the extruded cylinder.\",\"requiredPlugins\":[],");
+        sb.Append("\"groups\":[");
+        sb.Append("{\"name\":\"Parameters\",\"componentIds\":[1,3],\"reasoning\":\"Two sliders expose the circle radius and the extrusion height so the cylinder stays fully adjustable.\"},");
+        sb.Append("{\"name\":\"Profile\",\"componentIds\":[2],\"reasoning\":\"Builds the circle at the origin from the radius — this is the cross-section that gets extruded.\"},");
+        sb.Append("{\"name\":\"Extrude\",\"componentIds\":[4,5],\"reasoning\":\"Turns the height into an upward Z vector and sweeps the circle along it to produce the solid cylinder.\"}");
+        sb.Append("]}");
         sb.AppendLine();
         sb.AppendLine();
 
@@ -149,7 +184,12 @@ public class PromptBuilder
         sb.Append("{\"fromComponent\":5,\"fromOutput\":0,\"toComponent\":6,\"toInput\":0},");
         sb.Append("{\"fromComponent\":2,\"fromOutput\":0,\"toComponent\":7,\"toInput\":0},");
         sb.Append("{\"fromComponent\":6,\"fromOutput\":0,\"toComponent\":7,\"toInput\":1}");
-        sb.Append("],\"advice\":\"Floors sets the number of circles, Floor Height the vertical gap, Radius each circle. Series makes one Z height per floor and Move copies the single circle to every height — no components are duplicated.\",\"requiredPlugins\":[]}");
+        sb.Append("],\"advice\":\"Floors sets the number of circles, Floor Height the vertical gap, Radius each circle. Series makes one Z height per floor and Move copies the single circle to every height — no components are duplicated.\",\"requiredPlugins\":[],");
+        sb.Append("\"groups\":[");
+        sb.Append("{\"name\":\"Parameters\",\"componentIds\":[1,3,4],\"reasoning\":\"These sliders expose the tower's radius, floor count and floor height so the whole stack stays adjustable from three knobs.\"},");
+        sb.Append("{\"name\":\"Base Floor\",\"componentIds\":[2],\"reasoning\":\"Draws a single circle at the origin — the one floor outline that gets copied upward, so no geometry is duplicated by hand.\"},");
+        sb.Append("{\"name\":\"Vertical Array\",\"componentIds\":[5,6,7],\"reasoning\":\"Series turns floor count and height into a list of Z heights, Unit Z makes one offset vector per floor, and Move copies the base circle to every height to build the tower.\"}");
+        sb.Append("]}");
         sb.AppendLine();
         sb.AppendLine();
         sb.AppendLine("IMPORTANT: Output ONLY the JSON object. No other text. Start with { and end with }.");
@@ -167,6 +207,65 @@ public class PromptBuilder
             3. How data flows through the chain
             Use terms an architect (not a programmer) would understand. Be concise — 2-3 sentences per component.
             """;
+    }
+
+    /// <summary>
+    /// Conversational "Ask" mode: MANTIS answers Grasshopper / parametric-design
+    /// questions in PROSE without generating components. It sees a (trimmed) catalog so
+    /// it can name real components, and — when provided — the current canvas state so it
+    /// can explain or critique what's already built. The hard rule: never emit JSON or a
+    /// component graph; this mode only talks. Parity with Raven's Ask vs Edit split.
+    /// </summary>
+    public string BuildAskPrompt(
+        string? canvasState = null,
+        string? userRequest = null,
+        int contextWindowTokens = int.MaxValue)
+    {
+        var catalog = contextWindowTokens < CatalogTrimThreshold
+            ? _registry.BuildRelevantCatalog(userRequest)
+            : _registry.BuildCompactCatalog();
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("You are MANTIS, an expert computational designer for Rhino Grasshopper, in ASK mode.");
+        sb.AppendLine("You answer questions about Grasshopper, parametric and generative design, geometry, and how to APPROACH a problem — in clear, friendly prose for an architect or designer, not a programmer.");
+        sb.AppendLine();
+        sb.AppendLine("ASK MODE RULES:");
+        sb.AppendLine("- ANSWER IN PROSE. Do NOT output JSON, code fences, or a component graph — you are explaining and advising, not building.");
+        sb.AppendLine("- When you recommend components, use their EXACT catalog names and describe the wiring in words (e.g. \"feed a Series into Move's Motion input\"); a chain can be sketched as A → B → C.");
+        sb.AppendLine("- Be concise and concrete. Prefer a short numbered approach over a wall of text.");
+        sb.AppendLine("- If the user is actually asking you to BUILD something, give a brief answer, then tell them to switch OFF \"Ask\" and resend so MANTIS builds it live on the canvas.");
+        sb.AppendLine("- If something needs a plugin or you're unsure, say so plainly.");
+        sb.AppendLine();
+        sb.AppendLine("=== COMPONENT CATALOG (so you name real components) ===");
+        sb.AppendLine(catalog);
+
+        if (!string.IsNullOrWhiteSpace(canvasState))
+        {
+            sb.AppendLine();
+            sb.AppendLine("=== CURRENT CANVAS (what the user already has) ===");
+            sb.AppendLine(canvasState);
+            sb.AppendLine("When the question is about \"my script\", \"this\", or \"why is X red\", refer to this canvas.");
+        }
+
+        AppendCustomInstructions(sb);
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// Append the user's persisted standing instructions (from settings.json) so EVERY
+    /// prompt mode honors them — units, preferred plugins, naming, house style. Read
+    /// fresh each build so edits take effect immediately; absent/blank = nothing added,
+    /// keeping the prompt byte-identical to before for users who never set them.
+    /// </summary>
+    private static void AppendCustomInstructions(System.Text.StringBuilder sb)
+    {
+        var custom = MantisSettings.Get(MantisSettings.CustomInstructionsKey);
+        if (string.IsNullOrWhiteSpace(custom)) return;
+
+        sb.AppendLine();
+        sb.AppendLine("=== USER'S STANDING INSTRUCTIONS (always honor these) ===");
+        sb.AppendLine(custom!.Trim());
+        sb.AppendLine();
     }
 }
 

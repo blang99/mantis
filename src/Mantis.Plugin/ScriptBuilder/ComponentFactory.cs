@@ -32,11 +32,49 @@ public class ComponentFactory
         if (info == null) return null;
 
         var obj = Instances.ComponentServer.EmitObject(info.Guid);
+
+        // Stale/placeholder GUID recovery: a few curated catalog entries ship with a
+        // placeholder GUID (e.g. "Box", whose real component is named "Box 2Pt" with
+        // nickname "Box"). The name resolves, but EmitObject(placeholderGuid) returns
+        // null, silently dropping the component. Fall back to locating the real proxy
+        // by Name/NickName so the component is still placed.
+        if (obj == null)
+            obj = EmitByName(def.Name, info.Name, info.NickName);
+
         if (obj == null) return null;
 
         obj.CreateAttributes();
         SetInputValues(obj as GH_Component, def);
         return obj;
+    }
+
+    /// <summary>
+    /// Emit a component by matching the live ComponentServer proxies on Name (preferred)
+    /// or NickName. GUID-agnostic, so it recovers from a stale/placeholder catalog GUID.
+    /// Skips obsolete proxies so we never resurrect a deprecated variant.
+    /// </summary>
+    private static IGH_DocumentObject? EmitByName(params string?[] names)
+    {
+        var wanted = names
+            .Where(n => !string.IsNullOrWhiteSpace(n))
+            .Select(n => n!.Trim())
+            .ToList();
+        if (wanted.Count == 0) return null;
+
+        IGH_ObjectProxy? nickMatch = null;
+        foreach (var proxy in Instances.ComponentServer.ObjectProxies)
+        {
+            if (proxy?.Desc == null || proxy.Obsolete) continue;
+
+            if (wanted.Any(w => string.Equals(proxy.Desc.Name, w, StringComparison.OrdinalIgnoreCase)))
+                return Instances.ComponentServer.EmitObject(proxy.Guid); // exact Name wins
+
+            if (nickMatch == null &&
+                wanted.Any(w => string.Equals(proxy.Desc.NickName, w, StringComparison.OrdinalIgnoreCase)))
+                nickMatch = proxy;
+        }
+
+        return nickMatch != null ? Instances.ComponentServer.EmitObject(nickMatch.Guid) : null;
     }
 
     /// <summary>
@@ -174,16 +212,14 @@ public class ComponentFactory
                         ps.ExpireSolution(false);
                         break;
 
-                    // Some generic numeric inputs are exposed as a bare Param_Number-like
-                    // param; if the kind is a number but the param isn't a typed scalar
-                    // above, fall back to volatile so at least the first solve has data.
+                    // A non-scalar param (generic/typed object) received an inline value.
+                    // We deliberately do NOT call AddVolatileData here: this method runs
+                    // inside a scheduled solution, where adding volatile data throws
+                    // ("cannot modify data during a solution") AND any volatile value is
+                    // wiped on the very next recompute — so it was never persistent anyway.
+                    // The prompt steers the model to wire a slider/source for these cases,
+                    // which survives every solution. Skipping is the safe, error-free path.
                     default:
-                        if (je.ValueKind == JsonValueKind.Number)
-                            param.AddVolatileData(path, 0, new GH_Number(je.GetDouble()));
-                        else if (je.ValueKind == JsonValueKind.String)
-                            param.AddVolatileData(path, 0, new GH_String(je.GetString() ?? ""));
-                        else if (je.ValueKind is JsonValueKind.True or JsonValueKind.False)
-                            param.AddVolatileData(path, 0, new GH_Boolean(je.GetBoolean()));
                         break;
                 }
             }

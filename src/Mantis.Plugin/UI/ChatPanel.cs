@@ -19,6 +19,11 @@ public class ChatPanel : Panel
     private readonly Button _sendButton;
     private readonly Label _placeholderLabel;
 
+    // ── Reference-image attachment (image-to-script / vision) ──
+    private readonly Button _attachButton;        // opens the file picker
+    private readonly StackLayout _attachmentBar;  // thumbnail chips for pending images
+    private readonly List<ImageData> _pendingImages = new();
+
     // ── Top-bar buttons (consistent styling) ──
     private readonly Button _menuButton;     // toggles history sidebar
     private readonly Button _modelsButton;   // toggles model panel
@@ -31,6 +36,7 @@ public class ChatPanel : Panel
     private readonly Label _bottomProviderBadge;
     private readonly CheckBox _exploreToggle;
     private readonly CheckBox _iterateToggle;
+    private readonly CheckBox _askToggle;   // Q&A mode — answer, don't build
 
     // ── Sidebar (chat history) ──
     private readonly Splitter _outerSplitter;
@@ -45,7 +51,9 @@ public class ChatPanel : Panel
     private readonly ModelPickerPanel _modelPanel;
     private readonly Panel _modelPanelWrapper;
     private bool _modelPanelVisible;
-    private const int ModelPanelWidth = 340;
+    private const int ModelPanelWidth = 340;     // preferred width when there's room
+    private const int ModelPanelMinWidth = 260;  // floor before content feels cramped
+    private const int ChatMinWidth = 300;        // chat column never shrinks below this
 
     // Below this window width there isn't room for the history sidebar AND the
     // model panel AND a usable chat column (220 + 340 + ~300) — so opening one
@@ -126,6 +134,11 @@ public class ChatPanel : Panel
     private static readonly Color AiBubbleBg = Color.FromArgb(22, 32, 26);
     private static readonly Color ErrorBubbleBg = Color.FromArgb(42, 18, 18);
     private static readonly Color SystemBubbleBg = Color.FromArgb(18, 26, 22);
+
+    // Thought-process ("reasoning") bubble — a cool cyan-tinted panel so the
+    // wiring narration reads as distinct from normal AI advice.
+    private static readonly Color ReasoningBubbleBg = Color.FromArgb(14, 28, 30);
+    private static readonly Color ReasoningAccent = Color.FromArgb(94, 214, 220);
 
     private static readonly Color SidebarBg = Color.FromArgb(12, 20, 14);
     private static readonly Color SidebarItemBg = Color.FromArgb(18, 28, 20);
@@ -269,6 +282,28 @@ public class ChatPanel : Panel
         };
         _sendButton.Click += OnSendClick;
 
+        // ── Attach reference image (image-to-script). Enabled only when the
+        //    active model can actually see — gated in UpdateVisionAffordance. ──
+        _attachButton = new Button
+        {
+            Text = "+ Image",
+            Width = 92,
+            Height = 30,
+            BackgroundColor = BgSurface,
+            TextColor = Text2,
+            Font = new Font(FontBodyFamily, FontButton),
+            ToolTip = "Attach a reference image for the AI to reconstruct"
+        };
+        _attachButton.Click += OnAttachImageClick;
+
+        // Holds the thumbnail chips; stays collapsed until something is attached.
+        _attachmentBar = new StackLayout
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 8,
+            Visible = false
+        };
+
         // ── Top-bar buttons (all same styling) ──
         _menuButton = MakeTopBarButton("History", "Toggle chat history sidebar");
         _menuButton.Click += OnSidebarToggle;
@@ -319,6 +354,36 @@ public class ChatPanel : Panel
                       "build onto components Mantis did not create.",
             TextColor = Text2,
             Font = new Font(FontBodyFamily, FontMeta)
+        };
+        _askToggle = new CheckBox
+        {
+            Text = "Ask",
+            ToolTip = "Ask mode: get a conversational answer about Grasshopper or your " +
+                      "current canvas — MANTIS explains and advises instead of building. " +
+                      "Turn it off to build again.",
+            TextColor = Text2,
+            Font = new Font(FontBodyFamily, FontMeta)
+        };
+
+        // Ask is mutually exclusive with the build toggles: turning one on clears the
+        // others. Setting Checked=false re-fires the handler with Checked==false, which
+        // is a no-op, so there's no recursion.
+        _askToggle.CheckedChanged += (_, _) =>
+        {
+            if (_askToggle.Checked == true)
+            {
+                _exploreToggle.Checked = false;
+                _iterateToggle.Checked = false;
+            }
+            UpdateAskModeAffordance();
+        };
+        _exploreToggle.CheckedChanged += (_, _) =>
+        {
+            if (_exploreToggle.Checked == true) _askToggle.Checked = false;
+        };
+        _iterateToggle.CheckedChanged += (_, _) =>
+        {
+            if (_iterateToggle.Checked == true) _askToggle.Checked = false;
         };
 
         // Sidebar
@@ -378,7 +443,11 @@ public class ChatPanel : Panel
         // "text gets cut off when window is narrow" bug on macOS — Eto.Forms
         // Labels only wrap to an explicit Width, not to layout constraints.
         _messageScroll.SizeChanged += (_, _) => UpdateResponsiveLabelWidths();
-        SizeChanged += (_, _) => UpdateResponsiveLabelWidths();
+        SizeChanged += (_, _) =>
+        {
+            UpdateResponsiveLabelWidths();
+            AdaptPanelsToWidth();
+        };
     }
 
     /// <summary>
@@ -727,8 +796,12 @@ public class ChatPanel : Panel
                 SetSidebarVisible(false);
 
             _innerSplitter.Panel2 = _modelPanelWrapper;
-            // Position the splitter so chat takes most of the space
-            try { _innerSplitter.Position = Math.Max(0, Width - ModelPanelWidth); } catch { }
+            // Size + place the panel against the inner splitter's OWN width (the
+            // chat region) — never the full panel width, which double-counts the
+            // history sidebar and shoves the panel off the right edge.
+            PositionModelPanel();
+            // Re-apply once layout settles, in case Width was still stale here.
+            Application.Instance.AsyncInvoke(PositionModelPanel);
             _modelsButton.BackgroundColor = ColorMix(BgSurface, Accent, 0.3f);
         }
         else
@@ -738,6 +811,48 @@ public class ChatPanel : Panel
         }
         // Always refresh bottom bar — provider may have changed in the panel
         RefreshBottomStatusBar();
+    }
+
+    /// <summary>
+    /// Give the model panel an adaptive width and place the inner splitter so the
+    /// panel is always fully visible. Width is measured against the inner
+    /// splitter's own laid-out width (the chat region), so the history sidebar
+    /// can never push the panel off-screen. The panel prefers
+    /// <see cref="ModelPanelWidth"/> but shrinks toward
+    /// <see cref="ModelPanelMinWidth"/> to keep the chat column usable on narrow
+    /// windows — its content wraps and scrolls, so a slimmer panel still reads
+    /// cleanly.
+    /// </summary>
+    private void PositionModelPanel()
+    {
+        if (!_modelPanelVisible) return;
+
+        var innerWidth = _innerSplitter.Width;
+        if (innerWidth <= 0)
+            innerWidth = Width - (_sidebarVisible ? SidebarWidth : 0);
+        if (innerWidth <= 0) return;
+
+        // Prefer the full width; shrink so the chat keeps ChatMinWidth; never
+        // narrower than the readable floor, never wider than the splitter itself.
+        var target = Math.Min(ModelPanelWidth,
+                        Math.Max(ModelPanelMinWidth, innerWidth - ChatMinWidth));
+        target = Math.Min(target, innerWidth);
+
+        _modelPanelWrapper.Width = target;
+        try { _innerSplitter.Position = Math.Max(0, innerWidth - target); } catch { }
+    }
+
+    /// <summary>
+    /// Keep the panels coherent as the host window/panel is resized. When space
+    /// gets tight the history sidebar yields first (matching the open-time rule),
+    /// then the model panel re-fits itself to whatever room remains.
+    /// </summary>
+    private void AdaptPanelsToWidth()
+    {
+        if (!_modelPanelVisible) return;
+        if (_sidebarVisible && Width > 0 && Width < BothPanelsMinWidth)
+            SetSidebarVisible(false);
+        PositionModelPanel();
     }
 
     // ═══════════════════════════════════════════
@@ -858,7 +973,10 @@ public class ChatPanel : Panel
         // ── Outer splitter: Sidebar | (Inner splitter) ──
         _outerSplitter.Panel1 = _sidebarPanel;
         _outerSplitter.Panel2 = _innerSplitter;
-        _outerSplitter.Position = SidebarWidth;
+        // The real Position is applied in OnLoadComplete once the splitter has a size.
+        // Setting it now (size 0) throws or collapses the content pane on WPF — which is
+        // what left the panel BLANK on Windows. Guard it so construction can't fail either.
+        try { _outerSplitter.Position = SidebarWidth; } catch { /* applied again on load */ }
 
         // Sidebar starts visible — reflect that in the toggle button's tint.
         _menuButton.BackgroundColor = ColorMix(BgSurface, Accent, 0.3f);
@@ -891,11 +1009,19 @@ public class ChatPanel : Panel
                 _bottomProviderBadge,
                 _bottomModelLabel,
                 new StackLayoutItem(null, expand: true),
+                _askToggle,
                 _exploreToggle,
                 _iterateToggle
             }
         };
     }
+
+    /// <summary>Reflect Ask vs Build mode in the input placeholder. Pending images are
+    /// kept across the switch (Ask is text Q&A) for when the user builds again.</summary>
+    private void UpdateAskModeAffordance() =>
+        _placeholderLabel.Text = _askToggle.Checked == true
+            ? "Ask about Grasshopper or your canvas…"
+            : "Describe what you want to build...";
 
     private void RefreshBottomStatusBar()
     {
@@ -911,6 +1037,8 @@ public class ChatPanel : Panel
         _bottomModelLabel.Text = model != null
             ? $"  {model.DisplayName}"
             : "  No model — click 'Models' to choose";
+
+        UpdateVisionAffordance();
     }
 
     private StackLayout BuildInputArea()
@@ -919,7 +1047,8 @@ public class ChatPanel : Panel
         {
             Text = "Enter to send  ·  Shift+Enter for new line",
             Font = new Font(FontBodyFamily, FontMeta),
-            TextColor = TextD
+            TextColor = TextD,
+            VerticalAlignment = VerticalAlignment.Center
         };
 
         var sendCol = new StackLayout
@@ -927,6 +1056,19 @@ public class ChatPanel : Panel
             Spacing = 4,
             VerticalContentAlignment = VerticalAlignment.Bottom,
             Items = { _sendButton }
+        };
+
+        // Bottom row: attach-image control on the left, keyboard hint on the right.
+        var bottomRow = new StackLayout
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 10,
+            VerticalContentAlignment = VerticalAlignment.Center,
+            Items =
+            {
+                _attachButton,
+                new StackLayoutItem(hintLabel, expand: true)
+            }
         };
 
         return new StackLayout
@@ -937,6 +1079,7 @@ public class ChatPanel : Panel
             HorizontalContentAlignment = HorizontalAlignment.Stretch,
             Items =
             {
+                _attachmentBar,
                 _placeholderLabel,
                 new StackLayout
                 {
@@ -948,7 +1091,7 @@ public class ChatPanel : Panel
                         sendCol
                     }
                 },
-                hintLabel
+                bottomRow
             }
         };
     }
@@ -1162,6 +1305,43 @@ public class ChatPanel : Panel
         });
     }
 
+    /// <summary>
+    /// Renders the model's stage decomposition as a "thought process" bubble:
+    /// a numbered walk-through of how MANTIS staged and wired the graph. Each
+    /// stage maps to a labelled group on the canvas, so this narration and the
+    /// on-canvas annotation tell the same story.
+    /// </summary>
+    private void AddReasoningBubble(IReadOnlyList<GroupDef> groups)
+    {
+        if (groups == null || groups.Count == 0) return;
+
+        var sb = new System.Text.StringBuilder();
+        sb.Append("How I wired this, stage by stage:");
+
+        int n = 0;
+        foreach (var g in groups)
+        {
+            var name = string.IsNullOrWhiteSpace(g?.Name) ? "Stage" : g!.Name.Trim();
+            var reasoning = g?.Reasoning?.Trim() ?? "";
+            if (string.IsNullOrEmpty(reasoning) && string.IsNullOrWhiteSpace(g?.Name))
+                continue;
+
+            n++;
+            sb.Append("\n\n");
+            sb.Append(n);
+            sb.Append(".  ");
+            sb.Append(name);
+            if (!string.IsNullOrEmpty(reasoning))
+            {
+                sb.Append(" — ");
+                sb.Append(reasoning);
+            }
+        }
+
+        if (n == 0) return;
+        AddMessageBubble("MANTIS", "reasoning", sb.ToString());
+    }
+
     private Panel CreateBubble(string sender, string type, string text, DateTime ts)
     {
         Color bubbleBg, senderColor, textColor;
@@ -1186,6 +1366,12 @@ public class ChatPanel : Panel
                 senderColor = TextD;
                 textColor = Text2;
                 label = "System";
+                break;
+            case "reasoning":
+                bubbleBg = ReasoningBubbleBg;
+                senderColor = ReasoningAccent;
+                textColor = Text1;
+                label = "THOUGHT PROCESS";
                 break;
             default:
                 bubbleBg = AiBubbleBg;
@@ -1249,6 +1435,7 @@ public class ChatPanel : Panel
             "user" => Accent,
             "error" => ErrRed,
             "system" => TextD,
+            "reasoning" => ReasoningAccent,
             _ => AccentDim
         };
 
@@ -1491,6 +1678,26 @@ public class ChatPanel : Panel
         }
     }
 
+    /// <summary>
+    /// Splitters only have a valid size once the panel is laid out inside its host
+    /// window. On WPF (Windows), setting Position during construction — when the size is
+    /// still 0 — throws or collapses a pane, which surfaced as a BLANK panel. Applying
+    /// the initial split positions here, after load, fixes Windows while keeping the
+    /// macOS behaviour identical.
+    /// </summary>
+    protected override void OnLoadComplete(EventArgs e)
+    {
+        base.OnLoadComplete(e);
+        try
+        {
+            // Sidebar visible by default: give it its fixed width if there's room.
+            if (_outerSplitter.Panel1 != null && _outerSplitter.Width > SidebarWidth + 40)
+                _outerSplitter.Position = SidebarWidth;
+            // Model panel hidden by default (Panel2 == null) — inner splitter shows chat full-width.
+        }
+        catch { /* never let layout timing blank the panel */ }
+    }
+
     protected override void OnUnLoad(EventArgs e)
     {
         base.OnUnLoad(e);
@@ -1530,6 +1737,140 @@ public class ChatPanel : Panel
     private void OnSendClick(object? sender, EventArgs e) => _ = SendMessage();
 
     // ═══════════════════════════════════════════
+    //  REFERENCE-IMAGE ATTACHMENT  (image-to-script)
+    // ═══════════════════════════════════════════
+
+    private void OnAttachImageClick(object? sender, EventArgs e)
+    {
+        var dlg = new OpenFileDialog
+        {
+            Title = "Attach reference image",
+            MultiSelect = true
+        };
+        dlg.Filters.Add(new FileFilter("Images", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"));
+
+        if (dlg.ShowDialog(this) != DialogResult.Ok) return;
+
+        foreach (var path in dlg.Filenames)
+        {
+            try
+            {
+                var bytes = File.ReadAllBytes(path);
+                _pendingImages.Add(ImageData.FromBytes(bytes, MimeFromPath(path)));
+            }
+            catch (Exception ex)
+            {
+                AddMessageBubble("ERROR", "error", $"Couldn't read \"{Path.GetFileName(path)}\": {ex.Message}");
+            }
+        }
+        RefreshAttachmentBar();
+    }
+
+    private static string MimeFromPath(string path) =>
+        Path.GetExtension(path).ToLowerInvariant() switch
+        {
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".webp" => "image/webp",
+            ".gif"  => "image/gif",
+            ".bmp"  => "image/bmp",
+            _        => "image/png"
+        };
+
+    /// <summary>Re-render the pending-image chips; collapse the bar when empty.</summary>
+    private void RefreshAttachmentBar()
+    {
+        _attachmentBar.Items.Clear();
+
+        if (_pendingImages.Count == 0)
+        {
+            _attachmentBar.Visible = false;
+            return;
+        }
+        _attachmentBar.Visible = true;
+
+        for (int i = 0; i < _pendingImages.Count; i++)
+        {
+            var index = i;   // capture per-chip for the remove handler
+            _attachmentBar.Items.Add(BuildAttachmentChip(_pendingImages[i], index));
+        }
+    }
+
+    private Control BuildAttachmentChip(ImageData image, int index)
+    {
+        Control preview;
+        try
+        {
+            // Decode straight back from the stored base64 for a live thumbnail.
+            var bmp = new Bitmap(Convert.FromBase64String(image.Base64));
+            preview = new ImageView { Image = bmp, Width = 34, Height = 34 };
+        }
+        catch
+        {
+            preview = new Label
+            {
+                Text = "IMG",
+                Font = new Font(FontMonoFamily, FontMeta, FontStyle.Bold),
+                TextColor = Text2,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+        }
+
+        var remove = new Button
+        {
+            Text = "×",
+            Width = 22,
+            Height = 22,
+            BackgroundColor = BgSurface,
+            TextColor = Text2,
+            Font = new Font(FontBodyFamily, FontBody, FontStyle.Bold),
+            ToolTip = "Remove this image"
+        };
+        remove.Click += (_, _) =>
+        {
+            if (index < _pendingImages.Count) _pendingImages.RemoveAt(index);
+            RefreshAttachmentBar();
+        };
+
+        return new StackLayout
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 4,
+            Padding = new Padding(4),
+            BackgroundColor = BgInput,
+            VerticalContentAlignment = VerticalAlignment.Center,
+            Items = { preview, remove }
+        };
+    }
+
+    /// <summary>
+    /// Gate the attach affordance on the active model's vision capability. A
+    /// text-only model can't read images, so the button is disabled and any
+    /// already-attached references are dropped (with a note) rather than being
+    /// silently sent to a model that would ignore — or choke on — them.
+    /// </summary>
+    private void UpdateVisionAffordance()
+    {
+        var model = _service.ProviderManager.Active.AvailableModels
+            .FirstOrDefault(m => m.Id == _service.ProviderManager.Active.SelectedModel);
+        var supportsVision = model?.SupportsVision == true;
+
+        _attachButton.Enabled = supportsVision;
+        _attachButton.ToolTip = supportsVision
+            ? "Attach a reference image for the AI to reconstruct"
+            : "This model can't read images — switch to a vision model "
+              + "(Claude, GPT-4o, Gemini, or a local llava / qwen-vl) to attach references";
+
+        if (!supportsVision && _pendingImages.Count > 0)
+        {
+            _pendingImages.Clear();
+            RefreshAttachmentBar();
+            AddMessageBubble("MANTIS", "system",
+                "Removed the attached image(s) — the current model can't read images. "
+                + "Pick a vision-capable model to use image-to-script.");
+        }
+    }
+
+    // ═══════════════════════════════════════════
     //  EVENT WIRING
     // ═══════════════════════════════════════════
 
@@ -1547,6 +1888,14 @@ public class ChatPanel : Panel
             {
                 HideTypingIndicator();
                 AddMessageBubble("MANTIS", "ai", msg);
+            });
+
+        // ── Thought process: stage-by-stage narration of how MANTIS wired it ──
+        _service.OnReasoning += groups =>
+            Application.Instance.Invoke(() =>
+            {
+                HideTypingIndicator();
+                AddReasoningBubble(groups);
             });
 
         _service.OnError += msg =>
@@ -1601,7 +1950,13 @@ public class ChatPanel : Panel
     private async Task SendMessage()
     {
         var prompt = _inputBox.Text.Trim();
-        if (string.IsNullOrEmpty(prompt)) return;
+        var askMode = _askToggle.Checked == true;
+        var hasImages = !askMode && _pendingImages.Count > 0;   // images apply to building only
+
+        // An attached reference with no words is a valid build request ("rebuild this").
+        if (string.IsNullOrEmpty(prompt) && !hasImages) return;
+        if (string.IsNullOrEmpty(prompt) && hasImages)
+            prompt = "Reconstruct this reference image as a parametric Grasshopper definition.";
 
         if (!_service.HasApiKey && _activeProvider != "Ollama")
         {
@@ -1613,44 +1968,70 @@ public class ChatPanel : Panel
             return;
         }
 
+        // Snapshot + detach the attachments (build only) so the UI clears immediately
+        // and the request carries exactly what was attached at send time.
+        var images = hasImages ? new List<ImageData>(_pendingImages) : null;
+        if (hasImages)
+        {
+            _pendingImages.Clear();
+            RefreshAttachmentBar();
+        }
+
         _inputBox.Text = "";
         UpdatePlaceholder();
-        AddMessageBubble("You", "user", prompt);
+        AddMessageBubble("You", "user",
+            hasImages ? $"{prompt}\n\n[{images!.Count} reference image{(images.Count == 1 ? "" : "s")} attached]" : prompt);
         SetBusy(true);
         ShowTypingIndicator();
 
-        if (_service.ProviderManager.Active is OllamaClient ollama)
+        if (!askMode && _service.ProviderManager.Active is OllamaClient ollama)
         {
             var warning = ollama.GetModelQualityWarning();
             if (warning != null)
                 AddMessageBubble("MANTIS", "system", warning);
         }
 
-        var doc = EnsureGrasshopperDocument();
-        if (doc == null)
+        // Ask mode talks about Grasshopper / the current canvas and never builds, so it
+        // uses the open canvas if there is one but never forces a document into existence.
+        GH_Document? doc;
+        if (askMode)
         {
-            AddMessageBubble("ERROR", "error",
-                "No Grasshopper document found.\n" +
-                "Open Grasshopper first, then try again.");
-            SetBusy(false);
-            HideTypingIndicator();
-            HideBuildProgress();
-            return;
+            doc = Instances.ActiveCanvas?.Document;
         }
+        else
+        {
+            doc = EnsureGrasshopperDocument();
+            if (doc == null)
+            {
+                AddMessageBubble("ERROR", "error",
+                    "No Grasshopper document found.\n" +
+                    "Open Grasshopper first, then try again.");
+                SetBusy(false);
+                HideTypingIndicator();
+                HideBuildProgress();
+                return;
+            }
 
-        // Begin watching this document for component errors so the healing
-        // banner can offer one-click fixes after the build solves.
-        EnsureErrorMonitoring(doc);
+            // Begin watching this document for component errors so the healing
+            // banner can offer one-click fixes after the build solves.
+            EnsureErrorMonitoring(doc);
+        }
 
         _cts = new CancellationTokenSource();
         try
         {
-            if (_iterateToggle.Checked == true)
-                await _service.IterateAsync(prompt, doc, _cts.Token);
+            if (askMode)
+            {
+                var answer = await _service.AskAsync(prompt, doc, _cts.Token);
+                HideTypingIndicator();
+                AddMessageBubble("MANTIS", "ai", answer);
+            }
+            else if (_iterateToggle.Checked == true)
+                await _service.IterateAsync(prompt, doc!, _cts.Token, images);
             else if (_exploreToggle.Checked == true)
-                await _service.GenerateMultiSolutionAsync(prompt, doc, _cts.Token);
+                await _service.GenerateMultiSolutionAsync(prompt, doc!, _cts.Token, images);
             else
-                await _service.GenerateAsync(prompt, doc, streaming: true, _cts.Token);
+                await _service.GenerateAsync(prompt, doc!, streaming: true, _cts.Token, images);
         }
         catch (OperationCanceledException)
         {
@@ -1678,6 +2059,12 @@ public class ChatPanel : Panel
 
     private static GH_Document? EnsureGrasshopperDocument()
     {
+        // Surface the Grasshopper editor FIRST. GH is loaded in the background when the
+        // panel opens (so the catalog scan works), but its window stays hidden — so a
+        // build would place components and wires into a document the user never sees.
+        // ShowEditor brings the canvas up so the live build is actually visible.
+        GrasshopperGateway.ShowEditor();
+
         var activeDoc = Instances.ActiveCanvas?.Document;
         if (activeDoc != null) return activeDoc;
 

@@ -14,6 +14,19 @@ public class ConversationManager
         Trim();
     }
 
+    /// <summary>
+    /// Add a user turn that may carry reference images (Phase 1: image-to-script).
+    /// Falls back to a plain text turn when no images are attached, so the common
+    /// path is unchanged.
+    /// </summary>
+    public void AddUserMessage(string content, List<ImageData>? images)
+    {
+        _history.Add(images is { Count: > 0 }
+            ? ChatMessage.User(content, images)
+            : ChatMessage.User(content));
+        Trim();
+    }
+
     public void AddAssistantMessage(string content)
     {
         _history.Add(ChatMessage.Assistant(content));

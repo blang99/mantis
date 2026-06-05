@@ -39,28 +39,32 @@ public class GeminiClient : ILlmClient
             Id = "gemini-2.0-flash",
             DisplayName = "Gemini 2.0 Flash",
             Description = "Fast & free (default)",
-            IsFree = true
+            IsFree = true,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "gemini-2.5-flash",
             DisplayName = "Gemini 2.5 Flash",
             Description = "Latest fast model",
-            IsFree = true
+            IsFree = true,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "gemini-2.5-pro",
             DisplayName = "Gemini 2.5 Pro",
             Description = "Most capable",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "gemini-1.5-flash",
             DisplayName = "Gemini 1.5 Flash (legacy)",
             Description = "Stable fallback",
-            IsFree = true
+            IsFree = true,
+            SupportsVision = true
         }
     };
 
@@ -174,7 +178,7 @@ public class GeminiClient : ILlmClient
         var contents = messages.Select(m => new
         {
             role = m.Role == "assistant" ? "model" : "user",
-            parts = new[] { new { text = m.Content } }
+            parts = VisionPayload.GeminiParts(m)
         }).ToArray();
 
         var request = new

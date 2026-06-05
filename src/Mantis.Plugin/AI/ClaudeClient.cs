@@ -41,35 +41,40 @@ public class ClaudeClient : ILlmClient
             Id = "claude-sonnet-4-7",
             DisplayName = "Claude Sonnet 4.7",
             Description = "Best balance (recommended)",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "claude-opus-4-7",
             DisplayName = "Claude Opus 4.7",
             Description = "Most capable, slower",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "claude-haiku-4-7",
             DisplayName = "Claude Haiku 4.7",
             Description = "Fastest, cheap",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "claude-sonnet-4-6-20250514",
             DisplayName = "Claude Sonnet 4.6 (legacy)",
             Description = "Previous generation",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "claude-opus-4-6-20250514",
             DisplayName = "Claude Opus 4.6 (legacy)",
             Description = "Previous capable model",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         }
     };
 
@@ -154,7 +159,7 @@ public class ClaudeClient : ILlmClient
             model = _model,
             max_tokens = MaxTokens,
             system = systemPrompt,
-            messages = messages.Select(m => new { role = m.Role, content = m.Content }).ToArray()
+            messages = messages.Select(m => new { role = m.Role, content = VisionPayload.ClaudeContent(m) }).ToArray()
         };
 
         var json = JsonSerializer.Serialize(request);
@@ -226,13 +231,4 @@ public class ClaudeClient : ILlmClient
     {
         public ClaudeRateLimitException(string message) : base(message) { }
     }
-}
-
-public class ChatMessage
-{
-    public string Role { get; set; } = "user";
-    public string Content { get; set; } = "";
-
-    public static ChatMessage User(string content) => new() { Role = "user", Content = content };
-    public static ChatMessage Assistant(string content) => new() { Role = "assistant", Content = content };
 }

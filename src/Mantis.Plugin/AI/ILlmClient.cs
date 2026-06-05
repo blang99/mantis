@@ -34,4 +34,11 @@ public class ModelOption
     public string DisplayName { get; set; } = "";
     public string Description { get; set; } = "";
     public bool IsFree { get; set; }
+
+    /// <summary>
+    /// True when this model can accept reference images (Phase 1: image-to-script).
+    /// Drives the chat panel's attach-image affordance — it only lights up when the
+    /// selected model can actually see the attachment. Text-only models stay false.
+    /// </summary>
+    public bool SupportsVision { get; set; }
 }

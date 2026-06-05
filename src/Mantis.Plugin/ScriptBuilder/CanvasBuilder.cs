@@ -67,6 +67,10 @@ public class CanvasBuilder
         // with a sensible default so the graph resolves with no warnings.
         CanvasRepair.SatisfyRequiredInputs(placed.Values);
 
+        // Annotate the workflow: wrap each logical stage in a labelled,
+        // tinted GH_Group so the generated graph reads like an expert built it.
+        CanvasGrouping.Apply(document, script, placed);
+
         document.NewSolution(false);
         return result;
     }

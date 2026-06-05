@@ -12,6 +12,7 @@ public class StreamingCanvasBuilder : IDisposable
     private readonly LayoutEngine _layout;
     private readonly Dictionary<int, IGH_DocumentObject> _placed = new();
     private readonly Queue<ConnectionDef> _pendingWires = new();
+    private readonly List<Guid> _groupGuids = new();
     private GH_Document? _document;
     private string? _undoName;
 
@@ -28,7 +29,7 @@ public class StreamingCanvasBuilder : IDisposable
     /// iteration rebuild, so "build on top" never duplicates components.
     /// </summary>
     public IReadOnlyCollection<Guid> PlacedGuids =>
-        _placed.Values.Select(o => o.InstanceGuid).ToList();
+        _placed.Values.Select(o => o.InstanceGuid).Concat(_groupGuids).ToList();
 
     public StreamingCanvasBuilder(ComponentFactory factory, LayoutEngine layout)
     {
@@ -42,6 +43,7 @@ public class StreamingCanvasBuilder : IDisposable
         _undoName = undoName;
         _placed.Clear();
         _pendingWires.Clear();
+        _groupGuids.Clear();
         _document.UndoUtil.RecordEvent(new Grasshopper.Kernel.Undo.GH_UndoRecord(undoName));
     }
 
@@ -149,6 +151,11 @@ public class StreamingCanvasBuilder : IDisposable
             // data" warnings.
             CanvasRepair.SatisfyRequiredInputs(_placed.Values);
 
+            // Annotate the workflow: wrap each logical stage in a labelled,
+            // tinted GH_Group. Track the created group GUIDs so an iteration
+            // rebuild removes them too (otherwise old group boxes orphan).
+            _groupGuids.AddRange(CanvasGrouping.Apply(doc, script, _placed));
+
             // Trigger a real solution so geometry actually computes and shows in Rhino
             doc.NewSolution(false);
             ForceCanvasRedraw();
@@ -251,5 +258,6 @@ public class StreamingCanvasBuilder : IDisposable
     {
         _placed.Clear();
         _pendingWires.Clear();
+        _groupGuids.Clear();
     }
 }

@@ -52,12 +52,12 @@ public class SettingsDialog : Dialog
         {
             Text = GetApiKeyLabel(),
             TextColor = Text2,
-            Font = new Font("sans-serif", 10)
+            Font = new Font("Space Grotesk", 10)
         };
         _apiKeyHint = new Label
         {
             TextColor = AccentDim,
-            Font = new Font("JetBrains Mono, Menlo, monospace", 9)
+            Font = new Font("JetBrains Mono", 9)
         };
         LoadApiKeyHint();
 
@@ -93,7 +93,7 @@ public class SettingsDialog : Dialog
                 new Label
                 {
                     Text = "SETTINGS",
-                    Font = new Font("sans-serif", 12, FontStyle.Bold),
+                    Font = new Font("Space Grotesk", 12, FontStyle.Bold),
                     TextColor = Accent
                 }
             }
@@ -111,7 +111,7 @@ public class SettingsDialog : Dialog
                 new Label
                 {
                     Text = "AI PROVIDER",
-                    Font = new Font("JetBrains Mono, Menlo, monospace", 8),
+                    Font = new Font("JetBrains Mono", 8),
                     TextColor = TextD
                 },
                 _providerPicker
@@ -130,7 +130,7 @@ public class SettingsDialog : Dialog
                 new Label
                 {
                     Text = "AUTHENTICATION",
-                    Font = new Font("JetBrains Mono, Menlo, monospace", 8),
+                    Font = new Font("JetBrains Mono", 8),
                     TextColor = TextD
                 },
                 _apiKeyPanel
@@ -149,31 +149,31 @@ public class SettingsDialog : Dialog
                 new Label
                 {
                     Text = "GET API KEYS",
-                    Font = new Font("JetBrains Mono, Menlo, monospace", 8),
+                    Font = new Font("JetBrains Mono", 8),
                     TextColor = TextD
                 },
                 new Label
                 {
                     Text = "Claude  console.anthropic.com",
-                    Font = new Font("JetBrains Mono, Menlo, monospace", 9),
+                    Font = new Font("JetBrains Mono", 9),
                     TextColor = AccentDim
                 },
                 new Label
                 {
                     Text = "Gemini  aistudio.google.com",
-                    Font = new Font("JetBrains Mono, Menlo, monospace", 9),
+                    Font = new Font("JetBrains Mono", 9),
                     TextColor = AccentDim
                 },
                 new Label
                 {
                     Text = "OpenRouter  openrouter.ai",
-                    Font = new Font("JetBrains Mono, Menlo, monospace", 9),
+                    Font = new Font("JetBrains Mono", 9),
                     TextColor = AccentDim
                 },
                 new Label
                 {
                     Text = "Ollama  localhost (no key needed)",
-                    Font = new Font("JetBrains Mono, Menlo, monospace", 9),
+                    Font = new Font("JetBrains Mono", 9),
                     TextColor = AccentDim
                 }
             }
@@ -255,13 +255,13 @@ public class SettingsDialog : Dialog
                     {
                         Text = "◆ Ollama runs locally — no internet, no API key",
                         TextColor = Accent,
-                        Font = new Font("JetBrains Mono, Menlo, monospace", 10)
+                        Font = new Font("JetBrains Mono", 10)
                     },
                     new Label
                     {
                         Text = "Ensure Ollama is running at localhost:11434",
                         TextColor = Text2,
-                        Font = new Font("sans-serif", 9)
+                        Font = new Font("Space Grotesk", 9)
                     }
                 }
             };

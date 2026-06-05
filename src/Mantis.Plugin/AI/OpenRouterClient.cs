@@ -75,7 +75,8 @@ public class OpenRouterClient : ILlmClient
             Id = "google/gemini-2.0-flash-exp:free",
             DisplayName = "Gemini 2.0 Flash Exp (Free)",
             Description = "Fast & free",
-            IsFree = true
+            IsFree = true,
+            SupportsVision = true
         },
         new ModelOption
         {
@@ -89,7 +90,8 @@ public class OpenRouterClient : ILlmClient
             Id = "meta-llama/llama-4-maverick:free",
             DisplayName = "Llama 4 Maverick (Free)",
             Description = "Latest Meta open model",
-            IsFree = true
+            IsFree = true,
+            SupportsVision = true
         },
         new ModelOption
         {
@@ -105,28 +107,32 @@ public class OpenRouterClient : ILlmClient
             Id = "anthropic/claude-sonnet-4.7",
             DisplayName = "Claude Sonnet 4.7",
             Description = "Anthropic premium",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "anthropic/claude-opus-4.7",
             DisplayName = "Claude Opus 4.7",
             Description = "Most capable Claude",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "openai/gpt-4o",
             DisplayName = "GPT-4o",
             Description = "OpenAI flagship",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "openai/gpt-4o-mini",
             DisplayName = "GPT-4o Mini",
             Description = "Fast OpenAI",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
@@ -140,7 +146,8 @@ public class OpenRouterClient : ILlmClient
             Id = "google/gemini-2.5-pro",
             DisplayName = "Gemini 2.5 Pro",
             Description = "Google premium",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
@@ -230,7 +237,7 @@ public class OpenRouterClient : ILlmClient
             new { role = "system", content = systemPrompt }
         };
         allMessages.AddRange(
-            messages.Select(m => (object)new { role = m.Role, content = m.Content }));
+            messages.Select(m => (object)new { role = m.Role, content = VisionPayload.OpenAiContent(m) }));
 
         // Use OpenAI-compatible JSON response format
         var request = new

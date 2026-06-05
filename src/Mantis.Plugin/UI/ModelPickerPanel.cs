@@ -21,6 +21,9 @@ public class ModelPickerPanel : Panel
     private readonly Label _apiKeyStatus;
     private readonly Label _providerStatus;
     private readonly Button _saveKeyButton;
+    private readonly TextArea _customInstructionsBox;
+    private readonly Label _customInstructionsStatus;
+    private readonly Button _saveInstructionsButton;
     private readonly Scrollable _outerScroll;
 
     public event Action? OnClose;
@@ -80,19 +83,19 @@ public class ModelPickerPanel : Panel
         {
             BackgroundColor = BgInput,
             TextColor = Text1,
-            Font = new Font("sans-serif", FontModel)
+            Font = new Font("Space Grotesk", FontModel)
         };
 
         _apiKeyStatus = new Label
         {
-            Font = new Font("JetBrains Mono, Menlo, monospace", FontHint),
+            Font = new Font("JetBrains Mono", FontHint),
             TextColor = AccentDim,
             Wrap = WrapMode.Word
         };
 
         _providerStatus = new Label
         {
-            Font = new Font("sans-serif", FontHint),
+            Font = new Font("Space Grotesk", FontHint),
             TextColor = Text2,
             Wrap = WrapMode.Word
         };
@@ -104,9 +107,37 @@ public class ModelPickerPanel : Panel
             Height = 32,
             BackgroundColor = Accent,
             TextColor = Bg,
-            Font = new Font("sans-serif", FontHint, FontStyle.Bold)
+            Font = new Font("Space Grotesk", FontHint, FontStyle.Bold)
         };
         _saveKeyButton.Click += OnSaveKey;
+
+        _customInstructionsBox = new TextArea
+        {
+            BackgroundColor = BgInput,
+            TextColor = Text1,
+            Font = new Font("Space Grotesk", FontModel),
+            Height = 84,
+            Wrap = true,
+            Text = MantisSettings.Get(MantisSettings.CustomInstructionsKey) ?? ""
+        };
+
+        _customInstructionsStatus = new Label
+        {
+            Font = new Font("JetBrains Mono", FontHint),
+            TextColor = AccentDim,
+            Wrap = WrapMode.Word
+        };
+
+        _saveInstructionsButton = new Button
+        {
+            Text = "Save",
+            Width = 80,
+            Height = 32,
+            BackgroundColor = Accent,
+            TextColor = Bg,
+            Font = new Font("Space Grotesk", FontHint, FontStyle.Bold)
+        };
+        _saveInstructionsButton.Click += OnSaveInstructions;
 
         _outerScroll = new Scrollable
         {
@@ -134,7 +165,7 @@ public class ModelPickerPanel : Panel
             Height = 28,
             BackgroundColor = BgSurface,
             TextColor = Text2,
-            Font = new Font("sans-serif", FontHint)
+            Font = new Font("Space Grotesk", FontHint)
         };
         closeButton.Click += (_, _) => OnClose?.Invoke();
 
@@ -149,7 +180,7 @@ public class ModelPickerPanel : Panel
                 new Label
                 {
                     Text = "AI Model",
-                    Font = new Font("sans-serif", FontTitle, FontStyle.Bold),
+                    Font = new Font("Space Grotesk", FontTitle, FontStyle.Bold),
                     TextColor = Accent,
                     VerticalAlignment = VerticalAlignment.Center
                 },
@@ -172,7 +203,7 @@ public class ModelPickerPanel : Panel
                 new Label
                 {
                     Text = "PROVIDER",
-                    Font = new Font("JetBrains Mono, Menlo, monospace", FontSection, FontStyle.Bold),
+                    Font = new Font("JetBrains Mono", FontSection, FontStyle.Bold),
                     TextColor = TextD
                 },
                 _providerList,
@@ -192,7 +223,7 @@ public class ModelPickerPanel : Panel
                 new Label
                 {
                     Text = "MODEL",
-                    Font = new Font("JetBrains Mono, Menlo, monospace", FontSection, FontStyle.Bold),
+                    Font = new Font("JetBrains Mono", FontSection, FontStyle.Bold),
                     TextColor = TextD
                 },
                 _modelList
@@ -211,7 +242,7 @@ public class ModelPickerPanel : Panel
                 new Label
                 {
                     Text = "API KEY",
-                    Font = new Font("JetBrains Mono, Menlo, monospace", FontSection, FontStyle.Bold),
+                    Font = new Font("JetBrains Mono", FontSection, FontStyle.Bold),
                     TextColor = TextD
                 },
                 _apiKeyStatus,
@@ -229,6 +260,43 @@ public class ModelPickerPanel : Panel
             }
         };
 
+        // Custom instructions — standing context injected into every system prompt.
+        var instructionsSection = new StackLayout
+        {
+            Spacing = 8,
+            Padding = new Padding(14, 10, 14, 16),
+            BackgroundColor = Bg,
+            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+            Items =
+            {
+                new Label
+                {
+                    Text = "CUSTOM INSTRUCTIONS",
+                    Font = new Font("JetBrains Mono", FontSection, FontStyle.Bold),
+                    TextColor = TextD
+                },
+                new Label
+                {
+                    Text = "Standing context added to every request — e.g. units, preferred plugins, house style.",
+                    Font = new Font("Space Grotesk", FontHint),
+                    TextColor = Text2,
+                    Wrap = WrapMode.Word
+                },
+                _customInstructionsBox,
+                new StackLayout
+                {
+                    Orientation = Orientation.Horizontal,
+                    Spacing = 8,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Items =
+                    {
+                        new StackLayoutItem(_customInstructionsStatus, expand: true),
+                        _saveInstructionsButton
+                    }
+                }
+            }
+        };
+
         return new StackLayout
         {
             HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -239,9 +307,20 @@ public class ModelPickerPanel : Panel
                 sep1,
                 providerSection,
                 modelSection,
-                keySection
+                keySection,
+                instructionsSection
             }
         };
+    }
+
+    private void OnSaveInstructions(object? sender, EventArgs e)
+    {
+        var text = _customInstructionsBox.Text?.Trim() ?? "";
+        MantisSettings.Set(MantisSettings.CustomInstructionsKey, text);
+        _customInstructionsStatus.Text = string.IsNullOrEmpty(text)
+            ? "Cleared — no standing instructions."
+            : "✓ Saved — applied to every request.";
+        _customInstructionsStatus.TextColor = Accent;
     }
 
     private Control BuildHelpLinks()
@@ -255,7 +334,7 @@ public class ModelPickerPanel : Panel
                 new Label
                 {
                     Text = "Get a free API key:",
-                    Font = new Font("sans-serif", FontHint, FontStyle.Bold),
+                    Font = new Font("Space Grotesk", FontHint, FontStyle.Bold),
                     TextColor = TextD
                 },
                 MakeHelpLine("OpenRouter", "openrouter.ai/keys", "most free models"),
@@ -275,7 +354,7 @@ public class ModelPickerPanel : Panel
         return new Label
         {
             Text = text,
-            Font = new Font("JetBrains Mono, Menlo, monospace", FontHint - 1),
+            Font = new Font("JetBrains Mono", FontHint - 1),
             TextColor = AccentDim,
             Wrap = WrapMode.Word
         };
@@ -312,7 +391,7 @@ public class ModelPickerPanel : Panel
             var nameLabel = new Label
             {
                 Text = providerName,
-                Font = new Font("sans-serif", FontModel, FontStyle.Bold),
+                Font = new Font("Space Grotesk", FontModel, FontStyle.Bold),
                 TextColor = providerName == _selectedProvider ? Accent : Text1,
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -324,13 +403,13 @@ public class ModelPickerPanel : Panel
                 Content = new Label
                 {
                     Text = badgeText,
-                    Font = new Font("JetBrains Mono, Menlo, monospace", FontBadge, FontStyle.Bold),
+                    Font = new Font("JetBrains Mono", FontBadge, FontStyle.Bold),
                     TextColor = badgeFg
                 }
             };
 
             var checkMark = providerName == _selectedProvider
-                ? new Label { Text = "✓", Font = new Font("sans-serif", FontModel, FontStyle.Bold), TextColor = Accent }
+                ? new Label { Text = "✓", Font = new Font("Space Grotesk", FontModel, FontStyle.Bold), TextColor = Accent }
                 : new Label { Text = " " };
 
             var row = new StackLayout
@@ -382,7 +461,7 @@ public class ModelPickerPanel : Panel
                 Text = _selectedProvider == "Ollama"
                     ? "No models installed.\nRun: ollama pull llama3"
                     : "No models available.",
-                Font = new Font("sans-serif", FontModel),
+                Font = new Font("Space Grotesk", FontModel),
                 TextColor = Amber,
                 Wrap = WrapMode.Word
             });
@@ -416,7 +495,7 @@ public class ModelPickerPanel : Panel
             Content = new Label
             {
                 Text = title,
-                Font = new Font("JetBrains Mono, Menlo, monospace", FontHint, FontStyle.Bold),
+                Font = new Font("JetBrains Mono", FontHint, FontStyle.Bold),
                 TextColor = color
             }
         };
@@ -429,14 +508,14 @@ public class ModelPickerPanel : Panel
         var nameLabel = new Label
         {
             Text = m.DisplayName,
-            Font = new Font("sans-serif", FontModel, FontStyle.Bold),
+            Font = new Font("Space Grotesk", FontModel, FontStyle.Bold),
             TextColor = isSelected ? Accent : Text1
         };
 
         var descLabel = new Label
         {
             Text = m.Description,
-            Font = new Font("sans-serif", FontModelDesc),
+            Font = new Font("Space Grotesk", FontModelDesc),
             TextColor = Text2,
             Wrap = WrapMode.Word
         };
@@ -444,7 +523,7 @@ public class ModelPickerPanel : Panel
         var idLabel = new Label
         {
             Text = m.Id,
-            Font = new Font("JetBrains Mono, Menlo, monospace", FontModelId),
+            Font = new Font("JetBrains Mono", FontModelId),
             TextColor = TextD,
             Wrap = WrapMode.Word
         };
@@ -456,13 +535,13 @@ public class ModelPickerPanel : Panel
             Content = new Label
             {
                 Text = m.IsFree ? "FREE" : "PAID",
-                Font = new Font("JetBrains Mono, Menlo, monospace", FontBadge, FontStyle.Bold),
+                Font = new Font("JetBrains Mono", FontBadge, FontStyle.Bold),
                 TextColor = m.IsFree ? FreeBadgeText : PaidBadgeText
             }
         };
 
         var checkMark = isSelected
-            ? new Label { Text = "✓", Font = new Font("sans-serif", FontModel, FontStyle.Bold), TextColor = Accent }
+            ? new Label { Text = "✓", Font = new Font("Space Grotesk", FontModel, FontStyle.Bold), TextColor = Accent }
             : new Label { Text = " " };
 
         var textColumn = new StackLayout

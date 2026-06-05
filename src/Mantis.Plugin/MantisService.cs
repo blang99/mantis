@@ -37,6 +37,14 @@ public class MantisService : IDisposable
     public event Action? OnBuildComplete;
 
     /// <summary>
+    /// Fired once the model's stage decomposition is known, before/while the
+    /// canvas builds. The UI renders these as the "thought process" narration —
+    /// MANTIS explaining, stage by stage, how it wired the graph. The same
+    /// stages are drawn as labelled groups on the canvas.
+    /// </summary>
+    public event Action<IReadOnlyList<GroupDef>>? OnReasoning;
+
+    /// <summary>
     /// Fired when a multi-solution request yields 2+ buildable alternatives.
     /// The UI surfaces these as comparison tabs; the user picks one to apply
     /// via <see cref="ApplySolutionAsync"/>.
@@ -101,7 +109,8 @@ public class MantisService : IDisposable
 
     public async Task GenerateAsync(
         string userPrompt, GH_Document document,
-        bool streaming = true, CancellationToken ct = default)
+        bool streaming = true, CancellationToken ct = default,
+        List<ImageData>? images = null)
     {
         // AUTO-ITERATE: if a previous Mantis build is still on the canvas, treat
         // this request as a follow-up that BUILDS ON TOP of it. Without this, a
@@ -111,13 +120,15 @@ public class MantisService : IDisposable
         // override for extending graphs Mantis did not author.
         if (HasPreviousBuildOnCanvas(document))
         {
-            await IterateAsync(userPrompt, document, ct);
+            await IterateAsync(userPrompt, document, ct, images);
             return;
         }
 
-        _conversation.AddUserMessage(userPrompt);
+        bool hasImages = images is { Count: > 0 };
+        _conversation.AddUserMessage(userPrompt, images);
         var systemPrompt = _promptBuilder.BuildSystemPrompt(
-            PromptMode.Generate, null, userPrompt, _providerManager.Active.ContextWindowTokens);
+            PromptMode.Generate, null, userPrompt, _providerManager.Active.ContextWindowTokens,
+            hasImages: hasImages);
         var messages = _conversation.GetMessagesForApi();
 
         OnStatus?.Invoke("Generating script...");
@@ -164,13 +175,24 @@ public class MantisService : IDisposable
             // ROBUSTNESS: catch hallucinated component names and let the model
             // correct them ONCE before building, so a single bad name doesn't
             // break a whole sub-chain of a complex graph.
-            script = await ValidateAndCorrectAsync(script, PromptMode.Generate, null, userPrompt, ct);
+            script = await ValidateAndCorrectAsync(script, PromptMode.Generate, null, userPrompt, ct, hasImages);
+
+            // STRUCTURE CHECK: surface any structural problems the name-correction
+            // pass can't fix (dangling wires, components left out of every stage),
+            // so the user knows before the canvas paints. Non-blocking — we still
+            // build whatever is valid.
+            ReportStructuralIssues(script);
 
             // Show what was generated
             var summary = $"Built \"{script.SolutionName}\" — {script.Components.Count} components, {script.Connections.Count} connections";
             OnStatus?.Invoke(summary);
             if (!string.IsNullOrWhiteSpace(script.Advice))
                 OnAdvice?.Invoke(script.Advice);
+
+            // THOUGHT PROCESS: narrate the stage-by-stage wiring while the canvas
+            // builds. The same stages are drawn as labelled groups on the canvas.
+            if (script.Groups.Count > 0)
+                OnReasoning?.Invoke(script.Groups);
 
             // Show required plugins if any
             if (script.RequiredPlugins.Count > 0)
@@ -298,71 +320,162 @@ public class MantisService : IDisposable
     }
 
     /// <summary>
-    /// Detect component names the model invented that don't resolve to a real
-    /// catalog component, then ask the model — exactly once — to correct them
-    /// using the closest valid names. Returns the corrected script if the retry
-    /// reduced the number of unknown names, otherwise the original (so we still
-    /// build whatever IS valid). This is the main robustness lever for complex
-    /// requests: without it, one hallucinated name silently drops a component and
-    /// cascades into broken wiring across a whole sub-chain.
+    /// Validate → repair → re-verify loop. Runs the pure structural+port validator
+    /// and, while build-affecting ERRORS remain, asks the model to re-output corrected
+    /// JSON — feeding back the EXACT problems: hallucinated names (with catalog
+    /// suggestions), out-of-range port indices (with the valid range), and dangling or
+    /// duplicate ids. Each round is accepted only if it STRICTLY reduces the error
+    /// count, so a bad correction can never make the script worse; after the round cap
+    /// we build the best script seen. This is the main robustness lever for complex
+    /// requests: without it a single hallucinated name or mis-indexed wire silently
+    /// breaks a whole sub-chain of the graph.
     /// </summary>
     private async Task<ScriptDefinition> ValidateAndCorrectAsync(
-        ScriptDefinition script, PromptMode mode, string? canvasState, string? userRequest, CancellationToken ct)
+        ScriptDefinition script, PromptMode mode, string? canvasState, string? userRequest,
+        CancellationToken ct, bool hasImages = false)
     {
-        var unresolved = script.Components
-            .Select(c => c.Name)
-            .Where(n => !_factory.CanResolve(n))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
+        const int maxRounds = 2;
 
-        if (unresolved.Count == 0) return script;
+        var errors = ScriptValidator.Errors(
+            ScriptValidator.Validate(script, _factory.CanResolve, PortArityOf));
 
-        OnStatus?.Invoke($"Fixing {unresolved.Count} unrecognized component name(s)...");
+        for (int round = 1; round <= maxRounds && errors.Count > 0; round++)
+        {
+            ct.ThrowIfCancellationRequested();
+            OnStatus?.Invoke($"Repairing {errors.Count} issue(s) before building (pass {round}/{maxRounds})...");
 
+            ScriptDefinition? corrected;
+            try
+            {
+                var systemPrompt = _promptBuilder.BuildSystemPrompt(
+                    mode, canvasState, userRequest, _providerManager.Active.ContextWindowTokens,
+                    hasImages: hasImages);
+                _conversation.AddUserMessage(BuildRepairInstructions(errors, script));
+                var messages = _conversation.GetMessagesForApi();
+                var response = await _providerManager.Active.SendAsync(systemPrompt, messages, ct);
+                _conversation.AddAssistantMessage(response);
+                corrected = _parser.ParseComplete(response);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch
+            {
+                break; // repair is best-effort; build the best script we have
+            }
+
+            if (corrected == null || corrected.Components.Count == 0)
+                break;
+
+            var correctedErrors = ScriptValidator.Errors(
+                ScriptValidator.Validate(corrected, _factory.CanResolve, PortArityOf));
+
+            // Accept ONLY a strict improvement; otherwise keep the best and stop so a
+            // worse re-roll can't regress the script.
+            if (correctedErrors.Count < errors.Count)
+            {
+                script = corrected;
+                errors = correctedErrors;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return script;
+    }
+
+    /// <summary>
+    /// Catalog-backed port arity for the validator: given a component name, the
+    /// (input count, output count) advertised by the same catalog the model was
+    /// prompted with — so an out-of-range wire is always the model violating its own
+    /// contract. Null when the name doesn't resolve (the name check handles that).
+    /// </summary>
+    private (int Inputs, int Outputs)? PortArityOf(string name)
+    {
+        var info = _registry.FindByName(name);
+        return info == null ? null : (info.Inputs.Count, info.Outputs.Count);
+    }
+
+    /// <summary>
+    /// Turn validator ERRORS into a precise, model-actionable correction prompt:
+    /// names get catalog suggestions, ports get the valid index range, structural
+    /// problems get a concrete instruction. Capped so the prompt stays compact.
+    /// </summary>
+    private string BuildRepairInstructions(List<ScriptIssue> errors, ScriptDefinition script)
+    {
         var sb = new System.Text.StringBuilder();
-        sb.AppendLine("Your previous JSON used component names that are NOT in the catalog and cannot be placed:");
-        foreach (var name in unresolved)
-        {
-            var suggestions = _registry.SuggestNames(name, 5);
-            var hint = suggestions.Count > 0
-                ? string.Join(", ", suggestions)
-                : "(no close match — choose a different catalog component that achieves the same result)";
-            sb.AppendLine($"  - \"{name}\"  -> closest valid catalog names: {hint}");
-        }
-        sb.AppendLine("Re-output the COMPLETE corrected JSON using ONLY exact catalog names. Keep every valid component, id, and connection unchanged. Output ONLY the JSON object.");
+        sb.AppendLine("Your previous JSON has problems that MUST be fixed before it can be built:");
 
-        try
+        foreach (var e in errors.Take(12))
         {
-            var systemPrompt = _promptBuilder.BuildSystemPrompt(
-                mode, canvasState, userRequest, _providerManager.Active.ContextWindowTokens);
-            _conversation.AddUserMessage(sb.ToString());
-            var messages = _conversation.GetMessagesForApi();
-            var corrected = await _providerManager.Active.SendAsync(systemPrompt, messages, ct);
-            _conversation.AddAssistantMessage(corrected);
+            switch (e.Code)
+            {
+                case "UNRESOLVABLE_NAME":
+                {
+                    var comp = e.ComponentId is { } cid
+                        ? script.Components.FirstOrDefault(c => c.Id == cid)
+                        : null;
+                    var badName = comp?.Name ?? "";
+                    var suggestions = _registry.SuggestNames(badName, 5);
+                    var hint = suggestions.Count > 0
+                        ? string.Join(", ", suggestions)
+                        : "(no close match — pick a different catalog component that achieves the same result)";
+                    sb.AppendLine($"  - Component id {e.ComponentId}: \"{badName}\" is NOT in the catalog. Use one of: {hint}");
+                    break;
+                }
+                case "PORT_OUT_OF_RANGE":
+                    sb.AppendLine($"  - {e.Message} Use a port index within range, or rewire to the correct port.");
+                    break;
+                case "DANGLING_CONNECTION":
+                    sb.AppendLine($"  - {e.Message} Add the missing component or delete that connection.");
+                    break;
+                case "DUPLICATE_ID":
+                    sb.AppendLine($"  - {e.Message} Give every component a unique id and update its connections to match.");
+                    break;
+                default:
+                    sb.AppendLine($"  - {e.Message}");
+                    break;
+            }
+        }
 
-            var correctedScript = _parser.ParseComplete(corrected);
-            if (correctedScript == null || correctedScript.Components.Count == 0)
-                return script;
+        sb.AppendLine();
+        sb.AppendLine("Re-output the COMPLETE corrected JSON using ONLY exact catalog names and valid 0-based port indices. " +
+                      "Keep every correct component, id, and connection unchanged. Output ONLY the JSON object.");
+        return sb.ToString();
+    }
 
-            var stillBad = correctedScript.Components.Count(c => !_factory.CanResolve(c.Name));
-            return stillBad < unresolved.Count ? correctedScript : script;
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch
-        {
-            return script; // correction is best-effort; fall back to the original
-        }
+    /// <summary>
+    /// Run the pure structural validator (the same invariants the headless
+    /// simulation enforces) and surface any build-affecting ERRORS to the user.
+    /// Cosmetic warnings (e.g. a stage missing narration) are kept quiet to avoid
+    /// noise; the builder already skips wires it can't make.
+    /// </summary>
+    private void ReportStructuralIssues(ScriptDefinition script)
+    {
+        var errors = ScriptValidator.Errors(
+            ScriptValidator.Validate(script, _factory.CanResolve, PortArityOf));
+        if (errors.Count == 0) return;
+
+        var shown = errors.Take(6).Select(e => "  - " + e.Message);
+        var more = errors.Count > 6 ? $"\n  …and {errors.Count - 6} more." : "";
+        OnAdvice?.Invoke(
+            $"Heads up — {errors.Count} structural issue(s) detected before building:\n" +
+            string.Join("\n", shown) + more +
+            "\nMANTIS will build everything valid; any unresolved parts may be missing.");
     }
 
     public async Task GenerateMultiSolutionAsync(
-        string userPrompt, GH_Document document, CancellationToken ct = default)
+        string userPrompt, GH_Document document, CancellationToken ct = default,
+        List<ImageData>? images = null)
     {
-        _conversation.AddUserMessage(userPrompt);
+        bool hasImages = images is { Count: > 0 };
+        _conversation.AddUserMessage(userPrompt, images);
         var systemPrompt = _promptBuilder.BuildSystemPrompt(
-            PromptMode.MultiSolution, null, userPrompt, _providerManager.Active.ContextWindowTokens);
+            PromptMode.MultiSolution, null, userPrompt,
+            _providerManager.Active.ContextWindowTokens, hasImages: hasImages);
         var messages = _conversation.GetMessagesForApi();
 
         OnStatus?.Invoke("Generating multiple solutions...");
@@ -428,6 +541,10 @@ public class MantisService : IDisposable
         var script = _pendingSolutions.Solutions[index];
         OnStatus?.Invoke($"Applying \"{script.SolutionName}\"...");
 
+        // THOUGHT PROCESS: narrate how the chosen alternative is staged/wired.
+        if (script.Groups.Count > 0)
+            OnReasoning?.Invoke(script.Groups);
+
         try
         {
             await BuildScriptLiveAsync(script, document, ct);
@@ -443,12 +560,15 @@ public class MantisService : IDisposable
     }
 
     public async Task IterateAsync(
-        string userPrompt, GH_Document document, CancellationToken ct = default)
+        string userPrompt, GH_Document document, CancellationToken ct = default,
+        List<ImageData>? images = null)
     {
+        bool hasImages = images is { Count: > 0 };
         var canvasState = _serializer.Serialize(document);
-        _conversation.AddUserMessage(userPrompt);
+        _conversation.AddUserMessage(userPrompt, images);
         var systemPrompt = _promptBuilder.BuildSystemPrompt(
-            PromptMode.Iterate, canvasState, userPrompt, _providerManager.Active.ContextWindowTokens);
+            PromptMode.Iterate, canvasState, userPrompt, _providerManager.Active.ContextWindowTokens,
+            hasImages: hasImages);
         var messages = _conversation.GetMessagesForApi();
 
         OnStatus?.Invoke("Iterating on current script...");
@@ -472,7 +592,12 @@ public class MantisService : IDisposable
 
             // ROBUSTNESS: correct any hallucinated component names once before we
             // tear down and rebuild, so iterations stay buildable too.
-            script = await ValidateAndCorrectAsync(script, PromptMode.Iterate, canvasState, userPrompt, ct);
+            script = await ValidateAndCorrectAsync(script, PromptMode.Iterate, canvasState, userPrompt, ct, hasImages);
+            ReportStructuralIssues(script);
+
+            // THOUGHT PROCESS: narrate how the revised graph is staged/wired.
+            if (script.Groups.Count > 0)
+                OnReasoning?.Invoke(script.Groups);
 
             // The model returns the COMPLETE updated graph (existing + changes).
             // Remove the previous Mantis graph first so we build on top without
@@ -531,6 +656,33 @@ public class MantisService : IDisposable
         {
             OnError?.Invoke($"Healing failed: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// "Ask" mode (parity with Raven's Ask vs Edit): answer a Grasshopper /
+    /// parametric-design question in prose WITHOUT building anything. When a non-empty
+    /// canvas is open it is serialized in as context, so "what does my script do?" or
+    /// "why is this red?" can refer to the actual graph. The turn joins the shared
+    /// conversation history so the user can ask follow-ups — or discuss, then switch off
+    /// Ask and build what was just discussed.
+    /// </summary>
+    public async Task<string> AskAsync(
+        string question, GH_Document? document, CancellationToken ct = default)
+    {
+        OnStatus?.Invoke("Thinking...");
+
+        string? canvasState = null;
+        if (document != null && document.ObjectCount > 0)
+            canvasState = _serializer.Serialize(document);
+
+        var systemPrompt = _promptBuilder.BuildAskPrompt(
+            canvasState, question, _providerManager.Active.ContextWindowTokens);
+
+        _conversation.AddUserMessage(question);
+        var messages = _conversation.GetMessagesForApi();
+        var answer = await _providerManager.Active.SendAsync(systemPrompt, messages, ct);
+        _conversation.AddAssistantMessage(answer);
+        return answer;
     }
 
     public async Task<string> ExplainComponentAsync(

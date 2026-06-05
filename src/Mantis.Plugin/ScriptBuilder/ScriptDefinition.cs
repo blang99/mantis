@@ -21,6 +21,30 @@ public class ScriptDefinition
 
     [JsonPropertyName("requiredPlugins")]
     public List<string> RequiredPlugins { get; set; } = new();
+
+    [JsonPropertyName("groups")]
+    public List<GroupDef> Groups { get; set; } = new();
+}
+
+/// <summary>
+/// A logical stage of the script. Each group becomes one GH_Group on the
+/// canvas (the visual workflow annotation) and also carries the reasoning
+/// shown in the chat panel's "thought process" narration. One structure
+/// drives both the on-canvas grouping and the wiring explanation.
+/// </summary>
+public class GroupDef
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = "";
+
+    [JsonPropertyName("componentIds")]
+    public List<int> ComponentIds { get; set; } = new();
+
+    [JsonPropertyName("reasoning")]
+    public string Reasoning { get; set; } = "";
+
+    [JsonPropertyName("color")]
+    public string? Color { get; set; }
 }
 
 public class MultiSolutionResponse

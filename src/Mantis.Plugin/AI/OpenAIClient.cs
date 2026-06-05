@@ -39,28 +39,32 @@ public class OpenAIClient : ILlmClient
             Id = "gpt-4o-mini",
             DisplayName = "GPT-4o Mini",
             Description = "Fast, cheap (recommended)",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "gpt-4o",
             DisplayName = "GPT-4o",
             Description = "Flagship multimodal",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "gpt-4.1",
             DisplayName = "GPT-4.1",
             Description = "Latest reasoning",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
             Id = "gpt-4.1-mini",
             DisplayName = "GPT-4.1 Mini",
             Description = "Latest fast model",
-            IsFree = false
+            IsFree = false,
+            SupportsVision = true
         },
         new ModelOption
         {
@@ -140,7 +144,7 @@ public class OpenAIClient : ILlmClient
             new { role = "system", content = systemPrompt }
         };
         allMessages.AddRange(
-            messages.Select(m => (object)new { role = m.Role, content = m.Content }));
+            messages.Select(m => (object)new { role = m.Role, content = VisionPayload.OpenAiContent(m) }));
 
         // o1 / o3 models don't support response_format or temperature
         bool isReasoning = _model.StartsWith("o1") || _model.StartsWith("o3");
