@@ -70,7 +70,7 @@
         .mono { font-family: var(--font-mono); }
 
         /* ── Scroll reveal + directional variants ── */
-        .reveal { opacity: 0; transform: translateY(48px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
+        .reveal { opacity: 0; transform: translateY(48px); transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out); }
         .reveal.visible { opacity: 1; transform: none; }
         .reveal-left { opacity: 0; transform: translateX(-60px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
         .reveal-left.visible { opacity: 1; transform: none; }
@@ -170,6 +170,11 @@
         .nav-links a:not(.btn-nav):hover { color: var(--text-primary); }
         .nav-links a:not(.btn-nav):hover::after { right: 0; }
         .nav-links a:focus-visible { outline: 2px solid var(--mantis); outline-offset: 5px; border-radius: 3px; }
+        .nav-burger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 42px; height: 42px; padding: 0; background: transparent; border: 1px solid rgba(92,219,122,0.22); border-radius: 9px; cursor: pointer; }
+        .nav-burger span { display: block; width: 20px; height: 2px; margin: 0 auto; background: var(--mantis); border-radius: 2px; transition: transform 0.3s var(--ease-out), opacity 0.2s var(--ease-out); }
+        #nav.nav-open .nav-burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        #nav.nav-open .nav-burger span:nth-child(2) { opacity: 0; }
+        #nav.nav-open .nav-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
         .nav-divider { width: 1px; height: 24px; background: var(--border-light); margin: 0 0.4rem; }
         .btn-nav {
             background: var(--mantis) !important; color: var(--bg-deep) !important;
@@ -524,7 +529,12 @@
         @media (max-width: 600px) {
             .nav-tagline { display: none; }
             .nav-name { letter-spacing: 0.16em; }
-            .nav-links a:not(.btn-nav) { display: none; }
+            .nav-burger { display: flex; }
+            .nav-links { position: fixed; top: 72px; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 0.3rem; padding: 1rem 1.5rem 1.4rem; background: var(--bg-elevated, #0e1512); border-bottom: 1px solid rgba(92,219,122,0.16); box-shadow: 0 24px 50px rgba(0,0,0,0.55); transform: translateY(-14px); opacity: 0; pointer-events: none; transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out); }
+            #nav.nav-open .nav-links { transform: none; opacity: 1; pointer-events: auto; }
+            .nav-links a:not(.btn-nav) { display: block; padding: 0.7rem 0; font-size: 0.95rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+            .nav-links a:not(.btn-nav)::after { display: none; }
+            .nav-links .btn-nav { text-align: center; margin-top: 0.6rem; }
             .nav-divider { display: none; }
             .cap-grid { grid-template-columns: 1fr; }
             .provider-grid { grid-template-columns: 1fr; }
@@ -598,7 +608,6 @@
 
 <canvas id="fx-canvas"></canvas>
 <div id="cursor-glow"></div>
-<div class="scanlines"></div>
 <div id="scroll-progress"></div>
 
 <div class="chapter-rail" id="chapter-rail">
@@ -635,7 +644,7 @@
                 <span class="nav-tagline">The AI layer for Grasshopper</span>
             </span>
         </a>
-        <div class="nav-links">
+        <div class="nav-links" id="nav-links-list">
             <a href="#ways">Workflow</a>
             <a href="#features">Features</a>
             <a href="#models">Models</a>
@@ -643,6 +652,9 @@
             <span class="nav-divider" aria-hidden="true"></span>
             <a href="#install" class="btn-nav">Install Free</a>
         </div>
+        <button class="nav-burger" id="nav-burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links-list">
+            <span></span><span></span><span></span>
+        </button>
     </div>
 </nav>
 
@@ -655,7 +667,7 @@
             Open source &middot; Free to start &middot; Rhino 8 &middot; Windows &amp; macOS
         </div>
         <h1>
-            <span class="glitch" data-text="Talk to Grasshopper.">Talk to Grasshopper.</span><br/>
+            <span class="line1">Talk to Grasshopper.</span><br/>
             <span class="line2">Build anything.</span>
         </h1>
         <p class="hero-sub">Describe what you want in plain English. MANTIS places native Grasshopper components on your canvas — wired, laid out, and editable — exactly as an expert would build them.</p>
@@ -739,17 +751,50 @@
 <div id="logo-origin" aria-hidden="true">
     <div class="lo-branch"></div>
     <svg class="lo-mark" viewBox="0 0 36 36" fill="none">
-        <line class="lo-line" x1="18" y1="18" x2="18" y2="5"/>
-        <line class="lo-line" x1="18" y1="18" x2="5"  y2="15"/>
-        <line class="lo-line" x1="18" y1="18" x2="31" y2="15"/>
-        <line class="lo-line" x1="18" y1="18" x2="10" y2="28"/>
-        <line class="lo-line" x1="18" y1="18" x2="26" y2="28"/>
-        <circle class="lo-node" cx="18" cy="5"  r="3.5"/>
-        <circle class="lo-node" cx="5"  cy="15" r="2.5"/>
-        <circle class="lo-node" cx="31" cy="15" r="2.5"/>
-        <circle class="lo-node" cx="10" cy="28" r="2.5"/>
-        <circle class="lo-node" cx="26" cy="28" r="2.5"/>
-        <circle class="lo-hub"  cx="18" cy="18" r="4"/>
+        <defs>
+            <radialGradient id="loNode" cx="50%" cy="40%" r="62%">
+                <stop offset="0%" stop-color="#eafff1"/>
+                <stop offset="40%" stop-color="#7ae99a"/>
+                <stop offset="100%" stop-color="#3a9b55"/>
+            </radialGradient>
+            <radialGradient id="loHub" cx="50%" cy="38%" r="64%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="32%" stop-color="#bdffd2"/>
+                <stop offset="100%" stop-color="#5CDB7A"/>
+            </radialGradient>
+            <linearGradient id="loLine" x1="18" y1="18" x2="18" y2="4" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#7ae99a" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#5CDB7A" stop-opacity="0.3"/>
+            </linearGradient>
+        </defs>
+        <!-- connecting wires (hub → nodes): gradient stroke -->
+        <g stroke="url(#loLine)" stroke-width="1.05" stroke-linecap="round">
+            <line x1="18" y1="18" x2="18" y2="5"/>
+            <line x1="18" y1="18" x2="5"  y2="15"/>
+            <line x1="18" y1="18" x2="31" y2="15"/>
+            <line x1="18" y1="18" x2="10" y2="28"/>
+            <line x1="18" y1="18" x2="26" y2="28"/>
+        </g>
+        <!-- soft halo behind each node -->
+        <g fill="#5CDB7A">
+            <circle cx="18" cy="5"  r="5.6" opacity="0.12"/>
+            <circle cx="5"  cy="15" r="4.4" opacity="0.10"/>
+            <circle cx="31" cy="15" r="4.4" opacity="0.10"/>
+            <circle cx="10" cy="28" r="4.4" opacity="0.10"/>
+            <circle cx="26" cy="28" r="4.4" opacity="0.10"/>
+        </g>
+        <!-- outer nodes: gradient cores -->
+        <g fill="url(#loNode)">
+            <circle cx="18" cy="5"  r="3.4"/>
+            <circle cx="5"  cy="15" r="2.5"/>
+            <circle cx="31" cy="15" r="2.5"/>
+            <circle cx="10" cy="28" r="2.5"/>
+            <circle cx="26" cy="28" r="2.5"/>
+        </g>
+        <!-- hub: halo + bright core + specular highlight -->
+        <circle cx="18" cy="18" r="7.2" fill="#7ae99a" opacity="0.14"/>
+        <circle cx="18" cy="18" r="4.7" fill="url(#loHub)"/>
+        <circle cx="16.9" cy="16.5" r="1.5" fill="#ffffff" opacity="0.5"/>
     </svg>
 </div>
 
@@ -1285,7 +1330,13 @@ let scrollPos = window.scrollY || 0;      // shared scroll value (updated by con
 
     let running = false, raf = null;
     function frame(now) {
+        // Decouple the hero FX from the deep-scroll graph-travel act: fade the whole canvas
+        // out as you leave the hero (two heavy canvases never animate together) and SKIP all
+        // drawing once invisible — the rAF stays alive (reschedules) to resume on scroll-up.
+        const fxFade = Math.max(0, Math.min(1, 1 - ((window.scrollY || 0) - H * 0.55) / (H * 0.70)));
+        c.style.opacity = fxFade.toFixed(3);
         ctx.clearRect(0, 0, W, H);
+        if (fxFade <= 0.01) { if (running) raf = requestAnimationFrame(frame); return; }
         const par = window.scrollY || 0;   // live scroll (decoupled from the rAF-lagged shared value)
 
         // 1) Volumetric clouds (additive glow, slow parallax)
@@ -1625,40 +1676,52 @@ if (!PREFERS_REDUCED_MOTION) {
     const clamp = (v, a, b) => v < a ? a : (v > b ? b : v);
     function measure() { scenes.forEach(s => { s.top = s.el.offsetTop; s.h = s.el.offsetHeight; }); }
 
+    // ── Pre-baked pixel-dissolve masks (smoothness #1): a tiled SVG mask whose
+    //    per-cell square grows 0 → full cell (pixelated → crisp). Baking the steps
+    //    ONCE and swapping the cached string per frame keeps the dissolve buttery —
+    //    no per-frame string-building, no mask recompute, no redundant style writes. ──
+    const CELL = 26, MASK_STEPS = 32;
+    const PIX_MASKS = [];
+    for (let i = 0; i <= MASK_STEPS; i++) {
+        const sq = (i / MASK_STEPS) * CELL;
+        const off = ((CELL - sq) / 2).toFixed(2);
+        PIX_MASKS[i] = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='" + CELL + "' height='" + CELL + "'%3E%3Crect x='" + off + "' y='" + off + "' width='" + sq.toFixed(2) + "' height='" + sq.toFixed(2) + "' fill='%23fff'/%3E%3C/svg%3E\")";
+    }
+    function applyPixel(el, e, st) {
+        if (e <= 0.006) {                                  // off-stage — the component shows instead
+            if (st.step !== -1) { el.style.opacity = '0'; el.style.webkitMaskImage = el.style.maskImage = 'none'; st.step = -1; }
+            return;
+        }
+        if (e >= 0.985) {                                  // fully crisp — drop the mask (sharp text)
+            if (st.step !== 999) { el.style.opacity = '1'; el.style.webkitMaskImage = el.style.maskImage = 'none'; st.step = 999; }
+            return;
+        }
+        const step = Math.round(e * MASK_STEPS);
+        if (step === st.step) return;                      // unchanged this frame → zero style writes
+        if (!st.init) {                                    // tiling props set ONCE per section
+            el.style.webkitMaskRepeat = el.style.maskRepeat = 'repeat';
+            el.style.webkitMaskSize = el.style.maskSize = CELL + 'px ' + CELL + 'px';
+            el.style.opacity = '1';
+            st.init = true;
+        }
+        el.style.webkitMaskImage = el.style.maskImage = PIX_MASKS[step];
+        st.step = step;
+    }
+
     function update() {
         const vh = innerHeight, vw = innerWidth, y = window.scrollY || 0, c = y + vh / 2;
         scenes.forEach(s => {
-            // The section stays HIDDEN until its top reaches centre — so the arriving
-            // component (which holds in the gap just above) is fully visible on its own first.
-            // Then the section resolves IN through a pixel grid over DIN, stays FULLY CRISP and
-            // readable for its whole body, and only pixelates OUT over DOUT near the very bottom.
-            // The pixelate bands live INSIDE the section, never reaching into the gaps.
+            // Stay hidden until the section's top reaches centre (so the arriving component,
+            // held in the gap just above, is seen on its own first). Resolve IN over DIN,
+            // hold FULLY CRISP + readable across the whole body, pixelate OUT over DOUT near
+            // the bottom. Pixelate bands live INSIDE the section, never over the gaps.
             const top = s.top, bot = s.top + s.h;
             const DIN = Math.min(vh * 0.30, s.h * 0.32);     // resolve-in distance
             const DOUT = Math.min(vh * 0.30, s.h * 0.32);    // dissolve-out distance
             const e = smooth(clamp(Math.min((c - top) / DIN, (bot - c) / DOUT), 0, 1));
             s.e = e;
-            if (e <= 0.006) {
-                // Fully dissolved — the component is showing instead. Cheap hidden path
-                // (no per-frame mask building when the section is off-stage).
-                s.el.style.opacity = '0';
-                s.el.style.webkitMaskImage = 'none'; s.el.style.maskImage = 'none';
-            } else if (e > 0.985) {
-                s.el.style.opacity = '1';
-                s.el.style.webkitMaskImage = 'none'; s.el.style.maskImage = 'none';
-            } else {
-                // 8-BIT PIXEL BLOCKS: square cells assemble (materialise) / break apart
-                // (disintegrate) on a hard grid — full-brightness chunks, clearly digital,
-                // not a soft fade. The block side grows gradually (eased) until the cells merge.
-                const CELL = 26;
-                const sq = (e * e * CELL);
-                const off = ((CELL - sq) / 2).toFixed(2);
-                const mask = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='" + CELL + "' height='" + CELL + "'%3E%3Crect x='" + off + "' y='" + off + "' width='" + sq.toFixed(2) + "' height='" + sq.toFixed(2) + "' fill='%23ffffff'/%3E%3C/svg%3E\")";
-                s.el.style.webkitMaskImage = mask; s.el.style.maskImage = mask;
-                s.el.style.webkitMaskSize = CELL + 'px ' + CELL + 'px'; s.el.style.maskSize = CELL + 'px ' + CELL + 'px';
-                s.el.style.webkitMaskRepeat = 'repeat'; s.el.style.maskRepeat = 'repeat';
-                s.el.style.opacity = '1';
-            }
+            if (!s._pix) s._pix = { step: -2, init: false };
+            applyPixel(s.el, e, s._pix);
         });
         links.forEach(L => {
             const aCenter = L.a.top + L.a.h / 2, bCenter = L.b.top + L.b.h / 2;
@@ -1761,6 +1824,20 @@ if (!PREFERS_REDUCED_MOTION && matchMedia('(pointer: fine)').matches) {
         requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
+})();
+
+// ── Mobile nav: hamburger toggles the dropdown menu (≤600px) ──
+(function() {
+    const nav = document.getElementById('nav');
+    const burger = document.getElementById('nav-burger');
+    if (!nav || !burger) return;
+    const close = () => { nav.classList.remove('nav-open'); burger.setAttribute('aria-expanded', 'false'); };
+    burger.addEventListener('click', () => {
+        const open = nav.classList.toggle('nav-open');
+        burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    nav.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', close));
+    addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 })();
 
 // ── Smooth scroll for in-page anchors ──
