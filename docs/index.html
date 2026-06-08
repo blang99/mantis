@@ -800,6 +800,17 @@
 
 
 
+<!-- ═══ BRAND STATEMENT BAND ═══ -->
+<section class="brand-band">
+    <div class="brand-band-inner reveal">
+        <h2>
+            <span class="muted">Native to Grasshopper.</span>
+            <span class="accent">Not a black box.</span>
+        </h2>
+        <p>Every component MANTIS places is real, editable, and yours. No opaque scripts, no lock-in &mdash; just a graph you can read, reshape, and learn from. The AI does the heavy lifting; you keep the control.</p>
+    </div>
+</section>
+
 <!-- ═══ DEMO ═══ -->
 <section class="demo-section reveal" id="demo">
     <div class="demo-browser">
@@ -1149,17 +1160,6 @@
     </div>
 </section>
 
-
-<!-- ═══ BRAND STATEMENT BAND ═══ -->
-<section class="brand-band">
-    <div class="brand-band-inner reveal">
-        <h2>
-            <span class="muted">Native to Grasshopper.</span>
-            <span class="accent">Not a black box.</span>
-        </h2>
-        <p>Every component MANTIS places is real, editable, and yours. No opaque scripts, no lock-in &mdash; just a graph you can read, reshape, and learn from. The AI does the heavy lifting; you keep the control.</p>
-    </div>
-</section>
 
 <!-- ═══ INSTALL CTA ═══ -->
 <section class="install-section container" id="install">
@@ -1604,7 +1604,7 @@ if (!PREFERS_REDUCED_MOTION) {
         if (i === scenes.length - 1) return;
         const g = document.createElement('div');
         g.className = 'wire-gap';
-        g.style.height = '80vh';
+        g.style.height = '100vh';
         s.el.insertAdjacentElement('afterend', g);
     });
 
@@ -1640,7 +1640,7 @@ if (!PREFERS_REDUCED_MOTION) {
     //    per-cell square grows 0 → full cell (pixelated → crisp). Baking the steps
     //    ONCE and swapping the cached string per frame keeps the dissolve buttery —
     //    no per-frame string-building, no mask recompute, no redundant style writes. ──
-    const CELL = 26, MASK_STEPS = 32;
+    const CELL = 22, MASK_STEPS = 44;
     const PIX_MASKS = [];
     for (let i = 0; i <= MASK_STEPS; i++) {
         const sq = (i / MASK_STEPS) * CELL;
@@ -1676,8 +1676,8 @@ if (!PREFERS_REDUCED_MOTION) {
             // hold FULLY CRISP + readable across the whole body, pixelate OUT over DOUT near
             // the bottom. Pixelate bands live INSIDE the section, never over the gaps.
             const top = s.top, bot = s.top + s.h;
-            const DIN = Math.min(vh * 0.30, s.h * 0.32);     // resolve-in distance
-            const DOUT = Math.min(vh * 0.30, s.h * 0.32);    // dissolve-out distance
+            const DIN = Math.min(vh * 0.38, s.h * 0.36);     // resolve-in distance (gentle)
+            const DOUT = Math.min(vh * 0.38, s.h * 0.36);    // dissolve-out distance (gentle)
             const e = smooth(clamp(Math.min((c - top) / DIN, (bot - c) / DOUT), 0, 1));
             s.e = e;
             if (!s._pix) s._pix = { step: -2, init: false };
@@ -1685,13 +1685,13 @@ if (!PREFERS_REDUCED_MOTION) {
         });
         links.forEach(L => {
             const aCenter = L.a.top + L.a.h / 2, bCenter = L.b.top + L.b.h / 2;
-            const HOLD = vh * 0.42;                          // beat the component sits at centre, fully visible, before the section resolves
+            const HOLD = vh * 0.52;                          // beat the component sits at centre, fully visible, before the section resolves
             const aCy = aCenter - y;                         // leaving component at A's centre — rides up & out
             const bChipY = Math.max(L.b.top - y - HOLD, vh / 2);  // arriving component reaches centre EARLY and HOLDS there (wire already reached) before pixelating into the section
             // Gate so a section shows as a component only ONCE: leaving (after its own centre)
             // OR arriving (before the next centre), never both — no duplicate nodes.
-            const exitOp = clamp(1 - L.a.e / 0.26, 0, 1) * clamp((c - aCenter) / (vh * 0.45), 0, 1);
-            const enterOp = clamp(1 - L.b.e / 0.26, 0, 1) * clamp((bCenter - c) / (vh * 0.45), 0, 1);
+            const exitOp = clamp(1 - L.a.e / 0.26, 0, 1) * clamp((c - aCenter) / (vh * 0.60), 0, 1);
+            const enterOp = clamp(1 - L.b.e / 0.26, 0, 1) * clamp((bCenter - c) / (vh * 0.60), 0, 1);
             L.exitChip.style.left = (vw / 2) + 'px'; L.exitChip.style.top = aCy + 'px'; L.exitChip.style.opacity = exitOp.toFixed(3);
             L.enterChip.style.left = (vw / 2) + 'px'; L.enterChip.style.top = bChipY + 'px'; L.enterChip.style.opacity = enterOp.toFixed(3);
             // Clamp wire ends to just beyond the viewport — when a component is far
