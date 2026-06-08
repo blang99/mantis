@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.3.1</Version>
+    <Version>0.3.2</Version>
     <AssemblyTitle>MANTIS</AssemblyTitle>
     <Product>MANTIS</Product>
     <Authors>MANTIS</Authors>
@@ -14,6 +14,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- NOTE: we reference the 8.30 SDK (clean net7.0 reference assemblies), but the
+         packaged .yak is re-tagged from rh8_30 to rh8_0 at package time. RhinoCommon's
+         ASSEMBLY version is a stable 8.0.0.0 across every Rhino 8 service release, so this
+         binary already loads on all of Rhino 8; only yak's auto-derived min-version tag
+         (taken from the NuGet FILE version) was wrongly restrictive and hid us from
+         Package Manager search on Rhino 8.0–8.29. See dist/yak build step. -->
     <PackageReference Include="Grasshopper" Version="8.30.26103.11001" ExcludeAssets="runtime" />
     <PackageReference Include="RhinoCommon" Version="8.30.26103.11001" ExcludeAssets="runtime" />
     <PackageReference Include="Eto.Forms" Version="2.8.*" ExcludeAssets="runtime" />

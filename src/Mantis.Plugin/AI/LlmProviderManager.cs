@@ -22,11 +22,12 @@ public class LlmProviderManager : IDisposable
         _providers["Gemini"] = gemini;
         _providers["Ollama"] = ollama;
 
-        // Default to Ollama if the user has it running locally (no rate limits,
-        // no key needed). Otherwise OpenRouter — best free tier on the cloud side.
-        _active = ollama.AvailableModels.Count > 0 && ollama.AvailableModels[0].Description.Contains("local")
-            ? ollama
-            : openRouter;
+        // Default to Ollama ONLY if it's actually running locally with models pulled
+        // (no rate limits, no key). Trigger one detection, then check the flag — never
+        // index the model list here: the getter can legitimately return a fallback list
+        // and [0] would throw (this crashed panel start-up when Ollama ran with no models).
+        _ = ollama.AvailableModels;
+        _active = ollama.HasLocalModels ? ollama : openRouter;
     }
 
     public IReadOnlyList<string> ProviderNames => _providers.Keys.ToList();

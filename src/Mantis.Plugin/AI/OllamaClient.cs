@@ -84,22 +84,28 @@ public class OllamaClient : ILlmClient
     {
         get
         {
-            if (_detectedModels != null) return _detectedModels;
+            // Only treat a cached result as valid if it actually has models. Caching an
+            // EMPTY detected list (Ollama running but nothing pulled) and returning it on
+            // the next call is what made callers index [0] into an empty list and crash
+            // panel start-up. So we never cache or return an empty list.
+            if (_detectedModels is { Count: > 0 }) return _detectedModels;
 
-            // Try to detect models, but don't block constructor
             try
             {
-                _detectedModels = DetectModelsSync();
-                if (_detectedModels.Count > 0) return _detectedModels;
+                var detected = DetectModelsSync();
+                if (detected.Count > 0) { _detectedModels = detected; return _detectedModels; }
             }
             catch
             {
-                // Ollama not running — use fallback list
+                // Ollama not running — fall through to the built-in fallback list.
             }
 
             return FallbackModels;
         }
     }
+
+    /// <summary>True only when a live Ollama server reported at least one pulled model.</summary>
+    public bool HasLocalModels => _detectedModels is { Count: > 0 };
 
     public bool HasApiKey => true; // No key needed
 
