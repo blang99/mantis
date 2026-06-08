@@ -1612,6 +1612,87 @@ if (!PREFERS_REDUCED_MOTION) {
     const NS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(NS, 'svg');
     layer.appendChild(svg);
+
+    // ════════════════════════════════════════════════════════════════
+    //  PHYSARUM SLIME — the connective growth. From each fed component a
+    //  many-headed organic network reaches toward the next food source
+    //  (section): exploratory tendrils wander, the main vein thickens, the
+    //  growing heads glow, and nutrient pulses flow along the path. Canvas
+    //  (cheap glow + many strokes) instead of one dead wire. ──
+    // ════════════════════════════════════════════════════════════════
+    const slime = document.createElement('canvas');
+    slime.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+    layer.appendChild(slime);
+    const sctx = slime.getContext('2d');
+    let SDPR = 1;
+    function sizeSlime() {
+        SDPR = Math.min(devicePixelRatio || 1, 2);
+        slime.width = innerWidth * SDPR; slime.height = innerHeight * SDPR;
+        sctx.setTransform(SDPR, 0, 0, SDPR, 0, 0);
+    }
+    sizeSlime();
+    addEventListener('resize', sizeSlime, { passive: true });
+
+    function srand(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+    function makeVein(r, p0, p1, bow, wander, weight, phase) {
+        const pts = [], steps = 24, f1 = 1.2 + r() * 1.8, f2 = 2.6 + r() * 3.4, ph2 = r() * 6.28, br = r() * 6.28;
+        for (let k = 0; k <= steps; k++) {
+            const u = k / steps, p = p0 + (p1 - p0) * u, env = Math.sin(u * Math.PI);
+            const lat = bow * Math.sin(u * Math.PI) + wander * env * (Math.sin(p * f1 * 6.28 + phase) * 0.6 + Math.sin(p * f2 * 6.28 + ph2) * 0.4);
+            pts.push({ p, lat, env, br: br + u * 3.0 });
+        }
+        return { pts, p0, reach: p1, weight };
+    }
+    function makeTendrils(seed) {
+        const r = srand(seed * 9973 + 31), T = [];
+        T.push(makeVein(r, 0, 1, 0, 0.05, 1.0, r() * 6.28));            // main vein → reaches the food
+        const N = 6 + (r() * 4 | 0);                                    // many exploratory heads
+        for (let i = 0; i < N; i++) {
+            const p0 = 0.05 + r() * 0.55, p1 = Math.min(1, p0 + 0.2 + r() * 0.5);
+            const dir = r() < 0.5 ? -1 : 1, amp = 0.07 + r() * 0.16;
+            T.push(makeVein(r, p0, p1, dir * amp * 0.6, amp, 0.3 + r() * 0.45, r() * 6.28));
+        }
+        return T;
+    }
+    function slimePt(v, k, x0, rootY, corr, LAT, tt) {
+        const pt = v.pts[k], breath = Math.sin(tt * 1.15 + pt.br) * 0.5 * pt.env;
+        return [x0 + (pt.lat + breath * 0.045) * LAT, rootY + pt.p * corr];
+    }
+    function drawSlime(L, rootY, targetY, growth, alpha, now) {
+        if (alpha <= 0.02) return;
+        const x0 = innerWidth / 2, corr = targetY - rootY;
+        const LAT = Math.max(70, Math.min(240, Math.abs(corr) * 0.55)), tt = now * 0.001;
+        for (const v of L.tendrils) {
+            const grown = clamp((growth - v.p0) / Math.max(0.001, v.reach - v.p0), 0, 1);
+            if (grown <= 0.001) continue;
+            const last = Math.max(1, Math.round(grown * (v.pts.length - 1)));
+            let tx = x0, ty = rootY;
+            sctx.beginPath();
+            for (let k = 0; k <= last; k++) { const q = slimePt(v, k, x0, rootY, corr, LAT, tt); tx = q[0]; ty = q[1]; if (k === 0) sctx.moveTo(tx, ty); else sctx.lineTo(tx, ty); }
+            sctx.strokeStyle = 'rgba(122,233,154,' + (0.55 * alpha * v.weight).toFixed(3) + ')';
+            sctx.lineWidth = 1 + 3.6 * v.weight; sctx.lineCap = 'round'; sctx.lineJoin = 'round';
+            if (v.weight > 0.55) { sctx.shadowColor = 'rgba(92,219,122,0.85)'; sctx.shadowBlur = 6 + 8 * v.weight; }
+            sctx.stroke(); sctx.shadowBlur = 0;
+            if (grown < 0.997) {                                       // glowing growing head (a "many head")
+                const hr = 2 + 3 * v.weight, g = sctx.createRadialGradient(tx, ty, 0, tx, ty, hr * 3.4);
+                g.addColorStop(0, 'rgba(216,255,228,' + (0.9 * alpha).toFixed(3) + ')');
+                g.addColorStop(0.45, 'rgba(122,233,154,' + (0.5 * alpha).toFixed(3) + ')');
+                g.addColorStop(1, 'rgba(92,219,122,0)');
+                sctx.fillStyle = g; sctx.beginPath(); sctx.arc(tx, ty, hr * 3.4, 0, 6.2832); sctx.fill();
+                sctx.fillStyle = 'rgba(232,255,240,' + alpha.toFixed(3) + ')'; sctx.beginPath(); sctx.arc(tx, ty, hr * 0.55, 0, 6.2832); sctx.fill();
+            }
+        }
+        const main = L.tendrils[0], pn = main.pts.length - 1;          // nutrient pulses flow up the main vein
+        for (let s = 0; s < 3; s++) {
+            const pp = ((tt * 0.22 + s / 3) % 1) * growth;
+            if (pp <= 0.02 || pp >= growth) continue;
+            const idx = Math.min(pn, Math.max(0, Math.round(pp / Math.max(0.001, main.reach) * pn))), q = slimePt(main, idx, x0, rootY, corr, LAT, tt);
+            sctx.fillStyle = 'rgba(216,255,228,' + (0.8 * alpha).toFixed(3) + ')';
+            sctx.shadowColor = 'rgba(122,233,154,1)'; sctx.shadowBlur = 7;
+            sctx.beginPath(); sctx.arc(q[0], q[1], 2.1, 0, 6.2832); sctx.fill(); sctx.shadowBlur = 0;
+        }
+    }
+
     function makeChip(cat, name) {
         const chip = document.createElement('div'); chip.className = 'scene-node';
         chip.innerHTML = '<span class="sn-port"></span><span class="sn-body"><span class="sn-cat">' + cat +
@@ -1627,7 +1708,7 @@ if (!PREFERS_REDUCED_MOTION) {
         const a = scenes[i], b = scenes[i + 1];
         const wire = document.createElementNS(NS, 'path'); wire.setAttribute('class', 'gw-base'); svg.appendChild(wire);
         // No spark/head particles — the wire is a clean drawn line (dots floated off-trail).
-        links.push({ a, b, wire, drawT: 0, vis: 0, exitChip: makeChip(a.cat, a.name), enterChip: makeChip(b.cat, b.name) });
+        links.push({ a, b, wire, drawT: 0, vis: 0, tendrils: makeTendrils(i), exitChip: makeChip(a.cat, a.name), enterChip: makeChip(b.cat, b.name) });
     }
     document.body.appendChild(layer);
 
@@ -1674,6 +1755,7 @@ if (!PREFERS_REDUCED_MOTION) {
 
     function update() {
         const vh = innerHeight, vw = innerWidth, y = window.scrollY || 0, c = y + vh / 2;
+        sctx.clearRect(0, 0, vw, vh); const nowT = performance.now();   // fresh frame for the slime growth
         scenes.forEach(s => {
             // Component holds at centre, then the section PIXELATES + ENLARGES in as its top
             // reaches centre (grows from the top), holds FULLY CRISP + readable across its body,
@@ -1706,26 +1788,16 @@ if (!PREFERS_REDUCED_MOTION) {
             // Clamp wire ends to just beyond the viewport — when a component is far
             // off-screen the wire enters from the edge instead of spanning thousands of
             // px (which scattered the sparks far off the visible trail).
-            const x = vw / 2, y1 = Math.max(aCy + 30, -40), y2 = Math.min(bChipY - 30, vh + 40), span = y2 - y1, m1 = y1 + span * 0.5;
-            const amp = Math.min(135, Math.max(30, Math.abs(span) * 0.2));
-            // A winding "road": bends one way through the top half, the other through the bottom.
-            const d = 'M ' + x + ' ' + y1 +
-                      ' C ' + (x + amp) + ' ' + (y1 + span * 0.18) + ', ' + (x + amp) + ' ' + (m1 - span * 0.16) + ', ' + x + ' ' + m1 +
-                      ' C ' + (x - amp) + ' ' + (m1 + span * 0.16) + ', ' + (x - amp) + ' ' + (y2 - span * 0.18) + ', ' + x + ' ' + y2;
-            L.wire.setAttribute('d', d);
             const vis = clamp(exitOp * enterOp * 1.6, 0, 1);
             L.vis = vis;
             if (vis > 0.02) {
                 const gapH = Math.max(1, L.b.top - (L.a.top + L.a.h));
                 const tp = clamp((c - (L.a.top + L.a.h)) / gapH, 0, 1);       // travel progress through the gap
-                const draw = clamp((tp + 0.06) / 0.74, 0, 1);                 // how far the road has drawn
+                const draw = clamp((tp + 0.05) / 0.84, 0, 1);                 // how far the slime has grown toward the food
                 L.drawT = draw;
-                const total = L.wire.getTotalLength();
-                L.wire.style.strokeDasharray = total;
-                L.wire.style.strokeDashoffset = (total * (1 - draw)).toFixed(1);   // draws/extends as you travel
-                L.wire.style.opacity = (vis * 0.9).toFixed(3);
+                drawSlime(L, aCy, bChipY, draw, vis, nowT);                   // organic Physarum growth → next food source
             } else {
-                L.wire.style.opacity = '0'; L.drawT = 0;
+                L.drawT = 0;
             }
         });
     }
