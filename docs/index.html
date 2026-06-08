@@ -580,11 +580,11 @@
               downward to become the first wire that feeds the component build. ── */
         .logo-zone { height: 175vh; pointer-events: none; }
         #logo-origin { position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 5; opacity: 0; will-change: opacity; }
-        #logo-origin .lo-mark { width: 300px; height: 300px; will-change: opacity; }
+        #logo-origin .lo-mark { width: 210px; height: 210px; filter: drop-shadow(0 0 30px var(--mantis-glow-strong)); will-change: transform, opacity; }
         #logo-origin .lo-mark .lo-node { fill: var(--mantis); }
         #logo-origin .lo-mark .lo-hub { fill: var(--mantis-bright, #7ae99a); }
         #logo-origin .lo-mark .lo-line { stroke: var(--mantis); stroke-width: 1.2; opacity: 0.5; }
-        #logo-origin .lo-branch { display: none; position: absolute; top: 50%; left: 50%; width: 3px; height: 0; transform: translateX(-50%); transform-origin: top center; border-radius: 2px; opacity: 0; background: linear-gradient(180deg, var(--mantis) 0%, var(--mantis) 60%, rgba(92,219,122,0) 100%); box-shadow: 0 0 12px var(--mantis-glow-strong); }
+        #logo-origin .lo-branch { position: absolute; top: 50%; left: 50%; width: 3px; height: 0; transform: translateX(-50%); transform-origin: top center; border-radius: 2px; opacity: 0; background: linear-gradient(180deg, var(--mantis) 0%, var(--mantis) 60%, rgba(92,219,122,0) 100%); box-shadow: 0 0 12px var(--mantis-glow-strong); }
         @media (max-width: 720px) { #logo-origin .lo-mark { width: 150px; height: 150px; } }
         @keyframes headPulse { 0%,100% { r: 4.5px; opacity: 0.9; } 50% { r: 7px; opacity: 1; } }
         .scene-node {
@@ -686,7 +686,57 @@
     <div class="scroll-cue"><div class="mouse"></div>Scroll</div>
 </section>
 
-
+<!-- ═══ LOGO ORIGIN — the constellation unfurls into the first wire ═══ -->
+<div class="logo-zone" aria-hidden="true"></div>
+<div id="logo-origin" aria-hidden="true">
+    <div class="lo-branch"></div>
+    <svg class="lo-mark" viewBox="0 0 36 36" fill="none">
+        <defs>
+            <radialGradient id="loNode" cx="50%" cy="40%" r="62%">
+                <stop offset="0%" stop-color="#eafff1"/>
+                <stop offset="40%" stop-color="#7ae99a"/>
+                <stop offset="100%" stop-color="#3a9b55"/>
+            </radialGradient>
+            <radialGradient id="loHub" cx="50%" cy="38%" r="64%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="32%" stop-color="#bdffd2"/>
+                <stop offset="100%" stop-color="#5CDB7A"/>
+            </radialGradient>
+            <linearGradient id="loLine" x1="18" y1="18" x2="18" y2="4" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#7ae99a" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#5CDB7A" stop-opacity="0.3"/>
+            </linearGradient>
+        </defs>
+        <!-- connecting wires (hub → nodes): gradient stroke -->
+        <g stroke="url(#loLine)" stroke-width="1.05" stroke-linecap="round">
+            <line x1="18" y1="18" x2="18" y2="5"/>
+            <line x1="18" y1="18" x2="5"  y2="15"/>
+            <line x1="18" y1="18" x2="31" y2="15"/>
+            <line x1="18" y1="18" x2="10" y2="28"/>
+            <line x1="18" y1="18" x2="26" y2="28"/>
+        </g>
+        <!-- soft halo behind each node -->
+        <g fill="#5CDB7A">
+            <circle cx="18" cy="5"  r="5.6" opacity="0.12"/>
+            <circle cx="5"  cy="15" r="4.4" opacity="0.10"/>
+            <circle cx="31" cy="15" r="4.4" opacity="0.10"/>
+            <circle cx="10" cy="28" r="4.4" opacity="0.10"/>
+            <circle cx="26" cy="28" r="4.4" opacity="0.10"/>
+        </g>
+        <!-- outer nodes: gradient cores -->
+        <g fill="url(#loNode)">
+            <circle cx="18" cy="5"  r="3.4"/>
+            <circle cx="5"  cy="15" r="2.5"/>
+            <circle cx="31" cy="15" r="2.5"/>
+            <circle cx="10" cy="28" r="2.5"/>
+            <circle cx="26" cy="28" r="2.5"/>
+        </g>
+        <!-- hub: halo + bright core + specular highlight -->
+        <circle cx="18" cy="18" r="7.2" fill="#7ae99a" opacity="0.14"/>
+        <circle cx="18" cy="18" r="4.7" fill="url(#loHub)"/>
+        <circle cx="16.9" cy="16.5" r="1.5" fill="#ffffff" opacity="0.5"/>
+    </svg>
+</div>
 
 <!-- ═══ PROMPT TICKER ═══ -->
 <div class="ticker-wrap">
@@ -760,45 +810,6 @@
         <p>Every component MANTIS places is real, editable, and yours. No opaque scripts, no lock-in &mdash; just a graph you can read, reshape, and learn from. The AI does the heavy lifting; you keep the control.</p>
     </div>
 </section>
-
-<!-- ═══ LOGO ORIGIN — the constellation unfurls into the first wire ═══ -->
-<div class="logo-zone" aria-hidden="true"></div>
-<div id="logo-origin" aria-hidden="true">
-    <div class="lo-branch"></div>
-    <svg class="lo-mark" viewBox="0 0 36 36" fill="none">
-        <defs>
-            <radialGradient id="loNode" cx="42%" cy="36%" r="70%">
-                <stop offset="0%" stop-color="#d6ffe2"/>
-                <stop offset="55%" stop-color="#5CDB7A"/>
-                <stop offset="100%" stop-color="#37a85a"/>
-            </radialGradient>
-            <radialGradient id="loHub" cx="42%" cy="34%" r="72%">
-                <stop offset="0%" stop-color="#ffffff"/>
-                <stop offset="42%" stop-color="#9bffba"/>
-                <stop offset="100%" stop-color="#43c168"/>
-            </radialGradient>
-        </defs>
-        <!-- crisp connecting edges (hub → nodes) -->
-        <g stroke="#5CDB7A" stroke-width="1.4" stroke-linecap="round">
-            <line x1="18" y1="18" x2="18" y2="5"/>
-            <line x1="18" y1="18" x2="5"  y2="15"/>
-            <line x1="18" y1="18" x2="31" y2="15"/>
-            <line x1="18" y1="18" x2="10" y2="28"/>
-            <line x1="18" y1="18" x2="26" y2="28"/>
-        </g>
-        <!-- outer nodes: crisp gradient cores with a bright rim -->
-        <g fill="url(#loNode)" stroke="#c4ffd4" stroke-width="0.35">
-            <circle cx="18" cy="5"  r="3.4"/>
-            <circle cx="5"  cy="15" r="2.6"/>
-            <circle cx="31" cy="15" r="2.6"/>
-            <circle cx="10" cy="28" r="2.6"/>
-            <circle cx="26" cy="28" r="2.6"/>
-        </g>
-        <!-- hub: bright core, rim, specular highlight -->
-        <circle cx="18" cy="18" r="4.8" fill="url(#loHub)" stroke="#e6fff0" stroke-width="0.45"/>
-        <circle cx="16.7" cy="16.4" r="1.3" fill="#ffffff" opacity="0.45"/>
-    </svg>
-</div>
 
 <!-- ═══ DEMO ═══ -->
 <section class="demo-section reveal" id="demo">
@@ -1601,154 +1612,6 @@ if (!PREFERS_REDUCED_MOTION) {
     const NS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(NS, 'svg');
     layer.appendChild(svg);
-
-    // ════════════════════════════════════════════════════════════════
-    //  PHYSARUM SLIME — the connective growth. From each fed component a
-    //  many-headed organic network reaches toward the next food source
-    //  (section): exploratory tendrils wander, the main vein thickens, the
-    //  growing heads glow, and nutrient pulses flow along the path. Canvas
-    //  (cheap glow + many strokes) instead of one dead wire. ──
-    // ════════════════════════════════════════════════════════════════
-    const slime = document.createElement('canvas');
-    slime.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
-    layer.appendChild(slime);
-    const sctx = slime.getContext('2d');
-    let SDPR = 1;
-    function sizeSlime() {
-        SDPR = Math.min(devicePixelRatio || 1, 2);
-        slime.width = innerWidth * SDPR; slime.height = innerHeight * SDPR;
-        sctx.setTransform(SDPR, 0, 0, SDPR, 0, 0);
-    }
-    sizeSlime();
-    addEventListener('resize', sizeSlime, { passive: true });
-
-    // ════════════════════════════════════════════════════════════════
-    //  REAL AGENT-BASED PHYSARUM, recorded ONCE then REVEALED BY SCROLL. Agents
-    //  deposit a trail, sense three points ahead and steer toward the strongest;
-    //  the field diffuses + decays. We pre-run the sim once (chunked, no freeze)
-    //  to a steady-state network, paint it to a canvas, and the SCROLL POSITION
-    //  CLIPS how much shows — so the slime GROWS down as you scroll down and
-    //  RETRACTS as you scroll up (true back-and-forth), with a glowing growth
-    //  front. High-res field → sharp veins; the reveal is a cheap clipped draw. ──
-    // ════════════════════════════════════════════════════════════════
-    const FW = 360, FH = 540, NA = 3600;
-    let fieldReady = false;
-    const simC = document.createElement('canvas'); simC.width = FW; simC.height = FH;
-    const simCtx = simC.getContext('2d'), simImg = simCtx.createImageData(FW, FH);
-    (function precompute() {
-        let tr = new Float32Array(FW * FH), tp2 = new Float32Array(FW * FH);
-        const ag = new Float32Array(NA * 3);
-        for (let i = 0; i < NA; i++) { ag[i*3] = FW/2 + (Math.random()-0.5)*FW*0.72; ag[i*3+1] = Math.random()*FH*0.16; ag[i*3+2] = Math.random()*6.283; }
-        const food = [[FW/2, FH*0.87]];
-        const SD = 9, SA = 0.55, RA = 0.6, SS = 1.0, DEP = 5.5, DECAY = 0.90, STEPS = 150;
-        function smp(t, x, y) { x|=0; y|=0; if (x<0||x>=FW||y<0||y>=FH) return -1; return t[y*FW+x]; }
-        let s = 0;
-        function chunk() {
-            for (const lim = Math.min(STEPS, s + 6); s < lim; s++) {
-                for (let q=0;q<food.length;q++){ const fx=food[q][0]|0, fy=food[q][1]|0; for(let dy=-4;dy<=4;dy++)for(let dx=-4;dx<=4;dx++){const x=fx+dx,y=fy+dy;if(x>=0&&x<FW&&y>=0&&y<FH)tr[y*FW+x]+=2.4;} }
-                for (let i=0;i<NA;i++){ let x=ag[i*3],y=ag[i*3+1],a=ag[i*3+2]; const f=smp(tr,x+Math.cos(a)*SD,y+Math.sin(a)*SD),l=smp(tr,x+Math.cos(a+SA)*SD,y+Math.sin(a+SA)*SD),rg=smp(tr,x+Math.cos(a-SA)*SD,y+Math.sin(a-SA)*SD); if(f>=l&&f>=rg){}else if(l>rg)a+=RA;else if(rg>l)a-=RA;else a+=(Math.random()<0.5?RA:-RA); x+=Math.cos(a)*SS;y+=Math.sin(a)*SS; if(x<1){x=1;a=Math.PI-a;}if(x>=FW-1){x=FW-2;a=Math.PI-a;}if(y<1){y=1;a=-a;}if(y>=FH-1){y=FH-2;a=-a;} ag[i*3]=x;ag[i*3+1]=y;ag[i*3+2]=a; tr[(y|0)*FW+(x|0)]+=DEP; }
-                for (let y=0;y<FH;y++)for(let x=0;x<FW;x++){let su=0,c=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const nx=x+dx,ny=y+dy;if(nx<0||nx>=FW||ny<0||ny>=FH)continue;su+=tr[ny*FW+nx];c++;}tp2[y*FW+x]=(su/c)*DECAY;}
-                const t=tr;tr=tp2;tp2=t;
-            }
-            if (s < STEPS) setTimeout(chunk, 0);
-            else {                                                        // paint the steady-state network to simC, once
-                const d = simImg.data;
-                for (let i=0;i<FW*FH;i++){ let w=tr[i]/22; if(w>1)w=1; const j=i*4; d[j]=(45*w+185*w*w)|0; d[j+1]=(120*w+135*w*w)|0; d[j+2]=(52*w+95*w*w)|0; let av=w*2.4; if(av>1)av=1; d[j+3]=(av*255)|0; }
-                simCtx.putImageData(simImg, 0, 0); fieldReady = true;
-            }
-        }
-        chunk();
-    })();
-    function renderGrowth(growth, rootY, targetY, alpha) {
-        if (!fieldReady || alpha <= 0.02) return;
-        rootY = Math.max(rootY, -innerHeight * 0.3);
-        const ch = targetY - rootY, cw = ch * (FW / FH) * 1.55, x0 = innerWidth / 2 - cw / 2;
-        const g = growth < 0 ? 0 : (growth > 1 ? 1 : growth), srcH = Math.max(1, g * FH), dstH = g * ch;
-        sctx.globalCompositeOperation = 'lighter'; sctx.imageSmoothingEnabled = true;
-        sctx.globalAlpha = alpha;
-        sctx.drawImage(simC, 0, 0, FW, srcH, x0, rootY, cw, dstH);        // reveal only the grown part (top → front)
-        sctx.globalAlpha = 1;
-        if (g > 0.02 && g < 0.99) {                                       // glowing growth-front
-            const fy = rootY + dstH, grd = sctx.createLinearGradient(0, fy - 26, 0, fy + 6);
-            grd.addColorStop(0, 'rgba(120,235,150,0)'); grd.addColorStop(0.75, 'rgba(160,250,180,' + (0.16 * alpha).toFixed(3) + ')'); grd.addColorStop(1, 'rgba(214,255,224,' + (0.4 * alpha).toFixed(3) + ')');
-            sctx.fillStyle = grd; sctx.fillRect(x0, fy - 26, cw, 30);
-        }
-        sctx.globalCompositeOperation = 'source-over';
-    }
-
-    function srand(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-    const SIM_STEPS = 96;
-    // A CONNECTED vein network like the real slime mould: nodes arranged in a
-    // fan from the source (0,0) to the food (0,1); edges branch forward AND
-    // re-merge laterally (anastomosis → loops), and the trunk near the centre is
-    // thicker. Built once; scroll reveals it top-down. ──
-    function mkEdge(nodes, ai, bi, r, lateral) {
-        const a = nodes[ai], b = nodes[bi], midx = (a.x + b.x) / 2;
-        return {
-            a: ai, b: bi,
-            w: lateral ? 0.22 + r() * 0.16 : 0.30 + 0.70 * (1 - Math.min(1, Math.abs(midx))),   // central trunk thick, outer thin
-            cx: midx + (r() - 0.5) * 0.16, cy: (a.y + b.y) / 2 + (r() - 0.5) * 0.08,             // organic bend
-            dist: Math.max(a.y, b.y), ph: r() * 6.28
-        };
-    }
-    function makeVeinNet(seed, fromLogo) {
-        const r = srand(seed * 1597 + 7), LAYERS = 10, nodes = [], layers = [];
-        nodes.push({ x: 0, y: 0 }); layers.push([0]);                              // root — at the source (logo / component)
-        for (let L = 1; L < LAYERS; L++) {
-            const y = L / (LAYERS - 1), fan = Math.sin(y * Math.PI), idxs = [];
-            if (L === LAYERS - 1) { nodes.push({ x: 0, y: 1 }); idxs.push(nodes.length - 1); }   // food — all veins converge here
-            else {
-                const cnt = Math.max(1, Math.round(1 + fan * 4.2)), width = (0.18 + fan * 0.92) * (fromLogo ? 1.1 : 1);
-                for (let i = 0; i < cnt; i++) {
-                    const x = cnt === 1 ? (r() - 0.5) * 0.3 : ((i / (cnt - 1)) - 0.5) * 2 * width + (r() - 0.5) * 0.16;
-                    nodes.push({ x: x, y: y + (r() - 0.5) * 0.05 }); idxs.push(nodes.length - 1);
-                }
-            }
-            layers.push(idxs);
-        }
-        const edges = [];
-        for (const j of layers[1]) edges.push(mkEdge(nodes, 0, j, r, false));      // the source shoots out the first veins
-        for (let L = 1; L < LAYERS - 1; L++) {
-            for (const ni of layers[L]) {
-                const a = nodes[ni];
-                const nxt = layers[L + 1].map(function (j) { return [j, Math.hypot(nodes[j].x - a.x, nodes[j].y - a.y)]; }).sort(function (p, q) { return p[1] - q[1]; });
-                const k = Math.min(nxt.length, 1 + (r() < 0.5 ? 1 : 0));
-                for (let c = 0; c < k; c++) edges.push(mkEdge(nodes, ni, nxt[c][0], r, false));
-            }
-            const lay = layers[L];                                                 // lateral loops → anastomosis (the mesh)
-            for (let i = 0; i < lay.length - 1; i++) if (r() < 0.62) edges.push(mkEdge(nodes, lay[i], lay[i + 1], r, true));
-        }
-        return { nodes: nodes, edges: edges };
-    }
-    function drawSlime(L, rootY, targetY, growth, alpha, now) {
-        if (alpha <= 0.02) return;
-        const N = L.net.nodes, E = L.net.edges, x0 = innerWidth / 2, corr = targetY - rootY, LAT = innerWidth * 0.38, tt = now * 0.001;
-        sctx.lineCap = 'round'; sctx.lineJoin = 'round';
-        for (const e of E) {
-            if (e.dist > growth) continue;                                         // not yet grown
-            const a = N[e.a], b = N[e.b], sway = Math.sin(tt * 0.55 + e.ph) * 0.009;
-            const ax = x0 + (a.x + sway) * LAT, ay = rootY + a.y * corr;
-            const bx = x0 + (b.x + sway) * LAT, by = rootY + b.y * corr;
-            const cx = x0 + (e.cx + sway) * LAT, cy = rootY + e.cy * corr;
-            sctx.beginPath(); sctx.moveTo(ax, ay); sctx.quadraticCurveTo(cx, cy, bx, by);
-            const bw = 0.7 + 3.5 * e.w, a1 = alpha * (0.44 + e.w * 0.56);
-            sctx.strokeStyle = 'rgba(96,196,128,' + (a1 * 0.16).toFixed(3) + ')';   // translucent plasmodium sheath (flesh)
-            sctx.lineWidth = bw * 3.0;
-            if (e.w > 0.45) { sctx.shadowColor = 'rgba(92,219,122,0.4)'; sctx.shadowBlur = bw * 1.8; }
-            sctx.stroke(); sctx.shadowBlur = 0;
-            sctx.strokeStyle = 'rgba(126,226,150,' + (a1 * 0.8).toFixed(3) + ')';    // vein body (muscle)
-            sctx.lineWidth = bw; sctx.stroke();
-            sctx.strokeStyle = 'rgba(214,255,224,' + (a1 * 0.5).toFixed(3) + ')';    // bright lumen / fibre core
-            sctx.lineWidth = bw * 0.4; sctx.stroke();
-        }
-        for (let i = 0; i < N.length; i++) {                                       // junction nodes + glowing growing tips
-            const nd = N[i]; if (nd.y > growth + 0.015) continue;
-            const px = x0 + nd.x * LAT, py = rootY + nd.y * corr, tip = nd.y > growth - 0.07 && growth < 0.985;
-            if (tip) { const g = sctx.createRadialGradient(px, py, 0, px, py, 11); g.addColorStop(0, 'rgba(224,255,210,' + (0.85 * alpha).toFixed(3) + ')'); g.addColorStop(0.5, 'rgba(126,226,150,' + (0.35 * alpha).toFixed(3) + ')'); g.addColorStop(1, 'rgba(92,219,122,0)'); sctx.fillStyle = g; sctx.beginPath(); sctx.arc(px, py, 11, 0, 6.2832); sctx.fill(); }
-            sctx.fillStyle = 'rgba(206,250,186,' + ((tip ? 0.9 : 0.45) * alpha).toFixed(3) + ')'; sctx.beginPath(); sctx.arc(px, py, tip ? 2.2 : 1.3, 0, 6.2832); sctx.fill();
-        }
-    }
-
     function makeChip(cat, name) {
         const chip = document.createElement('div'); chip.className = 'scene-node';
         chip.innerHTML = '<span class="sn-port"></span><span class="sn-body"><span class="sn-cat">' + cat +
@@ -1764,15 +1627,9 @@ if (!PREFERS_REDUCED_MOTION) {
         const a = scenes[i], b = scenes[i + 1];
         const wire = document.createElementNS(NS, 'path'); wire.setAttribute('class', 'gw-base'); svg.appendChild(wire);
         // No spark/head particles — the wire is a clean drawn line (dots floated off-trail).
-        links.push({ a, b, wire, drawT: 0, vis: 0, net: makeVeinNet(i), exitChip: makeChip(a.cat, a.name), enterChip: makeChip(b.cat, b.name) });
+        links.push({ a, b, wire, drawT: 0, vis: 0, exitChip: makeChip(a.cat, a.name), enterChip: makeChip(b.cat, b.name) });
     }
     document.body.appendChild(layer);
-
-    // The LOGO is the ORIGIN of the growth: a screen-filling slime sprouts from
-    // the logo's centre as it dissolves, before the inter-section growth begins.
-    const logoZone = document.querySelector('.logo-zone');
-    const logoSprout = { net: makeVeinNet(99, true) };                 // the logo births a fan of veins that converge on the first component
-    const logoEnterChip = makeChip(scenes[0].cat, scenes[0].name);      // first COMPONENT — shown before the first section resolves
 
     const NODE_SCALE = 0.46;
     const smooth = t => t * t * (3 - 2 * t);
@@ -1817,7 +1674,6 @@ if (!PREFERS_REDUCED_MOTION) {
 
     function update() {
         const vh = innerHeight, vw = innerWidth, y = window.scrollY || 0, c = y + vh / 2;
-        sctx.clearRect(0, 0, vw, vh);                                   // fresh frame for the slime growth
         scenes.forEach(s => {
             // Component holds at centre, then the section PIXELATES + ENLARGES in as its top
             // reaches centre (grows from the top), holds FULLY CRISP + readable across its body,
@@ -1850,37 +1706,28 @@ if (!PREFERS_REDUCED_MOTION) {
             // Clamp wire ends to just beyond the viewport — when a component is far
             // off-screen the wire enters from the edge instead of spanning thousands of
             // px (which scattered the sparks far off the visible trail).
+            const x = vw / 2, y1 = Math.max(aCy + 30, -40), y2 = Math.min(bChipY - 30, vh + 40), span = y2 - y1, m1 = y1 + span * 0.5;
+            const amp = Math.min(135, Math.max(30, Math.abs(span) * 0.2));
+            // A winding "road": bends one way through the top half, the other through the bottom.
+            const d = 'M ' + x + ' ' + y1 +
+                      ' C ' + (x + amp) + ' ' + (y1 + span * 0.18) + ', ' + (x + amp) + ' ' + (m1 - span * 0.16) + ', ' + x + ' ' + m1 +
+                      ' C ' + (x - amp) + ' ' + (m1 + span * 0.16) + ', ' + (x - amp) + ' ' + (y2 - span * 0.18) + ', ' + x + ' ' + y2;
+            L.wire.setAttribute('d', d);
             const vis = clamp(exitOp * enterOp * 1.6, 0, 1);
             L.vis = vis;
             if (vis > 0.02) {
                 const gapH = Math.max(1, L.b.top - (L.a.top + L.a.h));
                 const tp = clamp((c - (L.a.top + L.a.h)) / gapH, 0, 1);       // travel progress through the gap
-                L.drawT = clamp((tp + 0.05) / 0.84, 0, 1);
-                renderGrowth(L.drawT, aCy, bChipY, vis);                      // recorded slime, scrubbed by scroll → grows / retracts
+                const draw = clamp((tp + 0.06) / 0.74, 0, 1);                 // how far the road has drawn
+                L.drawT = draw;
+                const total = L.wire.getTotalLength();
+                L.wire.style.strokeDasharray = total;
+                L.wire.style.strokeDashoffset = (total * (1 - draw)).toFixed(1);   // draws/extends as you travel
+                L.wire.style.opacity = (vis * 0.9).toFixed(3);
             } else {
-                L.drawT = 0;
+                L.wire.style.opacity = '0'; L.drawT = 0;
             }
         });
-
-        // ── The LOGO is the ORIGIN: a screen-filling slime sprouts from the logo's centre
-        //    as it dissolves, reaching down toward where the first component arrives. ──
-        if (logoZone) {
-            const lzTop = logoZone.offsetTop, lzH = logoZone.offsetHeight, lp = (y - lzTop) / lzH;
-            if (lp > 0.12 && lp < 1.2) {
-                const grow = clamp((lp - 0.22) / 0.72, 0, 1);
-                const lvis = clamp(Math.min((lp - 0.16) / 0.14, (1.2 - lp) / 0.28), 0, 1);
-                renderGrowth(grow, vh * 0.42, vh * 0.96, lvis);              // the logo births the slime, scrubbed by the logo-zone scroll
-            }
-        }
-        // First component: the logo hands off to a COMPONENT chip shown BEFORE the first
-        // section resolves — so the sequence reads component → section → component → wire.
-        {
-            const b = scenes[0], bCenter = b.top + b.h / 2, chipY = Math.max(b.top - y - vh * 0.52, vh / 2);
-            const op = clamp(1 - b.e / 0.26, 0, 1) * clamp((bCenter - c) / (vh * 0.6), 0, 1) * clamp((c - (b.top - vh * 1.7)) / (vh * 0.55), 0, 1);
-            logoEnterChip.style.left = (vw / 2) + 'px'; logoEnterChip.style.top = chipY + 'px';
-            logoEnterChip.style.opacity = op.toFixed(3);
-            logoEnterChip.style.transform = 'translate(-50%,-50%) scale(' + (1 + 3.4 * clamp(b.e, 0, 0.5)).toFixed(2) + ')';
-        }
     }
     // ── ONE rAF loop is the single source of truth: it recomputes the scene + wire
     //    geometry every frame from the LIVE scroll (so it adapts instantly both ways),
@@ -1937,7 +1784,7 @@ if (!PREFERS_REDUCED_MOTION && matchMedia('(pointer: fine)').matches) {
             const finalOut = sm(cl(p, 0.94, 1.00));
             // Constellation: small → very large → off-screen, dissolving as it goes.
             logo.style.opacity = (appearIn * (1 - finalOut)).toFixed(3);
-            mark.style.transform = 'scale(' + (0.42 + 2.9 * zoom).toFixed(3) + ')';
+            mark.style.transform = 'scale(' + (0.6 + 4.0 * zoom).toFixed(3) + ')';
             mark.style.opacity = (1 - dissolve).toFixed(3);
             // The followed branch extends from centre straight down into the build.
             branch.style.height = (grow * (vh * 0.62 + 140)).toFixed(0) + 'px';
