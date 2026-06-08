@@ -1585,12 +1585,16 @@ if (!PREFERS_REDUCED_MOTION) {
 (function() {
     if (PREFERS_REDUCED_MOTION) return;
     const DEF = [
-        ['#demo',     'Build',   'Live Canvas'],
-        ['#ways',     'Process', 'Workflow'],
-        ['#how',      'Method',  'How It Works'],
-        ['#features', 'Output',  'Features'],
-        ['#models',   'Source',  'AI Models'],
-        ['#install',  'Result',  'Get MANTIS'],
+        ['.ticker-wrap', 'Prompts', 'Try Anything'],
+        ['.stats-bar',   'Proof',   'By the Numbers'],
+        ['#problem',     'Why',     'The Wall'],
+        ['.brand-band',  'Ethos',   'Not a Black Box'],
+        ['#demo',        'Build',   'Live Canvas'],
+        ['#ways',        'Process', 'Workflow'],
+        ['#how',         'Method',  'How It Works'],
+        ['#features',    'Output',  'Features'],
+        ['#models',      'Source',  'AI Models'],
+        ['#install',     'Result',  'Get MANTIS'],
     ];
     const scenes = [];
     DEF.forEach(d => { const el = document.querySelector(d[0]); if (el) { el.classList.add('gh-scene'); scenes.push({ el, cat: d[1], name: d[2] }); } });
@@ -1604,7 +1608,7 @@ if (!PREFERS_REDUCED_MOTION) {
         if (i === scenes.length - 1) return;
         const g = document.createElement('div');
         g.className = 'wire-gap';
-        g.style.height = '100vh';
+        g.style.height = '70vh';
         s.el.insertAdjacentElement('afterend', g);
     });
 
