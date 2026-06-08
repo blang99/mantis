@@ -580,7 +580,7 @@
               downward to become the first wire that feeds the component build. ── */
         .logo-zone { height: 175vh; pointer-events: none; }
         #logo-origin { position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 5; opacity: 0; will-change: opacity; }
-        #logo-origin .lo-mark { width: 210px; height: 210px; filter: drop-shadow(0 0 30px var(--mantis-glow-strong)); will-change: transform, opacity; }
+        #logo-origin .lo-mark { width: 300px; height: 300px; will-change: opacity; }
         #logo-origin .lo-mark .lo-node { fill: var(--mantis); }
         #logo-origin .lo-mark .lo-hub { fill: var(--mantis-bright, #7ae99a); }
         #logo-origin .lo-mark .lo-line { stroke: var(--mantis); stroke-width: 1.2; opacity: 0.5; }
@@ -692,49 +692,36 @@
     <div class="lo-branch"></div>
     <svg class="lo-mark" viewBox="0 0 36 36" fill="none">
         <defs>
-            <radialGradient id="loNode" cx="50%" cy="40%" r="62%">
-                <stop offset="0%" stop-color="#eafff1"/>
-                <stop offset="40%" stop-color="#7ae99a"/>
-                <stop offset="100%" stop-color="#3a9b55"/>
+            <radialGradient id="loNode" cx="42%" cy="36%" r="70%">
+                <stop offset="0%" stop-color="#d6ffe2"/>
+                <stop offset="55%" stop-color="#5CDB7A"/>
+                <stop offset="100%" stop-color="#37a85a"/>
             </radialGradient>
-            <radialGradient id="loHub" cx="50%" cy="38%" r="64%">
+            <radialGradient id="loHub" cx="42%" cy="34%" r="72%">
                 <stop offset="0%" stop-color="#ffffff"/>
-                <stop offset="32%" stop-color="#bdffd2"/>
-                <stop offset="100%" stop-color="#5CDB7A"/>
+                <stop offset="42%" stop-color="#9bffba"/>
+                <stop offset="100%" stop-color="#43c168"/>
             </radialGradient>
-            <linearGradient id="loLine" x1="18" y1="18" x2="18" y2="4" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#7ae99a" stop-opacity="0.9"/>
-                <stop offset="100%" stop-color="#5CDB7A" stop-opacity="0.3"/>
-            </linearGradient>
         </defs>
-        <!-- connecting wires (hub → nodes): gradient stroke -->
-        <g stroke="url(#loLine)" stroke-width="1.05" stroke-linecap="round">
+        <!-- crisp connecting edges (hub → nodes) -->
+        <g stroke="#5CDB7A" stroke-width="1.4" stroke-linecap="round">
             <line x1="18" y1="18" x2="18" y2="5"/>
             <line x1="18" y1="18" x2="5"  y2="15"/>
             <line x1="18" y1="18" x2="31" y2="15"/>
             <line x1="18" y1="18" x2="10" y2="28"/>
             <line x1="18" y1="18" x2="26" y2="28"/>
         </g>
-        <!-- soft halo behind each node -->
-        <g fill="#5CDB7A">
-            <circle cx="18" cy="5"  r="5.6" opacity="0.12"/>
-            <circle cx="5"  cy="15" r="4.4" opacity="0.10"/>
-            <circle cx="31" cy="15" r="4.4" opacity="0.10"/>
-            <circle cx="10" cy="28" r="4.4" opacity="0.10"/>
-            <circle cx="26" cy="28" r="4.4" opacity="0.10"/>
-        </g>
-        <!-- outer nodes: gradient cores -->
-        <g fill="url(#loNode)">
+        <!-- outer nodes: crisp gradient cores with a bright rim -->
+        <g fill="url(#loNode)" stroke="#c4ffd4" stroke-width="0.35">
             <circle cx="18" cy="5"  r="3.4"/>
-            <circle cx="5"  cy="15" r="2.5"/>
-            <circle cx="31" cy="15" r="2.5"/>
-            <circle cx="10" cy="28" r="2.5"/>
-            <circle cx="26" cy="28" r="2.5"/>
+            <circle cx="5"  cy="15" r="2.6"/>
+            <circle cx="31" cy="15" r="2.6"/>
+            <circle cx="10" cy="28" r="2.6"/>
+            <circle cx="26" cy="28" r="2.6"/>
         </g>
-        <!-- hub: halo + bright core + specular highlight -->
-        <circle cx="18" cy="18" r="7.2" fill="#7ae99a" opacity="0.14"/>
-        <circle cx="18" cy="18" r="4.7" fill="url(#loHub)"/>
-        <circle cx="16.9" cy="16.5" r="1.5" fill="#ffffff" opacity="0.5"/>
+        <!-- hub: bright core, rim, specular highlight -->
+        <circle cx="18" cy="18" r="4.8" fill="url(#loHub)" stroke="#e6fff0" stroke-width="0.45"/>
+        <circle cx="16.7" cy="16.4" r="1.3" fill="#ffffff" opacity="0.45"/>
     </svg>
 </div>
 
@@ -1630,6 +1617,7 @@ if (!PREFERS_REDUCED_MOTION) {
         links.push({ a, b, wire, drawT: 0, vis: 0, exitChip: makeChip(a.cat, a.name), enterChip: makeChip(b.cat, b.name) });
     }
     document.body.appendChild(layer);
+    const logoEnterChip = makeChip(scenes[0].cat, scenes[0].name);   // first component — shown before its section
 
     const NODE_SCALE = 0.46;
     const smooth = t => t * t * (3 - 2 * t);
@@ -1728,6 +1716,15 @@ if (!PREFERS_REDUCED_MOTION) {
                 L.wire.style.opacity = '0'; L.drawT = 0;
             }
         });
+        // First component: show the FIRST section's component chip BEFORE its section
+        // resolves, so the order reads component → section (not section → component).
+        {
+            const b = scenes[0], bCenter = b.top + b.h / 2, chipY = Math.max(b.top - y - vh * 0.52, vh / 2);
+            const op = clamp(1 - b.e / 0.26, 0, 1) * clamp((bCenter - c) / (vh * 0.6), 0, 1) * clamp((c - (b.top - vh * 1.7)) / (vh * 0.55), 0, 1);
+            logoEnterChip.style.left = (vw / 2) + 'px'; logoEnterChip.style.top = chipY + 'px';
+            logoEnterChip.style.opacity = op.toFixed(3);
+            logoEnterChip.style.transform = 'translate(-50%,-50%) scale(' + (1 + 3.4 * clamp(b.e, 0, 0.5)).toFixed(2) + ')';
+        }
     }
     // ── ONE rAF loop is the single source of truth: it recomputes the scene + wire
     //    geometry every frame from the LIVE scroll (so it adapts instantly both ways),
@@ -1784,7 +1781,7 @@ if (!PREFERS_REDUCED_MOTION && matchMedia('(pointer: fine)').matches) {
             const finalOut = sm(cl(p, 0.94, 1.00));
             // Constellation: small → very large → off-screen, dissolving as it goes.
             logo.style.opacity = (appearIn * (1 - finalOut)).toFixed(3);
-            mark.style.transform = 'scale(' + (0.6 + 4.0 * zoom).toFixed(3) + ')';
+            mark.style.transform = 'scale(' + (0.42 + 2.9 * zoom).toFixed(3) + ')';
             mark.style.opacity = (1 - dissolve).toFixed(3);
             // The followed branch extends from centre straight down into the build.
             branch.style.height = (grow * (vh * 0.62 + 140)).toFixed(0) + 'px';
