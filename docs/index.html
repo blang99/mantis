@@ -1636,36 +1636,26 @@ if (!PREFERS_REDUCED_MOTION) {
     const clamp = (v, a, b) => v < a ? a : (v > b ? b : v);
     function measure() { scenes.forEach(s => { s.top = s.el.offsetTop; s.h = s.el.offsetHeight; }); }
 
-    // ── Pre-baked pixel-dissolve masks (smoothness #1): a tiled SVG mask whose
-    //    per-cell square grows 0 → full cell (pixelated → crisp). Baking the steps
-    //    ONCE and swapping the cached string per frame keeps the dissolve buttery —
-    //    no per-frame string-building, no mask recompute, no redundant style writes. ──
-    const CELL = 22, MASK_STEPS = 44;
-    const PIX_MASKS = [];
-    for (let i = 0; i <= MASK_STEPS; i++) {
-        const sq = (i / MASK_STEPS) * CELL;
-        const off = ((CELL - sq) / 2).toFixed(2);
-        PIX_MASKS[i] = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='" + CELL + "' height='" + CELL + "'%3E%3Crect x='" + off + "' y='" + off + "' width='" + sq.toFixed(2) + "' height='" + sq.toFixed(2) + "' fill='%23fff'/%3E%3C/svg%3E\")";
-    }
+    // ── Premium "resolve": each section materialises with a soft focus-in
+    //    (blur → sharp) + fade — compositor-friendly (opacity + filter), gently
+    //    quantised so styles are written only when the step changes. No blocky
+    //    pixel grid (that read as cheap); the digital character now lives in the
+    //    constellation, the wires, and the component chips instead. ──
+    const BLUR_MAX = 13;                                   // px of blur at the very start of the resolve
     function applyPixel(el, e, st) {
         if (e <= 0.006) {                                  // off-stage — the component shows instead
-            if (st.step !== -1) { el.style.opacity = '0'; el.style.webkitMaskImage = el.style.maskImage = 'none'; st.step = -1; }
+            if (st.v !== 0) { el.style.opacity = '0'; el.style.filter = 'blur(' + BLUR_MAX + 'px)'; st.v = 0; }
             return;
         }
-        if (e >= 0.985) {                                  // fully crisp — drop the mask (sharp text)
-            if (st.step !== 999) { el.style.opacity = '1'; el.style.webkitMaskImage = el.style.maskImage = 'none'; st.step = 999; }
+        if (e >= 0.992) {                                  // fully resolved — perfectly crisp, no filter
+            if (st.v !== 1) { el.style.opacity = '1'; el.style.filter = 'none'; st.v = 1; }
             return;
         }
-        const step = Math.round(e * MASK_STEPS);
-        if (step === st.step) return;                      // unchanged this frame → zero style writes
-        if (!st.init) {                                    // tiling props set ONCE per section
-            el.style.webkitMaskRepeat = el.style.maskRepeat = 'repeat';
-            el.style.webkitMaskSize = el.style.maskSize = CELL + 'px ' + CELL + 'px';
-            el.style.opacity = '1';
-            st.init = true;
-        }
-        el.style.webkitMaskImage = el.style.maskImage = PIX_MASKS[step];
-        st.step = step;
+        const q = Math.round(e * 50);                      // ~50 steps → smooth, skips redundant writes
+        if (q === st.q) return;
+        st.q = q; st.v = -1;
+        el.style.opacity = (0.10 + e * 0.90).toFixed(3);
+        el.style.filter = 'blur(' + ((1 - e) * BLUR_MAX).toFixed(2) + 'px)';
     }
 
     function update() {
@@ -1680,7 +1670,7 @@ if (!PREFERS_REDUCED_MOTION) {
             const DOUT = Math.min(vh * 0.38, s.h * 0.36);    // dissolve-out distance (gentle)
             const e = smooth(clamp(Math.min((c - top) / DIN, (bot - c) / DOUT), 0, 1));
             s.e = e;
-            if (!s._pix) s._pix = { step: -2, init: false };
+            if (!s._pix) s._pix = { q: -2, v: -2 };
             applyPixel(s.el, e, s._pix);
         });
         links.forEach(L => {
