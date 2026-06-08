@@ -1638,13 +1638,13 @@ if (!PREFERS_REDUCED_MOTION) {
         };
     }
     function makeVeinNet(seed, fromLogo) {
-        const r = srand(seed * 1597 + 7), LAYERS = 8, nodes = [], layers = [];
+        const r = srand(seed * 1597 + 7), LAYERS = 10, nodes = [], layers = [];
         nodes.push({ x: 0, y: 0 }); layers.push([0]);                              // root — at the source (logo / component)
         for (let L = 1; L < LAYERS; L++) {
             const y = L / (LAYERS - 1), fan = Math.sin(y * Math.PI), idxs = [];
             if (L === LAYERS - 1) { nodes.push({ x: 0, y: 1 }); idxs.push(nodes.length - 1); }   // food — all veins converge here
             else {
-                const cnt = Math.max(1, Math.round(1 + fan * 3.0)), width = (0.18 + fan * 0.9) * (fromLogo ? 1.1 : 1);
+                const cnt = Math.max(1, Math.round(1 + fan * 4.2)), width = (0.18 + fan * 0.92) * (fromLogo ? 1.1 : 1);
                 for (let i = 0; i < cnt; i++) {
                     const x = cnt === 1 ? (r() - 0.5) * 0.3 : ((i / (cnt - 1)) - 0.5) * 2 * width + (r() - 0.5) * 0.16;
                     nodes.push({ x: x, y: y + (r() - 0.5) * 0.05 }); idxs.push(nodes.length - 1);
@@ -1662,7 +1662,7 @@ if (!PREFERS_REDUCED_MOTION) {
                 for (let c = 0; c < k; c++) edges.push(mkEdge(nodes, ni, nxt[c][0], r, false));
             }
             const lay = layers[L];                                                 // lateral loops → anastomosis (the mesh)
-            for (let i = 0; i < lay.length - 1; i++) if (r() < 0.5) edges.push(mkEdge(nodes, lay[i], lay[i + 1], r, true));
+            for (let i = 0; i < lay.length - 1; i++) if (r() < 0.62) edges.push(mkEdge(nodes, lay[i], lay[i + 1], r, true));
         }
         return { nodes: nodes, edges: edges };
     }
@@ -1677,7 +1677,7 @@ if (!PREFERS_REDUCED_MOTION) {
             const bx = x0 + (b.x + sway) * LAT, by = rootY + b.y * corr;
             const cx = x0 + (e.cx + sway) * LAT, cy = rootY + e.cy * corr;
             sctx.beginPath(); sctx.moveTo(ax, ay); sctx.quadraticCurveTo(cx, cy, bx, by);
-            const bw = 0.9 + 5.2 * e.w, a1 = alpha * (0.42 + e.w * 0.58);
+            const bw = 0.7 + 3.5 * e.w, a1 = alpha * (0.44 + e.w * 0.56);
             sctx.strokeStyle = 'rgba(96,196,128,' + (a1 * 0.16).toFixed(3) + ')';   // translucent plasmodium sheath (flesh)
             sctx.lineWidth = bw * 3.0;
             if (e.w > 0.45) { sctx.shadowColor = 'rgba(92,219,122,0.4)'; sctx.shadowBlur = bw * 1.8; }
