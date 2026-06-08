@@ -584,7 +584,7 @@
         #logo-origin .lo-mark .lo-node { fill: var(--mantis); }
         #logo-origin .lo-mark .lo-hub { fill: var(--mantis-bright, #7ae99a); }
         #logo-origin .lo-mark .lo-line { stroke: var(--mantis); stroke-width: 1.2; opacity: 0.5; }
-        #logo-origin .lo-branch { position: absolute; top: 50%; left: 50%; width: 3px; height: 0; transform: translateX(-50%); transform-origin: top center; border-radius: 2px; opacity: 0; background: linear-gradient(180deg, var(--mantis) 0%, var(--mantis) 60%, rgba(92,219,122,0) 100%); box-shadow: 0 0 12px var(--mantis-glow-strong); }
+        #logo-origin .lo-branch { display: none; position: absolute; top: 50%; left: 50%; width: 3px; height: 0; transform: translateX(-50%); transform-origin: top center; border-radius: 2px; opacity: 0; background: linear-gradient(180deg, var(--mantis) 0%, var(--mantis) 60%, rgba(92,219,122,0) 100%); box-shadow: 0 0 12px var(--mantis-glow-strong); }
         @media (max-width: 720px) { #logo-origin .lo-mark { width: 150px; height: 150px; } }
         @keyframes headPulse { 0%,100% { r: 4.5px; opacity: 0.9; } 50% { r: 7px; opacity: 1; } }
         .scene-node {
@@ -1714,6 +1714,11 @@ if (!PREFERS_REDUCED_MOTION) {
     }
     document.body.appendChild(layer);
 
+    // The LOGO is the ORIGIN of the growth: a screen-filling slime sprouts from
+    // the logo's centre as it dissolves, before the inter-section growth begins.
+    const logoZone = document.querySelector('.logo-zone');
+    const logoSprout = { tendrils: makeTendrils(99) };
+
     const NODE_SCALE = 0.46;
     const smooth = t => t * t * (3 - 2 * t);
     const clamp = (v, a, b) => v < a ? a : (v > b ? b : v);
@@ -1802,6 +1807,17 @@ if (!PREFERS_REDUCED_MOTION) {
                 L.drawT = 0;
             }
         });
+
+        // ── The LOGO is the ORIGIN: a screen-filling slime sprouts from the logo's centre
+        //    as it dissolves, reaching down toward where the first component arrives. ──
+        if (logoZone) {
+            const lzTop = logoZone.offsetTop, lzH = logoZone.offsetHeight, lp = (y - lzTop) / lzH;
+            if (lp > 0.12 && lp < 1.2) {
+                const grow = clamp((lp - 0.22) / 0.72, 0, 1);
+                const lvis = clamp(Math.min((lp - 0.16) / 0.14, (1.2 - lp) / 0.28), 0, 1);
+                drawSlime(logoSprout, vh * 0.42, vh * 1.08, grow, lvis, nowT);   // logo → first food
+            }
+        }
     }
     // ── ONE rAF loop is the single source of truth: it recomputes the scene + wire
     //    geometry every frame from the LIVE scroll (so it adapts instantly both ways),
