@@ -686,6 +686,58 @@
     <div class="scroll-cue"><div class="mouse"></div>Scroll</div>
 </section>
 
+<!-- ═══ LOGO ORIGIN — the constellation unfurls into the first wire ═══ -->
+<div class="logo-zone" aria-hidden="true"></div>
+<div id="logo-origin" aria-hidden="true">
+    <div class="lo-branch"></div>
+    <svg class="lo-mark" viewBox="0 0 36 36" fill="none">
+        <defs>
+            <radialGradient id="loNode" cx="50%" cy="40%" r="62%">
+                <stop offset="0%" stop-color="#eafff1"/>
+                <stop offset="40%" stop-color="#7ae99a"/>
+                <stop offset="100%" stop-color="#3a9b55"/>
+            </radialGradient>
+            <radialGradient id="loHub" cx="50%" cy="38%" r="64%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="32%" stop-color="#bdffd2"/>
+                <stop offset="100%" stop-color="#5CDB7A"/>
+            </radialGradient>
+            <linearGradient id="loLine" x1="18" y1="18" x2="18" y2="4" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#7ae99a" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#5CDB7A" stop-opacity="0.3"/>
+            </linearGradient>
+        </defs>
+        <!-- connecting wires (hub → nodes): gradient stroke -->
+        <g stroke="url(#loLine)" stroke-width="1.05" stroke-linecap="round">
+            <line x1="18" y1="18" x2="18" y2="5"/>
+            <line x1="18" y1="18" x2="5"  y2="15"/>
+            <line x1="18" y1="18" x2="31" y2="15"/>
+            <line x1="18" y1="18" x2="10" y2="28"/>
+            <line x1="18" y1="18" x2="26" y2="28"/>
+        </g>
+        <!-- soft halo behind each node -->
+        <g fill="#5CDB7A">
+            <circle cx="18" cy="5"  r="5.6" opacity="0.12"/>
+            <circle cx="5"  cy="15" r="4.4" opacity="0.10"/>
+            <circle cx="31" cy="15" r="4.4" opacity="0.10"/>
+            <circle cx="10" cy="28" r="4.4" opacity="0.10"/>
+            <circle cx="26" cy="28" r="4.4" opacity="0.10"/>
+        </g>
+        <!-- outer nodes: gradient cores -->
+        <g fill="url(#loNode)">
+            <circle cx="18" cy="5"  r="3.4"/>
+            <circle cx="5"  cy="15" r="2.5"/>
+            <circle cx="31" cy="15" r="2.5"/>
+            <circle cx="10" cy="28" r="2.5"/>
+            <circle cx="26" cy="28" r="2.5"/>
+        </g>
+        <!-- hub: halo + bright core + specular highlight -->
+        <circle cx="18" cy="18" r="7.2" fill="#7ae99a" opacity="0.14"/>
+        <circle cx="18" cy="18" r="4.7" fill="url(#loHub)"/>
+        <circle cx="16.9" cy="16.5" r="1.5" fill="#ffffff" opacity="0.5"/>
+    </svg>
+</div>
+
 <!-- ═══ PROMPT TICKER ═══ -->
 <div class="ticker-wrap">
     <div class="ticker" id="ticker">
@@ -746,57 +798,7 @@
     </div>
 </section>
 
-<!-- ═══ LOGO ORIGIN — the constellation unfurls into the first wire ═══ -->
-<div class="logo-zone" aria-hidden="true"></div>
-<div id="logo-origin" aria-hidden="true">
-    <div class="lo-branch"></div>
-    <svg class="lo-mark" viewBox="0 0 36 36" fill="none">
-        <defs>
-            <radialGradient id="loNode" cx="50%" cy="40%" r="62%">
-                <stop offset="0%" stop-color="#eafff1"/>
-                <stop offset="40%" stop-color="#7ae99a"/>
-                <stop offset="100%" stop-color="#3a9b55"/>
-            </radialGradient>
-            <radialGradient id="loHub" cx="50%" cy="38%" r="64%">
-                <stop offset="0%" stop-color="#ffffff"/>
-                <stop offset="32%" stop-color="#bdffd2"/>
-                <stop offset="100%" stop-color="#5CDB7A"/>
-            </radialGradient>
-            <linearGradient id="loLine" x1="18" y1="18" x2="18" y2="4" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#7ae99a" stop-opacity="0.9"/>
-                <stop offset="100%" stop-color="#5CDB7A" stop-opacity="0.3"/>
-            </linearGradient>
-        </defs>
-        <!-- connecting wires (hub → nodes): gradient stroke -->
-        <g stroke="url(#loLine)" stroke-width="1.05" stroke-linecap="round">
-            <line x1="18" y1="18" x2="18" y2="5"/>
-            <line x1="18" y1="18" x2="5"  y2="15"/>
-            <line x1="18" y1="18" x2="31" y2="15"/>
-            <line x1="18" y1="18" x2="10" y2="28"/>
-            <line x1="18" y1="18" x2="26" y2="28"/>
-        </g>
-        <!-- soft halo behind each node -->
-        <g fill="#5CDB7A">
-            <circle cx="18" cy="5"  r="5.6" opacity="0.12"/>
-            <circle cx="5"  cy="15" r="4.4" opacity="0.10"/>
-            <circle cx="31" cy="15" r="4.4" opacity="0.10"/>
-            <circle cx="10" cy="28" r="4.4" opacity="0.10"/>
-            <circle cx="26" cy="28" r="4.4" opacity="0.10"/>
-        </g>
-        <!-- outer nodes: gradient cores -->
-        <g fill="url(#loNode)">
-            <circle cx="18" cy="5"  r="3.4"/>
-            <circle cx="5"  cy="15" r="2.5"/>
-            <circle cx="31" cy="15" r="2.5"/>
-            <circle cx="10" cy="28" r="2.5"/>
-            <circle cx="26" cy="28" r="2.5"/>
-        </g>
-        <!-- hub: halo + bright core + specular highlight -->
-        <circle cx="18" cy="18" r="7.2" fill="#7ae99a" opacity="0.14"/>
-        <circle cx="18" cy="18" r="4.7" fill="url(#loHub)"/>
-        <circle cx="16.9" cy="16.5" r="1.5" fill="#ffffff" opacity="0.5"/>
-    </svg>
-</div>
+
 
 <!-- ═══ DEMO ═══ -->
 <section class="demo-section reveal" id="demo">
