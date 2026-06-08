@@ -1623,41 +1623,56 @@ if (!PREFERS_REDUCED_MOTION) {
     addEventListener('resize', sizeSlime, { passive: true });
 
     // ════════════════════════════════════════════════════════════════
-    //  REAL AGENT-BASED PHYSARUM. Thousands of agents deposit a trail, sense
-    //  three points ahead and steer toward the strongest; the trail field
-    //  diffuses + decays each step. FOOD = the visible component positions, so
-    //  the living slime genuinely grows toward them. Sim runs at low res; drawn
-    //  scaled up it gives soft, organic veins. ──
+    //  REAL AGENT-BASED PHYSARUM, recorded ONCE then REVEALED BY SCROLL. Agents
+    //  deposit a trail, sense three points ahead and steer toward the strongest;
+    //  the field diffuses + decays. We pre-run the sim once (chunked, no freeze)
+    //  to a steady-state network, paint it to a canvas, and the SCROLL POSITION
+    //  CLIPS how much shows — so the slime GROWS down as you scroll down and
+    //  RETRACTS as you scroll up (true back-and-forth), with a glowing growth
+    //  front. High-res field → sharp veins; the reveal is a cheap clipped draw. ──
     // ════════════════════════════════════════════════════════════════
-    const SW = 200, SH = 138, NA = 2400;
-    let trail = new Float32Array(SW * SH), tmp = new Float32Array(SW * SH);
-    const agents = new Float32Array(NA * 3);
-    for (let i = 0; i < NA; i++) { agents[i * 3] = Math.random() * SW; agents[i * 3 + 1] = Math.random() * SH; agents[i * 3 + 2] = Math.random() * 6.283; }
-    const simC = document.createElement('canvas'); simC.width = SW; simC.height = SH;
-    const simCtx = simC.getContext('2d'), simImg = simCtx.createImageData(SW, SH);
-    const SD = 7, SA = 0.6, RA = 0.62, SS = 1.0, DEP = 5, DECAY = 0.905;
-    function smp(x, y) { x |= 0; y |= 0; if (x < 0 || x >= SW || y < 0 || y >= SH) return -1; return trail[y * SW + x]; }
-    function stepSim(foods) {
-        for (let k = 0; k < foods.length; k++) { const f = foods[k], fx = f[0] | 0, fy = f[1] | 0, fw = f[2]; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const x = fx + dx, y = fy + dy; if (x >= 0 && x < SW && y >= 0 && y < SH) trail[y * SW + x] += fw; } }
-        for (let i = 0; i < NA; i++) {
-            let x = agents[i * 3], y = agents[i * 3 + 1], a = agents[i * 3 + 2];
-            const f = smp(x + Math.cos(a) * SD, y + Math.sin(a) * SD), l = smp(x + Math.cos(a + SA) * SD, y + Math.sin(a + SA) * SD), rg = smp(x + Math.cos(a - SA) * SD, y + Math.sin(a - SA) * SD);
-            if (f >= l && f >= rg) {} else if (l > rg) a += RA; else if (rg > l) a -= RA; else a += (Math.random() < 0.5 ? RA : -RA);
-            x += Math.cos(a) * SS; y += Math.sin(a) * SS;
-            if (x < 1) { x = 1; a = Math.PI - a; } if (x >= SW - 1) { x = SW - 2; a = Math.PI - a; }
-            if (y < 1) { y = 1; a = -a; } if (y >= SH - 1) { y = SH - 2; a = -a; }
-            agents[i * 3] = x; agents[i * 3 + 1] = y; agents[i * 3 + 2] = a;
-            trail[(y | 0) * SW + (x | 0)] += DEP;
+    const FW = 360, FH = 540, NA = 3600;
+    let fieldReady = false;
+    const simC = document.createElement('canvas'); simC.width = FW; simC.height = FH;
+    const simCtx = simC.getContext('2d'), simImg = simCtx.createImageData(FW, FH);
+    (function precompute() {
+        let tr = new Float32Array(FW * FH), tp2 = new Float32Array(FW * FH);
+        const ag = new Float32Array(NA * 3);
+        for (let i = 0; i < NA; i++) { ag[i*3] = Math.random()*FW; ag[i*3+1] = Math.random()*FH; ag[i*3+2] = Math.random()*6.283; }
+        const food = [[FW/2, FH*0.93]];
+        const SD = 9, SA = 0.6, RA = 0.62, SS = 1.0, DEP = 5, DECAY = 0.945, STEPS = 64;
+        function smp(t, x, y) { x|=0; y|=0; if (x<0||x>=FW||y<0||y>=FH) return -1; return t[y*FW+x]; }
+        let s = 0;
+        function chunk() {
+            for (const lim = Math.min(STEPS, s + 6); s < lim; s++) {
+                for (let q=0;q<food.length;q++){ const fx=food[q][0]|0, fy=food[q][1]|0; for(let dy=-4;dy<=4;dy++)for(let dx=-4;dx<=4;dx++){const x=fx+dx,y=fy+dy;if(x>=0&&x<FW&&y>=0&&y<FH)tr[y*FW+x]+=2.4;} }
+                for (let i=0;i<NA;i++){ let x=ag[i*3],y=ag[i*3+1],a=ag[i*3+2]; const f=smp(tr,x+Math.cos(a)*SD,y+Math.sin(a)*SD),l=smp(tr,x+Math.cos(a+SA)*SD,y+Math.sin(a+SA)*SD),rg=smp(tr,x+Math.cos(a-SA)*SD,y+Math.sin(a-SA)*SD); if(f>=l&&f>=rg){}else if(l>rg)a+=RA;else if(rg>l)a-=RA;else a+=(Math.random()<0.5?RA:-RA); x+=Math.cos(a)*SS;y+=Math.sin(a)*SS; if(x<1){x=1;a=Math.PI-a;}if(x>=FW-1){x=FW-2;a=Math.PI-a;}if(y<1){y=1;a=-a;}if(y>=FH-1){y=FH-2;a=-a;} ag[i*3]=x;ag[i*3+1]=y;ag[i*3+2]=a; tr[(y|0)*FW+(x|0)]+=DEP; }
+                for (let y=0;y<FH;y++)for(let x=0;x<FW;x++){let su=0,c=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const nx=x+dx,ny=y+dy;if(nx<0||nx>=FW||ny<0||ny>=FH)continue;su+=tr[ny*FW+nx];c++;}tp2[y*FW+x]=(su/c)*DECAY;}
+                const t=tr;tr=tp2;tp2=t;
+            }
+            if (s < STEPS) setTimeout(chunk, 0);
+            else {                                                        // paint the steady-state network to simC, once
+                const d = simImg.data;
+                for (let i=0;i<FW*FH;i++){ let w=tr[i]/22; if(w>1)w=1; const j=i*4; d[j]=(45*w+185*w*w)|0; d[j+1]=(120*w+135*w*w)|0; d[j+2]=(52*w+95*w*w)|0; let av=w*2.4; if(av>1)av=1; d[j+3]=(av*255)|0; }
+                simCtx.putImageData(simImg, 0, 0); fieldReady = true;
+            }
         }
-        for (let y = 0; y < SH; y++) for (let x = 0; x < SW; x++) { let s = 0, c = 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const nx = x + dx, ny = y + dy; if (nx < 0 || nx >= SW || ny < 0 || ny >= SH) continue; s += trail[ny * SW + nx]; c++; } tmp[y * SW + x] = (s / c) * DECAY; }
-        const t = trail; trail = tmp; tmp = t;
-    }
-    function renderSim(alpha) {
-        const d = simImg.data;
-        for (let i = 0; i < SW * SH; i++) { let w = trail[i] / 24; if (w > 1) w = 1; const j = i * 4; d[j] = (40 * w + 190 * w * w) | 0; d[j + 1] = (112 * w + 143 * w * w) | 0; d[j + 2] = (46 * w + 96 * w * w) | 0; let av = w * 2.2; if (av > 1) av = 1; d[j + 3] = (255 * av * alpha) | 0; }
-        simCtx.putImageData(simImg, 0, 0);
+        chunk();
+    })();
+    function renderGrowth(growth, rootY, targetY, alpha) {
+        if (!fieldReady || alpha <= 0.02) return;
+        rootY = Math.max(rootY, -innerHeight * 0.3);
+        const ch = targetY - rootY, cw = ch * (FW / FH) * 1.55, x0 = innerWidth / 2 - cw / 2;
+        const g = growth < 0 ? 0 : (growth > 1 ? 1 : growth), srcH = Math.max(1, g * FH), dstH = g * ch;
         sctx.globalCompositeOperation = 'lighter'; sctx.imageSmoothingEnabled = true;
-        sctx.drawImage(simC, 0, 0, innerWidth, innerHeight);
+        sctx.globalAlpha = alpha;
+        sctx.drawImage(simC, 0, 0, FW, srcH, x0, rootY, cw, dstH);        // reveal only the grown part (top → front)
+        sctx.globalAlpha = 1;
+        if (g > 0.02 && g < 0.99) {                                       // glowing growth-front
+            const fy = rootY + dstH, grd = sctx.createLinearGradient(0, fy - 26, 0, fy + 6);
+            grd.addColorStop(0, 'rgba(120,235,150,0)'); grd.addColorStop(0.75, 'rgba(160,250,180,' + (0.16 * alpha).toFixed(3) + ')'); grd.addColorStop(1, 'rgba(214,255,224,' + (0.4 * alpha).toFixed(3) + ')');
+            sctx.fillStyle = grd; sctx.fillRect(x0, fy - 26, cw, 30);
+        }
         sctx.globalCompositeOperation = 'source-over';
     }
 
@@ -1802,8 +1817,7 @@ if (!PREFERS_REDUCED_MOTION) {
 
     function update() {
         const vh = innerHeight, vw = innerWidth, y = window.scrollY || 0, c = y + vh / 2;
-        sctx.clearRect(0, 0, vw, vh); const nowT = performance.now();   // fresh frame for the slime
-        const foods = []; let slimeA = 0;                               // food sources = the visible components
+        sctx.clearRect(0, 0, vw, vh);                                   // fresh frame for the slime growth
         scenes.forEach(s => {
             // Component holds at centre, then the section PIXELATES + ENLARGES in as its top
             // reaches centre (grows from the top), holds FULLY CRISP + readable across its body,
@@ -1842,9 +1856,7 @@ if (!PREFERS_REDUCED_MOTION) {
                 const gapH = Math.max(1, L.b.top - (L.a.top + L.a.h));
                 const tp = clamp((c - (L.a.top + L.a.h)) / gapH, 0, 1);       // travel progress through the gap
                 L.drawT = clamp((tp + 0.05) / 0.84, 0, 1);
-                if (enterOp > 0.04) foods.push([SW / 2, clamp(bChipY / vh, 0, 1) * SH, 2.6]);   // arriving component = food
-                if (exitOp > 0.04) foods.push([SW / 2, clamp(aCy / vh, 0, 1) * SH, 2.0]);        // leaving component = food
-                slimeA = Math.max(slimeA, vis);
+                renderGrowth(L.drawT, aCy, bChipY, vis);                      // recorded slime, scrubbed by scroll → grows / retracts
             } else {
                 L.drawT = 0;
             }
@@ -1857,9 +1869,7 @@ if (!PREFERS_REDUCED_MOTION) {
             if (lp > 0.12 && lp < 1.2) {
                 const grow = clamp((lp - 0.22) / 0.72, 0, 1);
                 const lvis = clamp(Math.min((lp - 0.16) / 0.14, (1.2 - lp) / 0.28), 0, 1);
-                foods.push([SW / 2, 0.40 * SH, 1.4 + grow]);                  // the logo seeds the slime (source, near the top)
-                foods.push([SW / 2, 0.96 * SH, 1.0 + grow * 2.2]);            // pull it down toward the first component
-                slimeA = Math.max(slimeA, lvis);
+                renderGrowth(grow, vh * 0.42, vh * 0.96, lvis);              // the logo births the slime, scrubbed by the logo-zone scroll
             }
         }
         // First component: the logo hands off to a COMPONENT chip shown BEFORE the first
@@ -1870,12 +1880,7 @@ if (!PREFERS_REDUCED_MOTION) {
             logoEnterChip.style.left = (vw / 2) + 'px'; logoEnterChip.style.top = chipY + 'px';
             logoEnterChip.style.opacity = op.toFixed(3);
             logoEnterChip.style.transform = 'translate(-50%,-50%) scale(' + (1 + 3.4 * clamp(b.e, 0, 0.5)).toFixed(2) + ')';
-            if (op > 0.04) { foods.push([SW / 2, clamp(chipY / vh, 0, 1) * SH, 2.6]); slimeA = Math.max(slimeA, op); }
         }
-        // ── Step the living Physarum slime toward the visible components, then render it.
-        //    Runs only while a component is near, so it costs nothing during crisp reading
-        //    and the network visibly forms as you enter each gap. ──
-        if (slimeA > 0.01) { stepSim(foods); renderSim(Math.min(1, slimeA * 1.5)); }
     }
     // ── ONE rAF loop is the single source of truth: it recomputes the scene + wire
     //    geometry every frame from the LIVE scroll (so it adapts instantly both ways),
