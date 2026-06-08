@@ -1585,16 +1585,12 @@ if (!PREFERS_REDUCED_MOTION) {
 (function() {
     if (PREFERS_REDUCED_MOTION) return;
     const DEF = [
-        ['.ticker-wrap', 'Prompts', 'Try Anything'],
-        ['.stats-bar',   'Proof',   'By the Numbers'],
-        ['#problem',     'Why',     'The Wall'],
-        ['.brand-band',  'Ethos',   'Not a Black Box'],
-        ['#demo',        'Build',   'Live Canvas'],
-        ['#ways',        'Process', 'Workflow'],
-        ['#how',         'Method',  'How It Works'],
-        ['#features',    'Output',  'Features'],
-        ['#models',      'Source',  'AI Models'],
-        ['#install',     'Result',  'Get MANTIS'],
+        ['#demo',     'Build',   'Live Canvas'],
+        ['#ways',     'Process', 'Workflow'],
+        ['#how',      'Method',  'How It Works'],
+        ['#features', 'Output',  'Features'],
+        ['#models',   'Source',  'AI Models'],
+        ['#install',  'Result',  'Get MANTIS'],
     ];
     const scenes = [];
     DEF.forEach(d => { const el = document.querySelector(d[0]); if (el) { el.classList.add('gh-scene'); scenes.push({ el, cat: d[1], name: d[2] }); } });
@@ -1608,7 +1604,7 @@ if (!PREFERS_REDUCED_MOTION) {
         if (i === scenes.length - 1) return;
         const g = document.createElement('div');
         g.className = 'wire-gap';
-        g.style.height = '70vh';
+        g.style.height = '100vh';
         s.el.insertAdjacentElement('afterend', g);
     });
 
@@ -1638,64 +1634,68 @@ if (!PREFERS_REDUCED_MOTION) {
     addEventListener('resize', sizeSlime, { passive: true });
 
     function srand(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-    function makeVein(r, p0, p1, bow, wander, weight, phase) {
-        const pts = [], steps = 24, f1 = 1.2 + r() * 1.8, f2 = 2.6 + r() * 3.4, ph2 = r() * 6.28, br = r() * 6.28;
-        for (let k = 0; k <= steps; k++) {
-            const u = k / steps, p = p0 + (p1 - p0) * u, env = Math.sin(u * Math.PI);
-            const lat = bow * Math.sin(u * Math.PI) + wander * env * (Math.sin(p * f1 * 6.28 + phase) * 0.6 + Math.sin(p * f2 * 6.28 + ph2) * 0.4);
-            pts.push({ p, lat, env, br: br + u * 3.0 });
+    const SIM_STEPS = 96;
+    function growNetwork(seed) {
+        // Run a tiny agent sim ONCE: heads start at the root (0,0), steer with a
+        // smooth, drifting curvature + a bias toward the food (0,1), branch, and
+        // leave curved trails. Normalised space; drawSlime maps it to the screen.
+        const r = srand(seed * 2087 + 11), STEP = 1.35 / SIM_STEPS, trails = [];
+        let heads = [];
+        const nSeed = 3 + (r() * 3 | 0);
+        for (let i = 0; i < nSeed; i++) {
+            const h = { x: (r() - 0.5) * 0.05, y: 0, ang: Math.PI / 2 + (r() - 0.5) * 0.7, av: 0, w: i === 0 ? 1 : 0.4 + r() * 0.45, trail: [] };
+            heads.push(h); trails.push(h);
         }
-        return { pts, p0, reach: p1, weight };
-    }
-    function makeTendrils(seed) {
-        const r = srand(seed * 9973 + 31), T = [];
-        T.push(makeVein(r, 0, 1, 0, 0.06, 1.0, r() * 6.28));            // main vein → reaches the food, mostly central
-        const N = 16 + (r() * 8 | 0);                                   // MANY heads exploring the whole screen
-        for (let i = 0; i < N; i++) {
-            const p0 = 0.02 + r() * 0.62, p1 = Math.min(1.05, p0 + 0.16 + r() * 0.64);
-            const dir = r() < 0.5 ? -1 : 1;
-            const amp = 0.32 + r() * 0.85;                              // wide wander to fill the screen
-            const bow = dir * (0.18 + r() * 0.80);                      // strong bow out across the screen
-            T.push(makeVein(r, p0, p1, bow, amp, 0.2 + r() * 0.5, r() * 6.28));
+        for (let s = 0; s < SIM_STEPS; s++) {
+            const born = [];
+            for (const h of heads) {
+                if (h.dead) continue;
+                h.av += (r() - 0.5) * 0.55 - h.av * 0.16;                          // smooth, drifting curvature
+                if (h.av > 0.55) h.av = 0.55; else if (h.av < -0.55) h.av = -0.55;
+                let dh = Math.atan2(1 - h.y, 0 - h.x) - h.ang;                      // steer toward the food at (0,1)
+                while (dh > Math.PI) dh -= 6.2832; while (dh < -Math.PI) dh += 6.2832;
+                h.ang += h.av * 0.5 + dh * (h.w > 0.8 ? 0.12 : 0.035);             // main head commits; explorers roam
+                h.x += Math.cos(h.ang) * STEP; h.y += Math.sin(h.ang) * STEP;
+                h.trail.push(h.x, h.y, s);
+                if (r() < 0.05 && h.w > 0.33 && s > 3 && s < SIM_STEPS * 0.82) {    // branch a new exploring head
+                    const c = { x: h.x, y: h.y, ang: h.ang + (r() < 0.5 ? -1 : 1) * (0.45 + r() * 0.7), av: 0, w: h.w * (0.5 + r() * 0.3), trail: [h.x, h.y, s] };
+                    born.push(c); trails.push(c);
+                }
+                if (h.x < -1.9 || h.x > 1.9 || h.y > 1.28 || h.y < -0.35) h.dead = true;
+            }
+            for (const c of born) heads.push(c);
         }
-        return T;
-    }
-    function slimePt(v, k, x0, rootY, corr, LAT, tt) {
-        const pt = v.pts[k], breath = Math.sin(tt * 1.15 + pt.br) * 0.5 * pt.env;
-        return [x0 + (pt.lat + breath * 0.045) * LAT, rootY + pt.p * corr];
+        return trails;
     }
     function drawSlime(L, rootY, targetY, growth, alpha, now) {
         if (alpha <= 0.02) return;
-        const x0 = innerWidth / 2, corr = targetY - rootY;
-        const LAT = innerWidth * 0.46, tt = now * 0.001;               // the whole screen is the canvas
-        for (const v of L.tendrils) {
-            const grown = clamp((growth - v.p0) / Math.max(0.001, v.reach - v.p0), 0, 1);
-            if (grown <= 0.001) continue;
-            const last = Math.max(1, Math.round(grown * (v.pts.length - 1)));
-            let tx = x0, ty = rootY;
-            sctx.beginPath();
-            for (let k = 0; k <= last; k++) { const q = slimePt(v, k, x0, rootY, corr, LAT, tt); tx = q[0]; ty = q[1]; if (k === 0) sctx.moveTo(tx, ty); else sctx.lineTo(tx, ty); }
-            sctx.strokeStyle = 'rgba(122,233,154,' + (0.55 * alpha * v.weight).toFixed(3) + ')';
-            sctx.lineWidth = 1 + 3.6 * v.weight; sctx.lineCap = 'round'; sctx.lineJoin = 'round';
-            if (v.weight > 0.55) { sctx.shadowColor = 'rgba(92,219,122,0.85)'; sctx.shadowBlur = 6 + 8 * v.weight; }
-            sctx.stroke(); sctx.shadowBlur = 0;
-            if (grown < 0.997) {                                       // glowing growing head (a "many head")
-                const hr = 2 + 3 * v.weight, g = sctx.createRadialGradient(tx, ty, 0, tx, ty, hr * 3.4);
-                g.addColorStop(0, 'rgba(216,255,228,' + (0.9 * alpha).toFixed(3) + ')');
-                g.addColorStop(0.45, 'rgba(122,233,154,' + (0.5 * alpha).toFixed(3) + ')');
-                g.addColorStop(1, 'rgba(92,219,122,0)');
-                sctx.fillStyle = g; sctx.beginPath(); sctx.arc(tx, ty, hr * 3.4, 0, 6.2832); sctx.fill();
-                sctx.fillStyle = 'rgba(232,255,240,' + alpha.toFixed(3) + ')'; sctx.beginPath(); sctx.arc(tx, ty, hr * 0.55, 0, 6.2832); sctx.fill();
+        const x0 = innerWidth / 2, corr = targetY - rootY, LAT = innerWidth * 0.46;
+        const front = growth * SIM_STEPS, tt = now * 0.001;
+        for (const tr of L.net) {
+            const t = tr.trail, n = t.length / 3 | 0;
+            if (n < 2 || t[2] > front) continue;
+            const sway = Math.sin(tt * 0.7 + tr.w * 7) * 0.012;                    // gentle breathing of the whole strand
+            let hx = x0 + (t[0] + sway) * LAT, hy = rootY + t[1] * corr, di = 0;
+            sctx.beginPath(); sctx.moveTo(hx, hy);
+            for (let k = 1; k < n; k++) {
+                if (t[k * 3 + 2] > front) break;
+                const px = x0 + (t[k * 3] + sway) * LAT, py = rootY + t[k * 3 + 1] * corr, mx = (hx + px) / 2, my = (hy + py) / 2;
+                sctx.quadraticCurveTo(hx, hy, mx, my);                             // smooth organic curve through the trail
+                hx = px; hy = py; di = k;
             }
-        }
-        const main = L.tendrils[0], pn = main.pts.length - 1;          // nutrient pulses flow up the main vein
-        for (let s = 0; s < 3; s++) {
-            const pp = ((tt * 0.22 + s / 3) % 1) * growth;
-            if (pp <= 0.02 || pp >= growth) continue;
-            const idx = Math.min(pn, Math.max(0, Math.round(pp / Math.max(0.001, main.reach) * pn))), q = slimePt(main, idx, x0, rootY, corr, LAT, tt);
-            sctx.fillStyle = 'rgba(216,255,228,' + (0.8 * alpha).toFixed(3) + ')';
-            sctx.shadowColor = 'rgba(122,233,154,1)'; sctx.shadowBlur = 7;
-            sctx.beginPath(); sctx.arc(q[0], q[1], 2.1, 0, 6.2832); sctx.fill(); sctx.shadowBlur = 0;
+            sctx.lineTo(hx, hy);
+            sctx.strokeStyle = 'rgba(122,233,154,' + (0.5 * alpha * (0.4 + tr.w * 0.6)).toFixed(3) + ')';
+            sctx.lineWidth = 0.8 + 3.2 * tr.w; sctx.lineCap = 'round'; sctx.lineJoin = 'round';
+            if (tr.w > 0.6) { sctx.shadowColor = 'rgba(92,219,122,0.8)'; sctx.shadowBlur = 5 + 7 * tr.w; }
+            sctx.stroke(); sctx.shadowBlur = 0;
+            if (growth < 0.999 && t[di * 3 + 2] >= front - 2.5) {                  // glowing head at the growing tip
+                const hr = 1.8 + 3 * tr.w, g = sctx.createRadialGradient(hx, hy, 0, hx, hy, hr * 3.3);
+                g.addColorStop(0, 'rgba(222,255,232,' + (0.92 * alpha).toFixed(3) + ')');
+                g.addColorStop(0.45, 'rgba(122,233,154,' + (0.45 * alpha).toFixed(3) + ')');
+                g.addColorStop(1, 'rgba(92,219,122,0)');
+                sctx.fillStyle = g; sctx.beginPath(); sctx.arc(hx, hy, hr * 3.3, 0, 6.2832); sctx.fill();
+                sctx.fillStyle = 'rgba(236,255,243,' + alpha.toFixed(3) + ')'; sctx.beginPath(); sctx.arc(hx, hy, hr * 0.5, 0, 6.2832); sctx.fill();
+            }
         }
     }
 
@@ -1714,14 +1714,14 @@ if (!PREFERS_REDUCED_MOTION) {
         const a = scenes[i], b = scenes[i + 1];
         const wire = document.createElementNS(NS, 'path'); wire.setAttribute('class', 'gw-base'); svg.appendChild(wire);
         // No spark/head particles — the wire is a clean drawn line (dots floated off-trail).
-        links.push({ a, b, wire, drawT: 0, vis: 0, tendrils: makeTendrils(i), exitChip: makeChip(a.cat, a.name), enterChip: makeChip(b.cat, b.name) });
+        links.push({ a, b, wire, drawT: 0, vis: 0, net: growNetwork(i), exitChip: makeChip(a.cat, a.name), enterChip: makeChip(b.cat, b.name) });
     }
     document.body.appendChild(layer);
 
     // The LOGO is the ORIGIN of the growth: a screen-filling slime sprouts from
     // the logo's centre as it dissolves, before the inter-section growth begins.
     const logoZone = document.querySelector('.logo-zone');
-    const logoSprout = { tendrils: makeTendrils(99) };
+    const logoSprout = { net: growNetwork(99) };
 
     const NODE_SCALE = 0.46;
     const smooth = t => t * t * (3 - 2 * t);
