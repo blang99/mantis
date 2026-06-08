@@ -1766,6 +1766,20 @@ if (!PREFERS_REDUCED_MOTION && matchMedia('(pointer: fine)').matches) {
     if (PREFERS_REDUCED_MOTION) { zone.style.height = '0px'; return; }   // no blank gap for reduced motion
     const cl = (v, a, b) => Math.max(0, Math.min(1, (v - a) / (b - a)));
     const sm = t => t * t * (3 - 2 * t);
+
+    // ── Particle / cloud field for the logo: a glowing nebula the constellation
+    //    grows out of, sparkle glints, and motes that stream down the wire. ──
+    const pcv = document.createElement('canvas');
+    pcv.style.cssText = 'position:fixed;inset:0;z-index:5;pointer-events:none;';
+    document.body.appendChild(pcv);
+    const pctx = pcv.getContext('2d');
+    function sizeP() { const dpr = Math.min(devicePixelRatio || 1, 2); pcv.width = innerWidth * dpr; pcv.height = innerHeight * dpr; pctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    sizeP(); addEventListener('resize', sizeP, { passive: true }); addEventListener('load', sizeP);
+    const cloud = [], sparks = [], motes = [];
+    for (let i = 0; i < 46; i++) cloud.push({ a: Math.random() * 6.283, r: 0.12 + Math.random() * 0.92, sz: 14 + Math.random() * 48, ph: Math.random() * 6.283, sp: 0.15 + Math.random() * 0.5, dr: (Math.random() - 0.5) * 0.0007, br: 0.3 + Math.random() * 0.7 });
+    for (let i = 0; i < 30; i++) sparks.push({ a: Math.random() * 6.283, r: 0.1 + Math.random() * 0.72, ph: Math.random() * 6.283, sp: 0.8 + Math.random() * 2.2 });
+    for (let i = 0; i < 26; i++) motes.push({ t: Math.random(), sp: 0.004 + Math.random() * 0.01, sw: Math.random() * 6.283 });
+
     function frame() {
         try {
             const vh = innerHeight, y = window.scrollY || 0;
@@ -1786,6 +1800,41 @@ if (!PREFERS_REDUCED_MOTION && matchMedia('(pointer: fine)').matches) {
             // The followed branch extends from centre straight down into the build.
             branch.style.height = (grow * (vh * 0.62 + 140)).toFixed(0) + 'px';
             branch.style.opacity = (sm(cl(p, 0.42, 0.56)) * (1 - handoff)).toFixed(3);
+
+            // ── particle / cloud / shining field ──
+            const cx = innerWidth / 2, cy = vh * 0.5, tt = performance.now() * 0.001;
+            const spread = Math.min(innerWidth, vh) * (0.18 + zoom * 0.62);   // the nebula grows with the zoom
+            pctx.clearRect(0, 0, innerWidth, vh);
+            pctx.globalCompositeOperation = 'lighter';
+            const cloudA = appearIn * (1 - dissolve * 0.7);
+            if (cloudA > 0.01) for (const c of cloud) {
+                c.a += c.dr;
+                const pulse = 0.6 + Math.sin(tt * c.sp + c.ph) * 0.4;
+                const x = cx + Math.cos(c.a) * c.r * spread, yy = cy + Math.sin(c.a) * c.r * spread * 0.82;
+                const sz = c.sz * (0.7 + zoom * 1.3) * pulse, al = 0.05 * cloudA * c.br * pulse;
+                const g = pctx.createRadialGradient(x, yy, 0, x, yy, sz);
+                g.addColorStop(0, 'rgba(122,233,154,' + al.toFixed(3) + ')'); g.addColorStop(1, 'rgba(92,219,122,0)');
+                pctx.fillStyle = g; pctx.beginPath(); pctx.arc(x, yy, sz, 0, 6.283); pctx.fill();
+            }
+            const sparkA = appearIn * (1 - dissolve);
+            if (sparkA > 0.02) for (const s of sparks) {
+                const tw = Math.sin(tt * s.sp + s.ph); if (tw < 0.72) continue;
+                const x = cx + Math.cos(s.a) * s.r * spread, yy = cy + Math.sin(s.a) * s.r * spread * 0.82, al = (tw - 0.72) / 0.28 * sparkA;
+                pctx.fillStyle = 'rgba(224,255,232,' + (al * 0.95).toFixed(3) + ')';
+                pctx.beginPath(); pctx.arc(x, yy, 1.5, 0, 6.283); pctx.fill();
+                pctx.strokeStyle = 'rgba(200,255,214,' + (al * 0.45).toFixed(3) + ')'; pctx.lineWidth = 1;
+                pctx.beginPath(); pctx.moveTo(x - 6, yy); pctx.lineTo(x + 6, yy); pctx.moveTo(x, yy - 6); pctx.lineTo(x, yy + 6); pctx.stroke();
+            }
+            if (grow > 0.01) {                                            // the wire: glowing body, streaming motes, growth tip
+                const wlen = grow * (vh * 0.62 + 140), wTop = cy + 20, wireA = sm(cl(p, 0.42, 0.56)) * (1 - handoff);
+                pctx.strokeStyle = 'rgba(122,233,154,' + (0.35 * wireA).toFixed(3) + ')'; pctx.lineWidth = 5; pctx.lineCap = 'round';
+                pctx.shadowColor = 'rgba(92,219,122,0.8)'; pctx.shadowBlur = 12;
+                pctx.beginPath(); pctx.moveTo(cx, wTop); pctx.lineTo(cx, wTop + wlen); pctx.stroke(); pctx.shadowBlur = 0;
+                for (const m of motes) { m.t += m.sp; if (m.t > 1) m.t -= 1; if (m.t > grow) continue; const yy = wTop + m.t * wlen, x = cx + Math.sin(m.t * 14 + tt * 3 + m.sw) * 3.5; pctx.fillStyle = 'rgba(196,255,210,' + (0.7 * wireA).toFixed(3) + ')'; pctx.beginPath(); pctx.arc(x, yy, 1.5, 0, 6.283); pctx.fill(); }
+                pctx.shadowColor = 'rgba(122,233,154,1)'; pctx.shadowBlur = 16; pctx.fillStyle = 'rgba(220,255,230,' + (0.95 * wireA).toFixed(3) + ')';
+                pctx.beginPath(); pctx.arc(cx, wTop + wlen, 3.6, 0, 6.283); pctx.fill(); pctx.shadowBlur = 0;
+            }
+            pctx.globalCompositeOperation = 'source-over';
         } catch (e) { /* keep the loop alive */ }
         requestAnimationFrame(frame);
     }
