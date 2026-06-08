@@ -569,7 +569,7 @@
 
         /* ── Graph-travel scroll: each section zooms out into a GH component,
               a wire reaches to the next, and the next section zooms in. ── */
-        .gh-scene { will-change: opacity, filter; }
+        .gh-scene { will-change: opacity, transform; }
         #graph-layer { position: fixed; inset: 0; pointer-events: none; z-index: 6; overflow: hidden; }
         #graph-layer svg { position: absolute; inset: 0; width: 100%; height: 100%; }
         #graph-layer svg .gw-base { fill: none; stroke: var(--mantis); stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 9px var(--mantis-glow-strong)); }
@@ -1636,42 +1636,57 @@ if (!PREFERS_REDUCED_MOTION) {
     const clamp = (v, a, b) => v < a ? a : (v > b ? b : v);
     function measure() { scenes.forEach(s => { s.top = s.el.offsetTop; s.h = s.el.offsetHeight; }); }
 
-    // ── Premium "resolve": each section materialises with a soft focus-in
-    //    (blur → sharp) + fade — compositor-friendly (opacity + filter), gently
-    //    quantised so styles are written only when the step changes. No blocky
-    //    pixel grid (that read as cheap); the digital character now lives in the
-    //    constellation, the wires, and the component chips instead. ──
-    const BLUR_MAX = 13;                                   // px of blur at the very start of the resolve
-    function applyPixel(el, e, st) {
-        if (e <= 0.006) {                                  // off-stage — the component shows instead
-            if (st.v !== 0) { el.style.opacity = '0'; el.style.filter = 'blur(' + BLUR_MAX + 'px)'; st.v = 0; }
+    // ── Component ⇄ section morph: a section PIXELATES + ENLARGES out of its
+    //    component (small → full detail) as its top reaches centre, holds crisp
+    //    and readable, then PIXELATES + SHRINKS back down as it leaves — before
+    //    the wire departs for the next component. Masks are baked once and the
+    //    cached string is swapped only on step change (buttery, no jank). ──
+    const CELL = 18, MASK_STEPS = 40, MINSCALE = 0.70;
+    const PIX_MASKS = [];
+    for (let i = 0; i <= MASK_STEPS; i++) {
+        const sq = (i / MASK_STEPS) * CELL;
+        const off = ((CELL - sq) / 2).toFixed(2);
+        PIX_MASKS[i] = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='" + CELL + "' height='" + CELL + "'%3E%3Crect x='" + off + "' y='" + off + "' width='" + sq.toFixed(2) + "' height='" + sq.toFixed(2) + "' fill='%23fff'/%3E%3C/svg%3E\")";
+    }
+    function applyPixel(el, e, st, originBottom) {
+        const oy = originBottom ? '100%' : '0%';           // grow from the TOP on the way in, shrink toward the BOTTOM on the way out
+        if (e <= 0.006) {                                  // fully shrunk into the component — section hidden
+            if (st.step !== -1) { el.style.opacity = '0'; el.style.webkitMaskImage = el.style.maskImage = 'none'; el.style.transformOrigin = '50% ' + oy; el.style.transform = 'scale(' + MINSCALE + ')'; st.step = -1; st.ob = originBottom; }
             return;
         }
-        if (e >= 0.992) {                                  // fully resolved — perfectly crisp, no filter
-            if (st.v !== 1) { el.style.opacity = '1'; el.style.filter = 'none'; st.v = 1; }
+        if (e >= 0.99) {                                   // fully enlarged + perfectly crisp
+            if (st.step !== 999) { el.style.opacity = '1'; el.style.webkitMaskImage = el.style.maskImage = 'none'; el.style.transform = 'none'; st.step = 999; }
             return;
         }
-        const q = Math.round(e * 50);                      // ~50 steps → smooth, skips redundant writes
-        if (q === st.q) return;
-        st.q = q; st.v = -1;
-        el.style.opacity = (0.10 + e * 0.90).toFixed(3);
-        el.style.filter = 'blur(' + ((1 - e) * BLUR_MAX).toFixed(2) + 'px)';
+        const step = Math.round(e * MASK_STEPS);
+        if (step === st.step && originBottom === st.ob) return;
+        if (!st.init) {                                    // tiling props set ONCE per section
+            el.style.webkitMaskRepeat = el.style.maskRepeat = 'repeat';
+            el.style.webkitMaskSize = el.style.maskSize = CELL + 'px ' + CELL + 'px';
+            el.style.opacity = '1';
+            st.init = true;
+        }
+        el.style.transformOrigin = '50% ' + oy;
+        el.style.transform = 'scale(' + (MINSCALE + (1 - MINSCALE) * e).toFixed(3) + ')';
+        el.style.webkitMaskImage = el.style.maskImage = PIX_MASKS[step];
+        st.step = step; st.ob = originBottom;
     }
 
     function update() {
         const vh = innerHeight, vw = innerWidth, y = window.scrollY || 0, c = y + vh / 2;
         scenes.forEach(s => {
-            // Stay hidden until the section's top reaches centre (so the arriving component,
-            // held in the gap just above, is seen on its own first). Resolve IN over DIN,
-            // hold FULLY CRISP + readable across the whole body, pixelate OUT over DOUT near
-            // the bottom. Pixelate bands live INSIDE the section, never over the gaps.
+            // Component holds at centre, then the section PIXELATES + ENLARGES in as its top
+            // reaches centre (grows from the top), holds FULLY CRISP + readable across its body,
+            // then PIXELATES + SHRINKS toward its bottom as it leaves. Transform bands live
+            // INSIDE the section, never over the gaps.
             const top = s.top, bot = s.top + s.h;
-            const DIN = Math.min(vh * 0.38, s.h * 0.36);     // resolve-in distance (gentle)
-            const DOUT = Math.min(vh * 0.38, s.h * 0.36);    // dissolve-out distance (gentle)
-            const e = smooth(clamp(Math.min((c - top) / DIN, (bot - c) / DOUT), 0, 1));
+            const DIN = Math.min(vh * 0.40, s.h * 0.34);     // resolve-in distance (gentle)
+            const DOUT = Math.min(vh * 0.40, s.h * 0.34);    // dissolve-out distance (gentle)
+            const inT = (c - top) / DIN, outT = (bot - c) / DOUT;
+            const e = smooth(clamp(Math.min(inT, outT), 0, 1));
             s.e = e;
-            if (!s._pix) s._pix = { q: -2, v: -2 };
-            applyPixel(s.el, e, s._pix);
+            if (!s._pix) s._pix = { step: -2, init: false, ob: null };
+            applyPixel(s.el, e, s._pix, outT < inT);         // resolving OUT (bottom edge active) → shrink toward bottom
         });
         links.forEach(L => {
             const aCenter = L.a.top + L.a.h / 2, bCenter = L.b.top + L.b.h / 2;
@@ -1682,8 +1697,12 @@ if (!PREFERS_REDUCED_MOTION) {
             // OR arriving (before the next centre), never both — no duplicate nodes.
             const exitOp = clamp(1 - L.a.e / 0.26, 0, 1) * clamp((c - aCenter) / (vh * 0.60), 0, 1);
             const enterOp = clamp(1 - L.b.e / 0.26, 0, 1) * clamp((bCenter - c) / (vh * 0.60), 0, 1);
-            L.exitChip.style.left = (vw / 2) + 'px'; L.exitChip.style.top = aCy + 'px'; L.exitChip.style.opacity = exitOp.toFixed(3);
-            L.enterChip.style.left = (vw / 2) + 'px'; L.enterChip.style.top = bChipY + 'px'; L.enterChip.style.opacity = enterOp.toFixed(3);
+            // Chips scale with their section's resolve state: the arriving component ENLARGES as
+            // its section materialises; the leaving one SHRINKS back to a component as its section goes.
+            const sEnter = (1 + 3.4 * clamp(L.b.e, 0, 0.5)).toFixed(2);
+            const sExit  = (1 + 3.4 * clamp(L.a.e, 0, 0.5)).toFixed(2);
+            L.exitChip.style.left = (vw / 2) + 'px'; L.exitChip.style.top = aCy + 'px'; L.exitChip.style.opacity = exitOp.toFixed(3); L.exitChip.style.transform = 'translate(-50%,-50%) scale(' + sExit + ')';
+            L.enterChip.style.left = (vw / 2) + 'px'; L.enterChip.style.top = bChipY + 'px'; L.enterChip.style.opacity = enterOp.toFixed(3); L.enterChip.style.transform = 'translate(-50%,-50%) scale(' + sEnter + ')';
             // Clamp wire ends to just beyond the viewport — when a component is far
             // off-screen the wire enters from the edge instead of spanning thousands of
             // px (which scattered the sparks far off the visible trail).
