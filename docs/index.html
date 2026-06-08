@@ -1638,9 +1638,9 @@ if (!PREFERS_REDUCED_MOTION) {
     (function precompute() {
         let tr = new Float32Array(FW * FH), tp2 = new Float32Array(FW * FH);
         const ag = new Float32Array(NA * 3);
-        for (let i = 0; i < NA; i++) { ag[i*3] = Math.random()*FW; ag[i*3+1] = Math.random()*FH; ag[i*3+2] = Math.random()*6.283; }
-        const food = [[FW/2, FH*0.93]];
-        const SD = 9, SA = 0.6, RA = 0.62, SS = 1.0, DEP = 5, DECAY = 0.945, STEPS = 64;
+        for (let i = 0; i < NA; i++) { ag[i*3] = FW/2 + (Math.random()-0.5)*FW*0.72; ag[i*3+1] = Math.random()*FH*0.16; ag[i*3+2] = Math.random()*6.283; }
+        const food = [[FW/2, FH*0.87]];
+        const SD = 9, SA = 0.55, RA = 0.6, SS = 1.0, DEP = 5.5, DECAY = 0.90, STEPS = 150;
         function smp(t, x, y) { x|=0; y|=0; if (x<0||x>=FW||y<0||y>=FH) return -1; return t[y*FW+x]; }
         let s = 0;
         function chunk() {
