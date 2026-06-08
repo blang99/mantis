@@ -1678,10 +1678,17 @@ if (!PREFERS_REDUCED_MOTION) {
                 hx = px; hy = py; di = k;
             }
             sctx.lineTo(hx, hy);
-            sctx.strokeStyle = 'rgba(122,233,154,' + (0.5 * alpha * (0.35 + tr.w * 0.5) * (0.4 + dep * 0.6)).toFixed(3) + ')';
-            sctx.lineWidth = (0.7 + 3.2 * tr.w) * (0.55 + dep * 0.7); sctx.lineCap = 'round'; sctx.lineJoin = 'round';
-            if (tr.w > 0.55 && dep > 0.5) { sctx.shadowColor = 'rgba(92,219,122,0.8)'; sctx.shadowBlur = (4 + 7 * tr.w) * dep; }
-            sctx.stroke(); sctx.shadowBlur = 0;
+            // MUSCLE / TISSUE strand: a soft fleshy sheath, a muscle body, and a bright
+            // fibre core — three passes over the same path give it organic depth.
+            const baseW = (0.7 + 3.0 * tr.w) * (0.55 + dep * 0.7), a1 = 0.5 * alpha * (0.35 + tr.w * 0.5) * (0.4 + dep * 0.6);
+            sctx.lineCap = 'round'; sctx.lineJoin = 'round';
+            sctx.strokeStyle = 'rgba(104,200,134,' + (a1 * 0.30).toFixed(3) + ')';   // soft flesh / tissue sheath
+            sctx.lineWidth = baseW * 3.4; sctx.shadowColor = 'rgba(92,219,122,0.5)'; sctx.shadowBlur = baseW * 2.2; sctx.stroke();
+            sctx.shadowBlur = 0;
+            sctx.strokeStyle = 'rgba(122,233,154,' + (a1 * 0.7).toFixed(3) + ')';     // muscle body
+            sctx.lineWidth = baseW * 1.5; sctx.stroke();
+            sctx.strokeStyle = 'rgba(206,255,220,' + (a1 * 0.95).toFixed(3) + ')';    // bright fibre core
+            sctx.lineWidth = baseW * 0.5; sctx.stroke();
             if (growth < 0.999 && t[di * 3 + 2] >= front - 2.5) {                  // glowing head at the growing tip (nearer = brighter)
                 const hr = (1.6 + 3 * tr.w) * (0.6 + dep * 0.6), g = sctx.createRadialGradient(hx, hy, 0, hx, hy, hr * 3.3);
                 g.addColorStop(0, 'rgba(222,255,232,' + (0.9 * alpha * (0.5 + dep * 0.5)).toFixed(3) + ')');
@@ -1716,6 +1723,7 @@ if (!PREFERS_REDUCED_MOTION) {
     // the logo's centre as it dissolves, before the inter-section growth begins.
     const logoZone = document.querySelector('.logo-zone');
     const logoSprout = { net: growNetwork(99, [1.57, 2.25, 0.89]) };   // sprout from the logo's lower legs (down, down-left, down-right)
+    const logoEnterChip = makeChip(scenes[0].cat, scenes[0].name);      // first COMPONENT — shown before the first section resolves
 
     const NODE_SCALE = 0.46;
     const smooth = t => t * t * (3 - 2 * t);
@@ -1815,6 +1823,15 @@ if (!PREFERS_REDUCED_MOTION) {
                 const lvis = clamp(Math.min((lp - 0.16) / 0.14, (1.2 - lp) / 0.28), 0, 1);
                 drawSlime(logoSprout, vh * 0.42, vh * 1.08, grow, lvis, nowT);   // logo → first food
             }
+        }
+        // First component: the logo hands off to a COMPONENT chip shown BEFORE the first
+        // section resolves — so the sequence reads component → section → component → wire.
+        {
+            const b = scenes[0], bCenter = b.top + b.h / 2;
+            logoEnterChip.style.left = (vw / 2) + 'px';
+            logoEnterChip.style.top = Math.max(b.top - y - vh * 0.52, vh / 2) + 'px';
+            logoEnterChip.style.opacity = (clamp(1 - b.e / 0.26, 0, 1) * clamp((bCenter - c) / (vh * 0.6), 0, 1) * clamp((c - (b.top - vh * 1.7)) / (vh * 0.55), 0, 1)).toFixed(3);
+            logoEnterChip.style.transform = 'translate(-50%,-50%) scale(' + (1 + 3.4 * clamp(b.e, 0, 0.5)).toFixed(2) + ')';
         }
     }
     // ── ONE rAF loop is the single source of truth: it recomputes the scene + wire
