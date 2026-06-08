@@ -686,57 +686,7 @@
     <div class="scroll-cue"><div class="mouse"></div>Scroll</div>
 </section>
 
-<!-- ═══ LOGO ORIGIN — the constellation unfurls into the first wire ═══ -->
-<div class="logo-zone" aria-hidden="true"></div>
-<div id="logo-origin" aria-hidden="true">
-    <div class="lo-branch"></div>
-    <svg class="lo-mark" viewBox="0 0 36 36" fill="none">
-        <defs>
-            <radialGradient id="loNode" cx="50%" cy="40%" r="62%">
-                <stop offset="0%" stop-color="#eafff1"/>
-                <stop offset="40%" stop-color="#7ae99a"/>
-                <stop offset="100%" stop-color="#3a9b55"/>
-            </radialGradient>
-            <radialGradient id="loHub" cx="50%" cy="38%" r="64%">
-                <stop offset="0%" stop-color="#ffffff"/>
-                <stop offset="32%" stop-color="#bdffd2"/>
-                <stop offset="100%" stop-color="#5CDB7A"/>
-            </radialGradient>
-            <linearGradient id="loLine" x1="18" y1="18" x2="18" y2="4" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#7ae99a" stop-opacity="0.9"/>
-                <stop offset="100%" stop-color="#5CDB7A" stop-opacity="0.3"/>
-            </linearGradient>
-        </defs>
-        <!-- connecting wires (hub → nodes): gradient stroke -->
-        <g stroke="url(#loLine)" stroke-width="1.05" stroke-linecap="round">
-            <line x1="18" y1="18" x2="18" y2="5"/>
-            <line x1="18" y1="18" x2="5"  y2="15"/>
-            <line x1="18" y1="18" x2="31" y2="15"/>
-            <line x1="18" y1="18" x2="10" y2="28"/>
-            <line x1="18" y1="18" x2="26" y2="28"/>
-        </g>
-        <!-- soft halo behind each node -->
-        <g fill="#5CDB7A">
-            <circle cx="18" cy="5"  r="5.6" opacity="0.12"/>
-            <circle cx="5"  cy="15" r="4.4" opacity="0.10"/>
-            <circle cx="31" cy="15" r="4.4" opacity="0.10"/>
-            <circle cx="10" cy="28" r="4.4" opacity="0.10"/>
-            <circle cx="26" cy="28" r="4.4" opacity="0.10"/>
-        </g>
-        <!-- outer nodes: gradient cores -->
-        <g fill="url(#loNode)">
-            <circle cx="18" cy="5"  r="3.4"/>
-            <circle cx="5"  cy="15" r="2.5"/>
-            <circle cx="31" cy="15" r="2.5"/>
-            <circle cx="10" cy="28" r="2.5"/>
-            <circle cx="26" cy="28" r="2.5"/>
-        </g>
-        <!-- hub: halo + bright core + specular highlight -->
-        <circle cx="18" cy="18" r="7.2" fill="#7ae99a" opacity="0.14"/>
-        <circle cx="18" cy="18" r="4.7" fill="url(#loHub)"/>
-        <circle cx="16.9" cy="16.5" r="1.5" fill="#ffffff" opacity="0.5"/>
-    </svg>
-</div>
+
 
 <!-- ═══ PROMPT TICKER ═══ -->
 <div class="ticker-wrap">
@@ -810,6 +760,45 @@
         <p>Every component MANTIS places is real, editable, and yours. No opaque scripts, no lock-in &mdash; just a graph you can read, reshape, and learn from. The AI does the heavy lifting; you keep the control.</p>
     </div>
 </section>
+
+<!-- ═══ LOGO ORIGIN — the constellation unfurls into the first wire ═══ -->
+<div class="logo-zone" aria-hidden="true"></div>
+<div id="logo-origin" aria-hidden="true">
+    <div class="lo-branch"></div>
+    <svg class="lo-mark" viewBox="0 0 36 36" fill="none">
+        <defs>
+            <radialGradient id="loNode" cx="42%" cy="36%" r="70%">
+                <stop offset="0%" stop-color="#d6ffe2"/>
+                <stop offset="55%" stop-color="#5CDB7A"/>
+                <stop offset="100%" stop-color="#37a85a"/>
+            </radialGradient>
+            <radialGradient id="loHub" cx="42%" cy="34%" r="72%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="42%" stop-color="#9bffba"/>
+                <stop offset="100%" stop-color="#43c168"/>
+            </radialGradient>
+        </defs>
+        <!-- crisp connecting edges (hub → nodes) -->
+        <g stroke="#5CDB7A" stroke-width="1.4" stroke-linecap="round">
+            <line x1="18" y1="18" x2="18" y2="5"/>
+            <line x1="18" y1="18" x2="5"  y2="15"/>
+            <line x1="18" y1="18" x2="31" y2="15"/>
+            <line x1="18" y1="18" x2="10" y2="28"/>
+            <line x1="18" y1="18" x2="26" y2="28"/>
+        </g>
+        <!-- outer nodes: crisp gradient cores with a bright rim -->
+        <g fill="url(#loNode)" stroke="#c4ffd4" stroke-width="0.35">
+            <circle cx="18" cy="5"  r="3.4"/>
+            <circle cx="5"  cy="15" r="2.6"/>
+            <circle cx="31" cy="15" r="2.6"/>
+            <circle cx="10" cy="28" r="2.6"/>
+            <circle cx="26" cy="28" r="2.6"/>
+        </g>
+        <!-- hub: bright core, rim, specular highlight -->
+        <circle cx="18" cy="18" r="4.8" fill="url(#loHub)" stroke="#e6fff0" stroke-width="0.45"/>
+        <circle cx="16.7" cy="16.4" r="1.3" fill="#ffffff" opacity="0.45"/>
+    </svg>
+</div>
 
 <!-- ═══ DEMO ═══ -->
 <section class="demo-section reveal" id="demo">
@@ -1643,7 +1632,7 @@ if (!PREFERS_REDUCED_MOTION) {
         let heads = [];
         const nSeed = 3 + (r() * 3 | 0);
         for (let i = 0; i < nSeed; i++) {
-            const h = { x: (r() - 0.5) * 0.05, y: 0, ang: Math.PI / 2 + (r() - 0.5) * 0.7, av: 0, w: i === 0 ? 1 : 0.4 + r() * 0.45, trail: [] };
+            const h = { x: (r() - 0.5) * 0.05, y: 0, ang: Math.PI / 2 + (r() - 0.5) * 0.7, av: 0, w: i === 0 ? 1 : 0.4 + r() * 0.45, d: 0.35 + r() * 0.65, trail: [] };
             heads.push(h); trails.push(h);
         }
         for (let s = 0; s < SIM_STEPS; s++) {
@@ -1654,17 +1643,18 @@ if (!PREFERS_REDUCED_MOTION) {
                 if (h.av > 0.55) h.av = 0.55; else if (h.av < -0.55) h.av = -0.55;
                 let dh = Math.atan2(1 - h.y, 0 - h.x) - h.ang;                      // steer toward the food at (0,1)
                 while (dh > Math.PI) dh -= 6.2832; while (dh < -Math.PI) dh += 6.2832;
-                h.ang += h.av * 0.5 + dh * (h.w > 0.8 ? 0.12 : 0.035);             // main head commits; explorers roam
+                h.ang += h.av * 0.5 + dh * (h.w > 0.8 ? 0.13 : 0.05) * (0.4 + h.y * 1.3);  // converge on the food as it nears
                 h.x += Math.cos(h.ang) * STEP; h.y += Math.sin(h.ang) * STEP;
                 h.trail.push(h.x, h.y, s);
                 if (r() < 0.05 && h.w > 0.33 && s > 3 && s < SIM_STEPS * 0.82) {    // branch a new exploring head
-                    const c = { x: h.x, y: h.y, ang: h.ang + (r() < 0.5 ? -1 : 1) * (0.45 + r() * 0.7), av: 0, w: h.w * (0.5 + r() * 0.3), trail: [h.x, h.y, s] };
+                    const c = { x: h.x, y: h.y, ang: h.ang + (r() < 0.5 ? -1 : 1) * (0.45 + r() * 0.7), av: 0, w: h.w * (0.5 + r() * 0.3), d: Math.max(0.1, Math.min(1, h.d + (r() - 0.5) * 0.25)), trail: [h.x, h.y, s] };
                     born.push(c); trails.push(c);
                 }
                 if (h.x < -1.9 || h.x > 1.9 || h.y > 1.28 || h.y < -0.35) h.dead = true;
             }
             for (const c of born) heads.push(c);
         }
+        trails.sort(function (a, b) { return a.d - b.d; });   // draw back-to-front for depth
         return trails;
     }
     function drawSlime(L, rootY, targetY, growth, alpha, now) {
@@ -1674,27 +1664,28 @@ if (!PREFERS_REDUCED_MOTION) {
         for (const tr of L.net) {
             const t = tr.trail, n = t.length / 3 | 0;
             if (n < 2 || t[2] > front) continue;
+            const dep = tr.d, LATd = LAT * (0.72 + dep * 0.5);                     // depth → lateral parallax (nearer = wider)
             const sway = Math.sin(tt * 0.7 + tr.w * 7) * 0.012;                    // gentle breathing of the whole strand
-            let hx = x0 + (t[0] + sway) * LAT, hy = rootY + t[1] * corr, di = 0;
+            let hx = x0 + (t[0] + sway) * LATd, hy = rootY + t[1] * corr, di = 0;
             sctx.beginPath(); sctx.moveTo(hx, hy);
             for (let k = 1; k < n; k++) {
                 if (t[k * 3 + 2] > front) break;
-                const px = x0 + (t[k * 3] + sway) * LAT, py = rootY + t[k * 3 + 1] * corr, mx = (hx + px) / 2, my = (hy + py) / 2;
+                const px = x0 + (t[k * 3] + sway) * LATd, py = rootY + t[k * 3 + 1] * corr, mx = (hx + px) / 2, my = (hy + py) / 2;
                 sctx.quadraticCurveTo(hx, hy, mx, my);                             // smooth organic curve through the trail
                 hx = px; hy = py; di = k;
             }
             sctx.lineTo(hx, hy);
-            sctx.strokeStyle = 'rgba(122,233,154,' + (0.5 * alpha * (0.4 + tr.w * 0.6)).toFixed(3) + ')';
-            sctx.lineWidth = 0.8 + 3.2 * tr.w; sctx.lineCap = 'round'; sctx.lineJoin = 'round';
-            if (tr.w > 0.6) { sctx.shadowColor = 'rgba(92,219,122,0.8)'; sctx.shadowBlur = 5 + 7 * tr.w; }
+            sctx.strokeStyle = 'rgba(122,233,154,' + (0.5 * alpha * (0.35 + tr.w * 0.5) * (0.4 + dep * 0.6)).toFixed(3) + ')';
+            sctx.lineWidth = (0.7 + 3.2 * tr.w) * (0.55 + dep * 0.7); sctx.lineCap = 'round'; sctx.lineJoin = 'round';
+            if (tr.w > 0.55 && dep > 0.5) { sctx.shadowColor = 'rgba(92,219,122,0.8)'; sctx.shadowBlur = (4 + 7 * tr.w) * dep; }
             sctx.stroke(); sctx.shadowBlur = 0;
-            if (growth < 0.999 && t[di * 3 + 2] >= front - 2.5) {                  // glowing head at the growing tip
-                const hr = 1.8 + 3 * tr.w, g = sctx.createRadialGradient(hx, hy, 0, hx, hy, hr * 3.3);
-                g.addColorStop(0, 'rgba(222,255,232,' + (0.92 * alpha).toFixed(3) + ')');
+            if (growth < 0.999 && t[di * 3 + 2] >= front - 2.5) {                  // glowing head at the growing tip (nearer = brighter)
+                const hr = (1.6 + 3 * tr.w) * (0.6 + dep * 0.6), g = sctx.createRadialGradient(hx, hy, 0, hx, hy, hr * 3.3);
+                g.addColorStop(0, 'rgba(222,255,232,' + (0.9 * alpha * (0.5 + dep * 0.5)).toFixed(3) + ')');
                 g.addColorStop(0.45, 'rgba(122,233,154,' + (0.45 * alpha).toFixed(3) + ')');
                 g.addColorStop(1, 'rgba(92,219,122,0)');
                 sctx.fillStyle = g; sctx.beginPath(); sctx.arc(hx, hy, hr * 3.3, 0, 6.2832); sctx.fill();
-                sctx.fillStyle = 'rgba(236,255,243,' + alpha.toFixed(3) + ')'; sctx.beginPath(); sctx.arc(hx, hy, hr * 0.5, 0, 6.2832); sctx.fill();
+                sctx.fillStyle = 'rgba(236,255,243,' + (alpha * (0.5 + dep * 0.5)).toFixed(3) + ')'; sctx.beginPath(); sctx.arc(hx, hy, hr * 0.5, 0, 6.2832); sctx.fill();
             }
         }
     }
