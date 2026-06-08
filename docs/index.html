@@ -1624,79 +1624,74 @@ if (!PREFERS_REDUCED_MOTION) {
 
     function srand(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
     const SIM_STEPS = 96;
-    function growNetwork(seed, fan) {
-        // Agent sim run ONCE. Heads sprout from the root — along the given branch
-        // directions when `fan` is supplied (the logo's own legs extending) — then
-        // steer with a calm drifting curvature, commit toward the food (0,1), and
-        // REVOLVE around it as they arrive. Few, clean strands; capped branching.
-        const r = srand(seed * 2087 + 11), STEP = 1.4 / SIM_STEPS, trails = [];
-        let heads = [];
-        if (fan) {
-            for (let i = 0; i < fan.length; i++) { const h = { x: 0, y: 0, ang: fan[i], av: 0, w: i === 0 ? 1 : 0.6 + r() * 0.3, d: 0.4 + r() * 0.55, trail: [] }; heads.push(h); trails.push(h); }
-        } else {
-            for (let i = 0; i < 2; i++) { const h = { x: (r() - 0.5) * 0.04, y: 0, ang: Math.PI / 2 + (r() - 0.5) * 0.5, av: 0, w: i === 0 ? 1 : 0.55 + r() * 0.3, d: 0.4 + r() * 0.6, trail: [] }; heads.push(h); trails.push(h); }
-        }
-        for (let s = 0; s < SIM_STEPS; s++) {
-            const born = [];
-            for (const h of heads) {
-                if (h.dead) continue;
-                h.av += (r() - 0.5) * 0.38 - h.av * 0.20;                          // calmer, smoother curvature
-                if (h.av > 0.4) h.av = 0.4; else if (h.av < -0.4) h.av = -0.4;
-                let dh = Math.atan2(1 - h.y, 0 - h.x) - h.ang;                      // toward the food at (0,1)
-                while (dh > Math.PI) dh -= 6.2832; while (dh < -Math.PI) dh += 6.2832;
-                let turn = h.av * 0.5 + dh * (h.w > 0.8 ? 0.14 : 0.06) * (0.4 + h.y * 1.3);
-                if (h.y > 0.8) { let td = (Math.atan2(1 - h.y, 0 - h.x) + Math.PI / 2) - h.ang; while (td > Math.PI) td -= 6.2832; while (td < -Math.PI) td += 6.2832; turn += td * 0.12; }  // revolve around the component
-                h.ang += turn;
-                h.x += Math.cos(h.ang) * STEP; h.y += Math.sin(h.ang) * STEP;
-                h.trail.push(h.x, h.y, s);
-                if (r() < 0.04 && h.w > 0.4 && s > 4 && s < SIM_STEPS * 0.7 && trails.length < 9) {  // a few branches, capped — keep it clean
-                    const c = { x: h.x, y: h.y, ang: h.ang + (r() < 0.5 ? -1 : 1) * (0.4 + r() * 0.5), av: 0, w: h.w * (0.55 + r() * 0.25), d: Math.max(0.1, Math.min(1, h.d + (r() - 0.5) * 0.2)), trail: [h.x, h.y, s] };
-                    born.push(c); trails.push(c);
+    // A CONNECTED vein network like the real slime mould: nodes arranged in a
+    // fan from the source (0,0) to the food (0,1); edges branch forward AND
+    // re-merge laterally (anastomosis → loops), and the trunk near the centre is
+    // thicker. Built once; scroll reveals it top-down. ──
+    function mkEdge(nodes, ai, bi, r, lateral) {
+        const a = nodes[ai], b = nodes[bi], midx = (a.x + b.x) / 2;
+        return {
+            a: ai, b: bi,
+            w: lateral ? 0.22 + r() * 0.16 : 0.30 + 0.70 * (1 - Math.min(1, Math.abs(midx))),   // central trunk thick, outer thin
+            cx: midx + (r() - 0.5) * 0.16, cy: (a.y + b.y) / 2 + (r() - 0.5) * 0.08,             // organic bend
+            dist: Math.max(a.y, b.y), ph: r() * 6.28
+        };
+    }
+    function makeVeinNet(seed, fromLogo) {
+        const r = srand(seed * 1597 + 7), LAYERS = 8, nodes = [], layers = [];
+        nodes.push({ x: 0, y: 0 }); layers.push([0]);                              // root — at the source (logo / component)
+        for (let L = 1; L < LAYERS; L++) {
+            const y = L / (LAYERS - 1), fan = Math.sin(y * Math.PI), idxs = [];
+            if (L === LAYERS - 1) { nodes.push({ x: 0, y: 1 }); idxs.push(nodes.length - 1); }   // food — all veins converge here
+            else {
+                const cnt = Math.max(1, Math.round(1 + fan * 3.0)), width = (0.18 + fan * 0.9) * (fromLogo ? 1.1 : 1);
+                for (let i = 0; i < cnt; i++) {
+                    const x = cnt === 1 ? (r() - 0.5) * 0.3 : ((i / (cnt - 1)) - 0.5) * 2 * width + (r() - 0.5) * 0.16;
+                    nodes.push({ x: x, y: y + (r() - 0.5) * 0.05 }); idxs.push(nodes.length - 1);
                 }
-                if (h.x < -1.9 || h.x > 1.9 || h.y > 1.3 || h.y < -0.4) h.dead = true;
             }
-            for (const c of born) heads.push(c);
+            layers.push(idxs);
         }
-        trails.sort(function (a, b) { return a.d - b.d; });   // draw back-to-front for depth
-        return trails;
+        const edges = [];
+        for (const j of layers[1]) edges.push(mkEdge(nodes, 0, j, r, false));      // the source shoots out the first veins
+        for (let L = 1; L < LAYERS - 1; L++) {
+            for (const ni of layers[L]) {
+                const a = nodes[ni];
+                const nxt = layers[L + 1].map(function (j) { return [j, Math.hypot(nodes[j].x - a.x, nodes[j].y - a.y)]; }).sort(function (p, q) { return p[1] - q[1]; });
+                const k = Math.min(nxt.length, 1 + (r() < 0.5 ? 1 : 0));
+                for (let c = 0; c < k; c++) edges.push(mkEdge(nodes, ni, nxt[c][0], r, false));
+            }
+            const lay = layers[L];                                                 // lateral loops → anastomosis (the mesh)
+            for (let i = 0; i < lay.length - 1; i++) if (r() < 0.5) edges.push(mkEdge(nodes, lay[i], lay[i + 1], r, true));
+        }
+        return { nodes: nodes, edges: edges };
     }
     function drawSlime(L, rootY, targetY, growth, alpha, now) {
         if (alpha <= 0.02) return;
-        const x0 = innerWidth / 2, corr = targetY - rootY, LAT = innerWidth * 0.42;
-        const front = growth * SIM_STEPS, tt = now * 0.001;
-        for (const tr of L.net) {
-            const t = tr.trail, n = t.length / 3 | 0;
-            if (n < 2 || t[2] > front) continue;
-            const dep = tr.d, LATd = LAT * (0.72 + dep * 0.5);                     // depth → lateral parallax (nearer = wider)
-            const sway = Math.sin(tt * 0.7 + tr.w * 7) * 0.012;                    // gentle breathing of the whole strand
-            let hx = x0 + (t[0] + sway) * LATd, hy = rootY + t[1] * corr, di = 0;
-            sctx.beginPath(); sctx.moveTo(hx, hy);
-            for (let k = 1; k < n; k++) {
-                if (t[k * 3 + 2] > front) break;
-                const px = x0 + (t[k * 3] + sway) * LATd, py = rootY + t[k * 3 + 1] * corr, mx = (hx + px) / 2, my = (hy + py) / 2;
-                sctx.quadraticCurveTo(hx, hy, mx, my);                             // smooth organic curve through the trail
-                hx = px; hy = py; di = k;
-            }
-            sctx.lineTo(hx, hy);
-            // MUSCLE / TISSUE strand: a soft fleshy sheath, a muscle body, and a bright
-            // fibre core — three passes over the same path give it organic depth.
-            const baseW = (0.7 + 3.0 * tr.w) * (0.55 + dep * 0.7), a1 = 0.5 * alpha * (0.35 + tr.w * 0.5) * (0.4 + dep * 0.6);
-            sctx.lineCap = 'round'; sctx.lineJoin = 'round';
-            sctx.strokeStyle = 'rgba(104,200,134,' + (a1 * 0.30).toFixed(3) + ')';   // soft flesh / tissue sheath
-            sctx.lineWidth = baseW * 3.4; sctx.shadowColor = 'rgba(92,219,122,0.5)'; sctx.shadowBlur = baseW * 2.2; sctx.stroke();
-            sctx.shadowBlur = 0;
-            sctx.strokeStyle = 'rgba(122,233,154,' + (a1 * 0.7).toFixed(3) + ')';     // muscle body
-            sctx.lineWidth = baseW * 1.5; sctx.stroke();
-            sctx.strokeStyle = 'rgba(206,255,220,' + (a1 * 0.95).toFixed(3) + ')';    // bright fibre core
-            sctx.lineWidth = baseW * 0.5; sctx.stroke();
-            if (growth < 0.999 && t[di * 3 + 2] >= front - 2.5) {                  // glowing head at the growing tip (nearer = brighter)
-                const hr = (1.6 + 3 * tr.w) * (0.6 + dep * 0.6), g = sctx.createRadialGradient(hx, hy, 0, hx, hy, hr * 3.3);
-                g.addColorStop(0, 'rgba(222,255,232,' + (0.9 * alpha * (0.5 + dep * 0.5)).toFixed(3) + ')');
-                g.addColorStop(0.45, 'rgba(122,233,154,' + (0.45 * alpha).toFixed(3) + ')');
-                g.addColorStop(1, 'rgba(92,219,122,0)');
-                sctx.fillStyle = g; sctx.beginPath(); sctx.arc(hx, hy, hr * 3.3, 0, 6.2832); sctx.fill();
-                sctx.fillStyle = 'rgba(236,255,243,' + (alpha * (0.5 + dep * 0.5)).toFixed(3) + ')'; sctx.beginPath(); sctx.arc(hx, hy, hr * 0.5, 0, 6.2832); sctx.fill();
-            }
+        const N = L.net.nodes, E = L.net.edges, x0 = innerWidth / 2, corr = targetY - rootY, LAT = innerWidth * 0.38, tt = now * 0.001;
+        sctx.lineCap = 'round'; sctx.lineJoin = 'round';
+        for (const e of E) {
+            if (e.dist > growth) continue;                                         // not yet grown
+            const a = N[e.a], b = N[e.b], sway = Math.sin(tt * 0.55 + e.ph) * 0.009;
+            const ax = x0 + (a.x + sway) * LAT, ay = rootY + a.y * corr;
+            const bx = x0 + (b.x + sway) * LAT, by = rootY + b.y * corr;
+            const cx = x0 + (e.cx + sway) * LAT, cy = rootY + e.cy * corr;
+            sctx.beginPath(); sctx.moveTo(ax, ay); sctx.quadraticCurveTo(cx, cy, bx, by);
+            const bw = 0.9 + 5.2 * e.w, a1 = alpha * (0.42 + e.w * 0.58);
+            sctx.strokeStyle = 'rgba(96,196,128,' + (a1 * 0.16).toFixed(3) + ')';   // translucent plasmodium sheath (flesh)
+            sctx.lineWidth = bw * 3.0;
+            if (e.w > 0.45) { sctx.shadowColor = 'rgba(92,219,122,0.4)'; sctx.shadowBlur = bw * 1.8; }
+            sctx.stroke(); sctx.shadowBlur = 0;
+            sctx.strokeStyle = 'rgba(126,226,150,' + (a1 * 0.8).toFixed(3) + ')';    // vein body (muscle)
+            sctx.lineWidth = bw; sctx.stroke();
+            sctx.strokeStyle = 'rgba(214,255,224,' + (a1 * 0.5).toFixed(3) + ')';    // bright lumen / fibre core
+            sctx.lineWidth = bw * 0.4; sctx.stroke();
+        }
+        for (let i = 0; i < N.length; i++) {                                       // junction nodes + glowing growing tips
+            const nd = N[i]; if (nd.y > growth + 0.015) continue;
+            const px = x0 + nd.x * LAT, py = rootY + nd.y * corr, tip = nd.y > growth - 0.07 && growth < 0.985;
+            if (tip) { const g = sctx.createRadialGradient(px, py, 0, px, py, 11); g.addColorStop(0, 'rgba(224,255,210,' + (0.85 * alpha).toFixed(3) + ')'); g.addColorStop(0.5, 'rgba(126,226,150,' + (0.35 * alpha).toFixed(3) + ')'); g.addColorStop(1, 'rgba(92,219,122,0)'); sctx.fillStyle = g; sctx.beginPath(); sctx.arc(px, py, 11, 0, 6.2832); sctx.fill(); }
+            sctx.fillStyle = 'rgba(206,250,186,' + ((tip ? 0.9 : 0.45) * alpha).toFixed(3) + ')'; sctx.beginPath(); sctx.arc(px, py, tip ? 2.2 : 1.3, 0, 6.2832); sctx.fill();
         }
     }
 
@@ -1715,14 +1710,14 @@ if (!PREFERS_REDUCED_MOTION) {
         const a = scenes[i], b = scenes[i + 1];
         const wire = document.createElementNS(NS, 'path'); wire.setAttribute('class', 'gw-base'); svg.appendChild(wire);
         // No spark/head particles — the wire is a clean drawn line (dots floated off-trail).
-        links.push({ a, b, wire, drawT: 0, vis: 0, net: growNetwork(i), exitChip: makeChip(a.cat, a.name), enterChip: makeChip(b.cat, b.name) });
+        links.push({ a, b, wire, drawT: 0, vis: 0, net: makeVeinNet(i), exitChip: makeChip(a.cat, a.name), enterChip: makeChip(b.cat, b.name) });
     }
     document.body.appendChild(layer);
 
     // The LOGO is the ORIGIN of the growth: a screen-filling slime sprouts from
     // the logo's centre as it dissolves, before the inter-section growth begins.
     const logoZone = document.querySelector('.logo-zone');
-    const logoSprout = { net: growNetwork(99, [1.57, 2.25, 0.89]) };   // sprout from the logo's lower legs (down, down-left, down-right)
+    const logoSprout = { net: makeVeinNet(99, true) };                 // the logo births a fan of veins that converge on the first component
     const logoEnterChip = makeChip(scenes[0].cat, scenes[0].name);      // first COMPONENT — shown before the first section resolves
 
     const NODE_SCALE = 0.46;
