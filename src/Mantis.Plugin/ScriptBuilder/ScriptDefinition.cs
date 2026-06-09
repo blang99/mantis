@@ -102,6 +102,24 @@ public class PlanStepDef
     public List<string> CandidateComponents { get; set; } = new();
 }
 
+/// <summary>
+/// A BUILT stage as the plan side-panel sees it: the stage's name + reasoning paired with
+/// the real GH_Group it became on the canvas (<see cref="GroupGuid"/>). Clicking the step
+/// in the panel navigates/zooms the Grasshopper canvas to that group. GroupGuid is
+/// <see cref="System.Guid.Empty"/> when the stage produced no group (all members failed to
+/// resolve), so the panel can still render it but leave it non-navigable. Produced by
+/// CanvasGrouping.Apply, ordered 1:1 with the script's groups / the plan's steps.
+/// </summary>
+public class PlanStep
+{
+    public string Name { get; set; } = "";
+    public string Reasoning { get; set; } = "";
+    public string? Color { get; set; }
+    public Guid GroupGuid { get; set; }
+    public List<int> ComponentIds { get; set; } = new();
+    public List<Guid> MemberGuids { get; set; } = new();
+}
+
 public class ComponentDef
 {
     [JsonPropertyName("id")]

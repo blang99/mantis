@@ -69,7 +69,7 @@ public class CanvasBuilder
 
         // Annotate the workflow: wrap each logical stage in a labelled,
         // tinted GH_Group so the generated graph reads like an expert built it.
-        CanvasGrouping.Apply(document, script, placed);
+        result.PlanSteps = CanvasGrouping.Apply(document, script, placed);
 
         document.NewSolution(false);
         return result;
@@ -100,4 +100,7 @@ public class BuildResult
     public int WiredConnections { get; set; }
     public List<string> Errors { get; set; } = new();
     public bool Success => Errors.Count == 0;
+
+    /// <summary>The built stages, each linked to its GH_Group GUID (for the plan side-panel).</summary>
+    public List<PlanStep> PlanSteps { get; set; } = new();
 }

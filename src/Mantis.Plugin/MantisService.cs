@@ -37,6 +37,13 @@ public class MantisService : IDisposable
     public event Action? OnBuildComplete;
 
     /// <summary>
+    /// Fired AFTER a build completes, with the built stages each linked to their on-canvas
+    /// GH_Group GUID (ordered 1:1 with the plan). The plan side-panel renders these and a
+    /// step click navigates/zooms the Grasshopper canvas to that step's group.
+    /// </summary>
+    public event Action<IReadOnlyList<PlanStep>>? OnPlanReady;
+
+    /// <summary>
     /// Fired once the model's stage decomposition is known, before/while the
     /// canvas builds. The UI renders these as the "thought process" narration —
     /// MANTIS explaining, stage by stage, how it wired the graph. The same
@@ -278,6 +285,7 @@ public class MantisService : IDisposable
             if (streaming)
             {
                 await BuildScriptLiveAsync(script, document, ct);
+                OnPlanReady?.Invoke(_streamingBuilder.PlanSteps);
             }
             else
             {
@@ -285,6 +293,7 @@ public class MantisService : IDisposable
                 OnStatus?.Invoke($"Placed {result.PlacedComponents} components, {result.WiredConnections} connections");
                 foreach (var error in result.Errors)
                     OnError?.Invoke(error);
+                OnPlanReady?.Invoke(result.PlanSteps);
                 OnBuildComplete?.Invoke();
             }
         }

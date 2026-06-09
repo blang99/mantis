@@ -13,8 +13,14 @@ public class StreamingCanvasBuilder : IDisposable
     private readonly Dictionary<int, IGH_DocumentObject> _placed = new();
     private readonly Queue<ConnectionDef> _pendingWires = new();
     private readonly List<Guid> _groupGuids = new();
+    private List<PlanStep> _planSteps = new();
     private GH_Document? _document;
     private string? _undoName;
+
+    /// <summary>The built stages of the most recent build — each plan step linked to its
+    /// GH_Group GUID, ordered 1:1 with the plan. Consumed by the plan side-panel so a step
+    /// click can navigate the Grasshopper canvas to that group.</summary>
+    public IReadOnlyList<PlanStep> PlanSteps => _planSteps;
 
     public event Action<int, string>? OnComponentPlaced;
     public event Action<int, int>? OnConnectionMade;
@@ -154,7 +160,8 @@ public class StreamingCanvasBuilder : IDisposable
             // Annotate the workflow: wrap each logical stage in a labelled,
             // tinted GH_Group. Track the created group GUIDs so an iteration
             // rebuild removes them too (otherwise old group boxes orphan).
-            _groupGuids.AddRange(CanvasGrouping.Apply(doc, script, _placed));
+            _planSteps = CanvasGrouping.Apply(doc, script, _placed);
+            _groupGuids.AddRange(_planSteps.Where(s => s.GroupGuid != Guid.Empty).Select(s => s.GroupGuid));
 
             // Trigger a real solution so geometry actually computes and shows in Rhino
             doc.NewSolution(false);

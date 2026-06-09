@@ -30,53 +30,71 @@ internal static class CanvasGrouping
     /// skipped silently. Safe to call when <paramref name="script"/> has no
     /// groups (older models / simple scripts) — it simply does nothing.
     /// </summary>
-    public static List<Guid> Apply(
+    /// <returns>
+    /// One <see cref="PlanStep"/> per stage, ORDERED 1:1 with <c>script.Groups</c> (and so
+    /// with the plan's steps). Each binding carries the created GH_Group's GUID so the plan
+    /// side-panel can navigate to it; <see cref="PlanStep.GroupGuid"/> stays
+    /// <see cref="System.Guid.Empty"/> for a stage that produced no group. (Previously this
+    /// returned a flat GUID list that SKIPPED empty stages, so it could not be aligned to
+    /// the stages — that misalignment is fixed here.)
+    /// </returns>
+    public static List<PlanStep> Apply(
         GH_Document doc,
         ScriptDefinition script,
         IReadOnlyDictionary<int, IGH_DocumentObject> placed)
     {
-        var created = new List<Guid>();
+        var steps = new List<PlanStep>();
         if (doc == null || script?.Groups == null || script.Groups.Count == 0)
-            return created;
+            return steps;
 
-        int index = 0;
+        int colourIndex = 0;
         foreach (var g in script.Groups)
         {
-            if (g?.ComponentIds == null || g.ComponentIds.Count == 0)
-                continue;
+            var def = g ?? new GroupDef();
+            var step = new PlanStep
+            {
+                Name = def.Name,
+                Reasoning = def.Reasoning,
+                Color = def.Color,
+                ComponentIds = def.ComponentIds ?? new List<int>(),
+            };
 
             var memberGuids = new List<Guid>();
-            foreach (var id in g.ComponentIds)
+            foreach (var id in step.ComponentIds)
                 if (placed.TryGetValue(id, out var obj) && obj != null)
                     memberGuids.Add(obj.InstanceGuid);
 
-            if (memberGuids.Count == 0)
-                continue;
-
-            try
+            if (memberGuids.Count > 0)
             {
-                var group = new GH_Group { NickName = g.Name ?? string.Empty };
-                group.CreateAttributes();
-                group.Colour = ResolveColour(g.Color, index);
+                try
+                {
+                    var group = new GH_Group { NickName = def.Name ?? string.Empty };
+                    group.CreateAttributes();
+                    group.Colour = ResolveColour(def.Color, colourIndex);
 
-                // Members must be added BEFORE the group is added to the doc so
-                // its bounds compute correctly.
-                foreach (var guid in memberGuids)
-                    group.AddObject(guid);
+                    // Members must be added BEFORE the group is added to the doc so
+                    // its bounds compute correctly.
+                    foreach (var guid in memberGuids)
+                        group.AddObject(guid);
 
-                doc.AddObject(group, false);
-                group.ExpireCaches();
+                    doc.AddObject(group, false);
+                    group.ExpireCaches();
 
-                created.Add(group.InstanceGuid);
-                index++;
+                    step.GroupGuid = group.InstanceGuid;
+                    step.MemberGuids = memberGuids;
+                    colourIndex++;
+                }
+                catch
+                {
+                    // A single malformed stage must never abort the whole build —
+                    // the step is still returned (without a group) so the plan stays aligned.
+                }
             }
-            catch
-            {
-                // A single malformed stage must never abort the whole build.
-            }
+
+            steps.Add(step);
         }
 
-        return created;
+        return steps;
     }
 
     private static Color ResolveColour(string? hex, int index)
