@@ -1342,6 +1342,106 @@ public class ChatPanel : Panel
         AddMessageBubble("MANTIS", "reasoning", sb.ToString());
     }
 
+    /// <summary>
+    /// PHASE 2 — render the just-built PLAN as a clickable block: each step shows its number,
+    /// colour chip, name and reasoning, and CLICKING a step selects + frames that step's
+    /// Grasshopper group on the canvas (<see cref="CanvasNavigator.ZoomToGroup"/>). Steps whose
+    /// group couldn't be created are dimmed + non-clickable. Rendered in the message flow (not a
+    /// splitter pane) so it can't re-introduce the Windows blank-panel failure mode.
+    /// </summary>
+    private void AddPlanBubble(IReadOnlyList<PlanStep> steps)
+    {
+        if (steps == null) return;
+        var shown = steps.Where(s => s != null && !string.IsNullOrWhiteSpace(s.Name)).ToList();
+        if (shown.Count == 0) return;
+
+        var container = new StackLayout
+        {
+            Orientation = Orientation.Vertical,
+            Spacing = 6,
+            Padding = new Padding(14, 12),
+            BackgroundColor = ReasoningBubbleBg,
+            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+        };
+        container.Items.Add(new Label { Text = "PLAN", Font = new Font(FontMonoFamily, 8, FontStyle.Bold), TextColor = ReasoningAccent });
+        container.Items.Add(new Label { Text = "Click a step to jump to its group on the canvas.", Font = new Font(FontBodyFamily, 9), TextColor = TextD });
+
+        int n = 0;
+        foreach (var step in shown)
+        {
+            n++;
+            bool hasGroup = step.GroupGuid != Guid.Empty;
+            var chip = PlanChipColor(step.Color, Accent);
+
+            var numChip = new Panel
+            {
+                Content = new Label { Text = n.ToString(), Font = new Font(FontMonoFamily, 9, FontStyle.Bold), TextColor = Bg },
+                BackgroundColor = chip,
+                Padding = new Padding(7, 2),
+            };
+
+            var reason = step.Reasoning?.Trim() ?? "";
+            if (reason.Length > 130) reason = reason[..130] + "…";
+
+            var textCol = new StackLayout
+            {
+                Spacing = 2,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Items =
+                {
+                    new Label { Text = step.Name.Trim(), Font = new Font(FontBodyFamily, 11, FontStyle.Bold), TextColor = hasGroup ? Text1 : TextD },
+                    new Label { Text = reason, Font = new Font(FontBodyFamily, 9), TextColor = Text2, Wrap = WrapMode.Word },
+                }
+            };
+
+            var row = new Panel
+            {
+                Padding = new Padding(8, 6),
+                BackgroundColor = BgCard,
+                Cursor = hasGroup ? Cursors.Pointer : Cursors.Default,
+                Content = new StackLayout
+                {
+                    Orientation = Orientation.Horizontal,
+                    Spacing = 9,
+                    VerticalContentAlignment = VerticalAlignment.Top,
+                    Items = { numChip, new StackLayoutItem(textCol, expand: true) }
+                }
+            };
+
+            if (hasGroup)
+            {
+                var guid = step.GroupGuid;
+                var nm = step.Name.Trim();
+                row.MouseDown += (_, _) =>
+                {
+                    bool ok = CanvasNavigator.ZoomToGroup(guid);
+                    _statusLabel.Text = ok ? $"Jumped to “{nm}”" : $"“{nm}” is no longer on the canvas";
+                    _statusLabel.TextColor = ok ? Accent : Color.FromArgb(232, 184, 77);
+                };
+            }
+
+            container.Items.Add(row);
+        }
+
+        if (_messageList.Items.Count > 0)
+            _messageList.Items.Add(new StackLayoutItem(new Panel { Height = 8, BackgroundColor = Bg }));
+        _messageList.Items.Add(new StackLayoutItem(container));
+        Application.Instance.AsyncInvoke(() => { _messageScroll.ScrollPosition = new Point(0, int.MaxValue / 2); });
+    }
+
+    /// <summary>Parse a "#RRGGBB" plan-step colour, or fall back to the brand accent.</summary>
+    private static Color PlanChipColor(string? hex, Color fallback)
+    {
+        if (string.IsNullOrWhiteSpace(hex)) return fallback;
+        var h = hex!.Trim().TrimStart('#');
+        if (h.Length == 6
+            && int.TryParse(h.Substring(0, 2), System.Globalization.NumberStyles.HexNumber, null, out var r)
+            && int.TryParse(h.Substring(2, 2), System.Globalization.NumberStyles.HexNumber, null, out var g)
+            && int.TryParse(h.Substring(4, 2), System.Globalization.NumberStyles.HexNumber, null, out var b))
+            return Color.FromArgb(r, g, b);
+        return fallback;
+    }
+
     private Panel CreateBubble(string sender, string type, string text, DateTime ts)
     {
         Color bubbleBg, senderColor, textColor;
@@ -1896,6 +1996,14 @@ public class ChatPanel : Panel
             {
                 HideTypingIndicator();
                 AddReasoningBubble(groups);
+            });
+
+        // ── Plan (post-build): clickable steps, each jumping to its on-canvas group ──
+        _service.OnPlanReady += steps =>
+            Application.Instance.Invoke(() =>
+            {
+                HideTypingIndicator();
+                AddPlanBubble(steps);
             });
 
         _service.OnError += msg =>
