@@ -80,11 +80,26 @@ public class MantisService : IDisposable
         _explainService = new ExplainService(_providerManager, _promptBuilder);
     }
 
-    public void Initialize()
+    private bool _ready;
+
+    /// <summary>
+    /// Lazily loads Grasshopper and scans the component catalog. DEFERRED until the first
+    /// build/ask — merely OPENING the MANTIS panel never forces Grasshopper to load, which
+    /// is faster and avoids surfacing unrelated plugins' load-time warnings. Idempotent and
+    /// safe to call at the start of every operation that needs the canvas/catalog.
+    /// </summary>
+    public void EnsureReady()
     {
+        if (_ready) return;
+        OnStatus?.Invoke("Loading Grasshopper…");
+        GrasshopperGateway.EnsureLoaded();
         _registry.Initialize();
+        _ready = true;
         OnStatus?.Invoke($"Loaded {_registry.All.Count} components");
     }
+
+    /// <summary>Back-compat alias for <see cref="EnsureReady"/>.</summary>
+    public void Initialize() => EnsureReady();
 
     /// <summary>Set API key for the currently active provider.</summary>
     public void SetApiKey(string apiKey) =>
@@ -112,6 +127,8 @@ public class MantisService : IDisposable
         bool streaming = true, CancellationToken ct = default,
         List<ImageData>? images = null)
     {
+        EnsureReady();   // lazily load Grasshopper + scan the catalog on first use
+
         // AUTO-ITERATE: if a previous Mantis build is still on the canvas, treat
         // this request as a follow-up that BUILDS ON TOP of it. Without this, a
         // request like "add a fillet" goes through a fresh Generate with no
@@ -471,6 +488,7 @@ public class MantisService : IDisposable
         string userPrompt, GH_Document document, CancellationToken ct = default,
         List<ImageData>? images = null)
     {
+        EnsureReady();
         bool hasImages = images is { Count: > 0 };
         _conversation.AddUserMessage(userPrompt, images);
         var systemPrompt = _promptBuilder.BuildSystemPrompt(
@@ -531,6 +549,7 @@ public class MantisService : IDisposable
     public async Task ApplySolutionAsync(
         int index, GH_Document document, CancellationToken ct = default)
     {
+        EnsureReady();
         if (_pendingSolutions == null ||
             index < 0 || index >= _pendingSolutions.Solutions.Count)
         {
@@ -563,6 +582,7 @@ public class MantisService : IDisposable
         string userPrompt, GH_Document document, CancellationToken ct = default,
         List<ImageData>? images = null)
     {
+        EnsureReady();
         bool hasImages = images is { Count: > 0 };
         var canvasState = _serializer.Serialize(document);
         _conversation.AddUserMessage(userPrompt, images);
@@ -620,6 +640,7 @@ public class MantisService : IDisposable
 
     public async Task HealErrorsAsync(GH_Document document, CancellationToken ct = default)
     {
+        EnsureReady();
         var errors = _errorMonitor.CurrentErrors;
         if (errors.Count == 0)
         {
@@ -669,6 +690,7 @@ public class MantisService : IDisposable
     public async Task<string> AskAsync(
         string question, GH_Document? document, CancellationToken ct = default)
     {
+        EnsureReady();
         OnStatus?.Invoke("Thinking...");
 
         string? canvasState = null;

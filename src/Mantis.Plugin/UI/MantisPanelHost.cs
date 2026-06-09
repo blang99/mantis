@@ -44,12 +44,14 @@ public static class MantisPanelHost
     {
         if (_service != null) return _service;
 
-        GrasshopperGateway.EnsureLoaded();
+        // Deliberately does NOT load Grasshopper or scan the component catalog here —
+        // that is deferred to MantisService.EnsureReady() on the first build/ask. So
+        // opening the MANTIS panel is instant and never forces Grasshopper to load
+        // (which could surface unrelated plugins' load-time warnings, slow the open,
+        // or fail before the user has even typed anything).
         FontInstaller.EnsureInstalled();
 
-        var service = new MantisService();
-        service.Initialize();
-        _service = service;
+        _service = new MantisService();
         return _service;
     }
 
