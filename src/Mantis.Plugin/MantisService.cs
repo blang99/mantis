@@ -122,6 +122,48 @@ public class MantisService : IDisposable
         _providerManager.Active.SelectedModel = modelId;
     }
 
+    /// <summary>
+    /// Whether to run the explicit PLAN pass before building. Default ON for cloud models,
+    /// OFF for local Ollama (the extra round-trip roughly doubles latency on slower local
+    /// models). The user can force it either way via the "planFirst" setting (on/off).
+    /// </summary>
+    private bool PlanningEnabled
+    {
+        get
+        {
+            var setting = MantisSettings.Get("planFirst");
+            if (setting == "on") return true;
+            if (setting == "off") return false;
+            return _providerManager.ActiveProviderName != "Ollama";
+        }
+    }
+
+    /// <summary>
+    /// PLAN pass: MANTIS first UNDERSTANDS the request and lays out a reasoned, ordered
+    /// plan (<see cref="PlanDef"/>) — before any component is emitted. Cheap (it returns
+    /// only the plan, not a graph) and best-effort: returns null if planning is disabled
+    /// or the model didn't produce a usable plan, in which case the build runs single-shot.
+    /// </summary>
+    private async Task<PlanDef?> PlanAsync(string userPrompt, CancellationToken ct)
+    {
+        if (!PlanningEnabled) return null;
+        try
+        {
+            OnStatus?.Invoke("Understanding the request & planning…");
+            var planPrompt = _promptBuilder.BuildPlanPrompt(
+                userPrompt, null, _providerManager.Active.ContextWindowTokens);
+            // Reuse the same conversation messages (incl. any images) but DON'T record the
+            // plan response — it's an internal step, not part of the build conversation.
+            var messages = _conversation.GetMessagesForApi();
+            var sb = new System.Text.StringBuilder();
+            await foreach (var chunk in _providerManager.Active.StreamAsync(planPrompt, messages, ct))
+                sb.Append(chunk);
+            return _parser.ParsePlan(sb.ToString());
+        }
+        catch (OperationCanceledException) { throw; }
+        catch { return null; }   // never let a planning hiccup block the build
+    }
+
     public async Task GenerateAsync(
         string userPrompt, GH_Document document,
         bool streaming = true, CancellationToken ct = default,
@@ -143,9 +185,20 @@ public class MantisService : IDisposable
 
         bool hasImages = images is { Count: > 0 };
         _conversation.AddUserMessage(userPrompt, images);
+
+        // PLAN FIRST: understand the request and lay out reasoned, ordered steps before
+        // building. The plan is shown up-front as the "thought process" the user reads,
+        // and injected into the build so the graph follows it (each step -> one on-canvas
+        // group). Best-effort — if planning is disabled/fails, fall back to single-shot.
+        var plan = await PlanAsync(userPrompt, ct);
+        if (plan != null && plan.Steps.Count > 0)
+            OnReasoning?.Invoke(plan.Steps
+                .Select(s => new GroupDef { Name = s.Name, Reasoning = s.Reasoning })
+                .ToList());
+
         var systemPrompt = _promptBuilder.BuildSystemPrompt(
             PromptMode.Generate, null, userPrompt, _providerManager.Active.ContextWindowTokens,
-            hasImages: hasImages);
+            hasImages: hasImages, plan: plan);
         var messages = _conversation.GetMessagesForApi();
 
         OnStatus?.Invoke("Generating script...");
@@ -206,9 +259,10 @@ public class MantisService : IDisposable
             if (!string.IsNullOrWhiteSpace(script.Advice))
                 OnAdvice?.Invoke(script.Advice);
 
-            // THOUGHT PROCESS: narrate the stage-by-stage wiring while the canvas
-            // builds. The same stages are drawn as labelled groups on the canvas.
-            if (script.Groups.Count > 0)
+            // THOUGHT PROCESS: narrate the stage-by-stage wiring while the canvas builds.
+            // Skip if we already showed the plan up-front (no double narration); the build
+            // still draws the real labelled groups on the canvas either way.
+            if (plan == null && script.Groups.Count > 0)
                 OnReasoning?.Invoke(script.Groups);
 
             // Show required plugins if any

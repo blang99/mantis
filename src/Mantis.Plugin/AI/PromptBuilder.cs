@@ -1,4 +1,5 @@
 using Mantis.Plugin.Knowledge;
+using Mantis.Plugin.ScriptBuilder;
 
 namespace Mantis.Plugin.AI;
 
@@ -22,7 +23,8 @@ public class PromptBuilder
         string? canvasState = null,
         string? userRequest = null,
         int contextWindowTokens = int.MaxValue,
-        bool hasImages = false)
+        bool hasImages = false,
+        PlanDef? plan = null)
     {
         // ADAPTIVE CATALOG: large-context cloud models get the full catalog;
         // small-context local models get a relevance-trimmed catalog so the
@@ -45,6 +47,24 @@ public class PromptBuilder
         sb.AppendLine("=== COMPONENT CATALOG ===");
         sb.AppendLine(catalog);
         sb.AppendLine();
+
+        // ── The plan MANTIS already reasoned out (Generate, after a Plan pass) ──
+        if (plan != null && plan.Steps.Count > 0)
+        {
+            sb.AppendLine("=== YOUR PLAN (you already reasoned this out — build it faithfully) ===");
+            sb.AppendLine("Intent: " + plan.Intent);
+            if (plan.Assumptions.Count > 0)
+                sb.AppendLine("Assumptions: " + string.Join("; ", plan.Assumptions));
+            sb.AppendLine("Steps (each becomes EXACTLY ONE group, same order, same name):");
+            for (int i = 0; i < plan.Steps.Count; i++)
+            {
+                var s = plan.Steps[i];
+                sb.AppendLine($"  {i + 1}. {s.Name} — {s.Approach}" +
+                              (s.CandidateComponents.Count > 0 ? "  [" + string.Join(", ", s.CandidateComponents) + "]" : ""));
+            }
+            sb.AppendLine("Realize this plan as a complete, working graph. The \"groups\" array MUST contain exactly these steps, in this order, with these names — so the on-canvas stages match the plan the user is reading.");
+            sb.AppendLine();
+        }
 
         // ── Mode-specific context ──
         if (mode == PromptMode.MultiSolution)
@@ -197,6 +217,63 @@ public class PromptBuilder
         return sb.ToString();
     }
 
+    /// <summary>
+    /// PLAN mode: before building anything, MANTIS understands the request and lays out the
+    /// smallest correct parametric workflow as an ordered set of reasoned stages (a
+    /// <see cref="PlanDef"/>). Cheap — it outputs only the plan, not a graph — and it gives
+    /// the model awareness of which components exist so its steps are grounded. The plan is
+    /// then shown to the user and fed back into the build pass so the graph follows it, with
+    /// each step becoming one on-canvas group.
+    /// </summary>
+    public string BuildPlanPrompt(
+        string? userRequest = null,
+        string? canvasState = null,
+        int contextWindowTokens = int.MaxValue)
+    {
+        // Names/categories are enough to PLAN; the full per-port detail is only needed at build time.
+        var catalog = _registry.BuildRelevantCatalog(userRequest);
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("You are MANTIS, an expert computational designer for Rhino Grasshopper, in PLANNING mode.");
+        sb.AppendLine("Before building anything you THINK: understand exactly what the user wants, then lay out the SMALLEST correct parametric workflow as an ordered set of stages with reasoning. You are NOT building the graph yet — only the plan.");
+        sb.AppendLine();
+        sb.AppendLine("=== AVAILABLE COMPONENTS (plan around these real names) ===");
+        sb.AppendLine(catalog);
+
+        if (!string.IsNullOrWhiteSpace(canvasState))
+        {
+            sb.AppendLine();
+            sb.AppendLine("=== CURRENT CANVAS (the user may want to build on this) ===");
+            sb.AppendLine(canvasState);
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("=== HOW TO PLAN ===");
+        sb.AppendLine("- INTENT: restate, in one line, the concrete geometry/outcome the user wants.");
+        sb.AppendLine("- STEPS: 2-5 ordered stages with clean left-to-right data flow — typically Parameters (sliders) -> Base Geometry -> Transform/Array -> Combine -> Output. Name each stage for what THIS design needs, not generically.");
+        sb.AppendLine("- For each step give: reasoning (WHY this stage exists + what it produces for the next), approach (HOW — the technique), and candidateComponents (exact catalog names you expect to use).");
+        sb.AppendLine("- Favor the MINIMUM set of stages that fully and correctly produces the result. For repetition, plan sliders + Series/Range + a one-to-many array (a list into one component) — never hand-duplicate components.");
+        sb.AppendLine("- assumptions: defaults/interpretations you are committing to (units, counts, orientation).");
+        sb.AppendLine("- openQuestions: only genuinely ambiguous points — do NOT block; proceed with sensible defaults.");
+        sb.AppendLine();
+
+        AppendCustomInstructions(sb);
+
+        sb.AppendLine("=== OUTPUT FORMAT (MANDATORY) ===");
+        sb.AppendLine("Output ONLY a single JSON object. No text, no markdown, no code fences.");
+        sb.AppendLine("{");
+        sb.AppendLine("  \"intent\": \"one-line restatement of the goal\",");
+        sb.AppendLine("  \"assumptions\": [\"world XY origin\", \"count driven by an integer slider\"],");
+        sb.AppendLine("  \"steps\": [");
+        sb.AppendLine("    {\"name\": \"Parameters\", \"reasoning\": \"why this stage exists and what it feeds next\", \"approach\": \"expose radius/count/height as sliders\", \"candidateComponents\": [\"Number Slider\"]},");
+        sb.AppendLine("    {\"name\": \"Base Geometry\", \"reasoning\": \"...\", \"approach\": \"...\", \"candidateComponents\": [\"Circle\"]}");
+        sb.AppendLine("  ],");
+        sb.AppendLine("  \"openQuestions\": []");
+        sb.AppendLine("}");
+        sb.AppendLine("Start with { and end with }.");
+        return sb.ToString();
+    }
+
     public string BuildExplainPrompt()
     {
         return """
@@ -272,6 +349,7 @@ public class PromptBuilder
 public enum PromptMode
 {
     Generate,
+    Plan,
     MultiSolution,
     Iterate,
     Heal,

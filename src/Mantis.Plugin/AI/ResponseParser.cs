@@ -106,6 +106,23 @@ public class ResponseParser
         return null;
     }
 
+    /// <summary>
+    /// Parse the PLAN pass response into a <see cref="PlanDef"/>. Returns null if the
+    /// model didn't return a usable plan (so the build falls back to single-shot).
+    /// </summary>
+    public PlanDef? ParsePlan(string json)
+    {
+        json = ExtractJson(json);
+        try
+        {
+            var plan = JsonSerializer.Deserialize<PlanDef>(json, _jsonOpts);
+            if (plan != null && plan.Steps.Count > 0)
+                return plan;
+        }
+        catch { }
+        return null;
+    }
+
     private static string ExtractJson(string text)
     {
         var stripped = text.Trim();

@@ -56,6 +56,52 @@ public class MultiSolutionResponse
     public string ComparisonSummary { get; set; } = "";
 }
 
+/// <summary>
+/// The result of the PLAN pass — MANTIS's explicit, reasoned strategy produced BEFORE
+/// any component is emitted. The model first UNDERSTANDS the request and lays out an
+/// ordered set of steps with reasoning; the build pass then turns each step into a
+/// stage/<see cref="GroupDef"/> (one GH_Group on the canvas). So the same plan drives
+/// (a) the build, (b) the chat "thought process" narration, and (c) the plan side-panel
+/// where each step links to its on-canvas group.
+/// </summary>
+public class PlanDef
+{
+    /// <summary>One-line restatement of what the user actually wants.</summary>
+    [JsonPropertyName("intent")]
+    public string Intent { get; set; } = "";
+
+    /// <summary>Assumptions MANTIS is making (units, defaults, interpretation).</summary>
+    [JsonPropertyName("assumptions")]
+    public List<string> Assumptions { get; set; } = new();
+
+    /// <summary>The ordered workflow steps — each becomes a build stage / GH group.</summary>
+    [JsonPropertyName("steps")]
+    public List<PlanStepDef> Steps { get; set; } = new();
+
+    /// <summary>Anything genuinely ambiguous worth flagging (not blocking).</summary>
+    [JsonPropertyName("openQuestions")]
+    public List<string> OpenQuestions { get; set; } = new();
+}
+
+/// <summary>One ordered stage of the plan — maps 1:1 to a <see cref="GroupDef"/> at build time.</summary>
+public class PlanStepDef
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = "";
+
+    /// <summary>WHY this step exists in the workflow.</summary>
+    [JsonPropertyName("reasoning")]
+    public string Reasoning { get; set; } = "";
+
+    /// <summary>HOW — the technique / components this step will use.</summary>
+    [JsonPropertyName("approach")]
+    public string Approach { get; set; } = "";
+
+    /// <summary>Component names this step is likely to need (guides the build pass).</summary>
+    [JsonPropertyName("candidateComponents")]
+    public List<string> CandidateComponents { get; set; } = new();
+}
+
 public class ComponentDef
 {
     [JsonPropertyName("id")]
