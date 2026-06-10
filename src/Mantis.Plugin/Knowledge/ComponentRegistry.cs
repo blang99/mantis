@@ -90,12 +90,23 @@ public class ComponentRegistry
         return sb.ToString();
     }
 
+    /// <summary>
+    /// Resolve a (possibly imperfect) component name to a real catalog entry — CONSERVATIVELY.
+    /// High-confidence tiers only: exact, parenthetical-strip, exact nickname, and normalized-exact
+    /// (case/space/punctuation-insensitive). The remaining fuzzy tier accepts a partial ONLY when a
+    /// SINGLE catalog name contains the (reasonably long) query. Anything ambiguous returns null so
+    /// it surfaces as UNRESOLVABLE and triggers the repair loop. We never silently bind a
+    /// low-confidence guess — e.g. a hallucinated "Spherical Surface" must NOT resolve to "Surface".
+    /// </summary>
     public ComponentInfo? FindByName(string name)
     {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+
+        // Tier 1 — exact.
         if (_byName.TryGetValue(name, out var info))
             return info;
 
-        // Strip parenthetical nicknames: "Circle CNR (Circle)" → "Circle CNR"
+        // Tier 2 — strip a parenthetical nickname: "Circle CNR (Circle)" → "Circle CNR".
         var cleanName = name;
         var parenIdx = name.IndexOf('(');
         if (parenIdx > 0)
@@ -103,32 +114,46 @@ public class ComponentRegistry
         if (cleanName != name && _byName.TryGetValue(cleanName, out info))
             return info;
 
-        // Fuzzy match: try nickname
+        // Tier 3 — exact nickname.
         foreach (var comp in _byName.Values)
-        {
-            if (string.Equals(comp.NickName, name, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(comp.NickName, name, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(comp.NickName, cleanName, StringComparison.OrdinalIgnoreCase))
                 return comp;
-            if (string.Equals(comp.NickName, cleanName, StringComparison.OrdinalIgnoreCase))
-                return comp;
-        }
 
-        // Fuzzy match: query contains catalog name (e.g. "Circle CNR (Circle)" contains "Circle CNR")
-        foreach (var comp in _byName.Values)
-        {
-            if (name.Contains(comp.Name, StringComparison.OrdinalIgnoreCase))
-                return comp;
-        }
+        // Tier 4 — normalized exact (ignore case/spacing/punctuation): "numberslider" == "Number Slider".
+        var nQuery = NormalizeName(cleanName);
+        if (nQuery.Length > 0)
+            foreach (var comp in _byName.Values)
+                if (NormalizeName(comp.Name) == nQuery || NormalizeName(comp.NickName ?? "") == nQuery)
+                    return comp;
 
-        // Fuzzy match: catalog name contains query
-        foreach (var comp in _byName.Values)
+        // Tier 5 — CONFIDENT partial only: exactly ONE catalog name contains the query, and the
+        // query is long enough to be meaningful. Ambiguous (0 or >1) or short → null → repair.
+        if (cleanName.Length >= 4)
         {
-            if (comp.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
-                return comp;
-            if (cleanName.Length > 2 && comp.Name.Contains(cleanName, StringComparison.OrdinalIgnoreCase))
-                return comp;
+            ComponentInfo? unique = null;
+            foreach (var comp in _byName.Values)
+            {
+                if (comp.Name.Contains(cleanName, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (unique != null) { unique = null; break; } // ambiguous → don't guess
+                    unique = comp;
+                }
+            }
+            if (unique != null) return unique;
         }
 
         return null;
+    }
+
+    /// <summary>Lowercase, alphanumeric-only form for case/space/punctuation-insensitive matching.</summary>
+    private static string NormalizeName(string s)
+    {
+        if (string.IsNullOrEmpty(s)) return "";
+        var sb = new System.Text.StringBuilder(s.Length);
+        foreach (var ch in s)
+            if (char.IsLetterOrDigit(ch)) sb.Append(char.ToLowerInvariant(ch));
+        return sb.ToString();
     }
 
     public ComponentInfo? FindByGuid(Guid guid) =>

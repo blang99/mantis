@@ -54,9 +54,11 @@ public class SimulationTests
         n.Equals("Boolean Toggle", StringComparison.OrdinalIgnoreCase) ||
         n.Equals("Toggle", StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>Mirror of ComponentRegistry.FindByName (exact cascade order).</summary>
+    /// <summary>Mirror of ComponentRegistry.FindByName (hardened: conservative, no silent mis-bind).</summary>
     private static ComponentInfo? FindByName(string name)
     {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+
         if (Catalog.TryGetValue(name, out var info))
             return info;
 
@@ -68,25 +70,40 @@ public class SimulationTests
             return info;
 
         foreach (var comp in Catalog.Values)
+            if (string.Equals(comp.NickName, name, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(comp.NickName, cleanName, StringComparison.OrdinalIgnoreCase))
+                return comp;
+
+        var nQuery = NormalizeName(cleanName);
+        if (nQuery.Length > 0)
+            foreach (var comp in Catalog.Values)
+                if (NormalizeName(comp.Name) == nQuery || NormalizeName(comp.NickName ?? "") == nQuery)
+                    return comp;
+
+        if (cleanName.Length >= 4)
         {
-            if (string.Equals(comp.NickName, name, StringComparison.OrdinalIgnoreCase))
-                return comp;
-            if (string.Equals(comp.NickName, cleanName, StringComparison.OrdinalIgnoreCase))
-                return comp;
+            ComponentInfo? unique = null;
+            foreach (var comp in Catalog.Values)
+            {
+                if (comp.Name.Contains(cleanName, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (unique != null) { unique = null; break; } // ambiguous → don't guess
+                    unique = comp;
+                }
+            }
+            if (unique != null) return unique;
         }
-        foreach (var comp in Catalog.Values)
-        {
-            if (name.Contains(comp.Name, StringComparison.OrdinalIgnoreCase))
-                return comp;
-        }
-        foreach (var comp in Catalog.Values)
-        {
-            if (comp.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
-                return comp;
-            if (cleanName.Length > 2 && comp.Name.Contains(cleanName, StringComparison.OrdinalIgnoreCase))
-                return comp;
-        }
+
         return null;
+    }
+
+    private static string NormalizeName(string s)
+    {
+        if (string.IsNullOrEmpty(s)) return "";
+        var sb = new System.Text.StringBuilder(s.Length);
+        foreach (var ch in s)
+            if (char.IsLetterOrDigit(ch)) sb.Append(char.ToLowerInvariant(ch));
+        return sb.ToString();
     }
 
     /// <summary>Mirror of ComponentFactory.CanResolve.</summary>
@@ -95,6 +112,31 @@ public class SimulationTests
         if (string.IsNullOrWhiteSpace(name)) return false;
         if (IsNumberSlider(name) || IsPanel(name) || IsBooleanToggle(name)) return true;
         return FindByName(name) != null;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  RESOLVER HARDENING (review Weakness #2). The resolver must STOP silently
+    //  binding a hallucinated name to a real component it merely CONTAINS — that
+    //  produced a clean-looking canvas computing the wrong geometry. Such a name
+    //  must now come back unresolved so the repair loop + SuggestNames fix it.
+    // ─────────────────────────────────────────────────────────────────────────
+    [Fact]
+    public void Resolver_still_resolves_real_names_exactly_and_normalized()
+    {
+        var real = Catalog.Values.First().Name; // any real catalog component
+        Assert.True(CanResolve(real), $"exact catalog name '{real}' must still resolve");
+        Assert.True(CanResolve(real.ToLowerInvariant().Replace(" ", "")),
+            "a case/space-normalized variant must still resolve");
+    }
+
+    [Fact]
+    public void Resolver_no_longer_silently_binds_a_hallucination_that_contains_a_real_name()
+    {
+        var real = Catalog.Values.First().Name;            // e.g. "Circle"
+        var hallucinated = "Quantum " + real + " Engine";  // contains the real name as a substring
+        Assert.Null(FindByName(hallucinated));
+        Assert.False(CanResolve(hallucinated),
+            $"'{hallucinated}' must NOT silently resolve to '{real}' — it should surface as unresolvable so repair fixes it.");
     }
 
     /// <summary>
