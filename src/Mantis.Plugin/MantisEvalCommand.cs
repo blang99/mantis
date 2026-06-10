@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Mantis.Plugin.Eval;
@@ -11,13 +12,14 @@ using Rhino.Commands;
 namespace Mantis.Plugin;
 
 /// <summary>
-/// The <c>MantisEval</c> command — MANTIS's quality system. Runs the frozen eval corpus through the
-/// REAL generation + validation pipeline with the user's configured provider and writes a per-tier
-/// scorecard to %AppData%/Mantis/eval-&lt;timestamp&gt;.md.
+/// The <c>MantisEval</c> command — MANTIS's quality system. Runs (a balanced sample of) the frozen
+/// eval corpus through the REAL generation + validation pipeline with the user's configured provider
+/// and writes a per-tier scorecard to %AppData%/Mantis/eval-&lt;timestamp&gt;.md.
 ///
 /// Runs the generation loop on a BACKGROUND thread so Rhino stays responsive (an earlier version ran
 /// it synchronously on the UI thread, which deadlocked while Grasshopper loaded). Grasshopper + the
-/// catalog are loaded ON the UI thread first; the background loop only does HTTP + pure scoring.
+/// catalog load ON the UI thread first; the background loop only does HTTP + pure scoring. You pick
+/// how many cases to run — local models are slow, so the default is a small balanced sample.
 /// Re-running the command cancels an in-flight run.
 /// </summary>
 public class MantisEvalCommand : Command
@@ -34,6 +36,15 @@ public class MantisEvalCommand : Command
             RhinoApp.WriteLine("MANTIS eval: no corpus embedded.");
             return Result.Failure;
         }
+
+        // How many cases? Local models are slow (one full generation each), so default small.
+        int count = Math.Min(12, corpus.Count);
+        var rc = Rhino.Input.RhinoGet.GetInteger(
+            $"How many eval cases to run (sampled across tiers, 1-{corpus.Count}; local models are slow)",
+            true, ref count, 1, corpus.Count);
+        if (rc == Result.Cancel) return Result.Cancel;
+        count = Math.Max(1, Math.Min(count, corpus.Count));
+        var sample = SampleBalanced(corpus, count);
 
         // Cancel any prior run, then start a fresh token.
         _running?.Cancel();
@@ -53,14 +64,13 @@ public class MantisEvalCommand : Command
         }
 
         var provider = service.ActiveProviderName;
-        RhinoApp.WriteLine($"MANTIS eval: running {corpus.Count} cases via '{provider}' IN THE BACKGROUND — "
-                           + "Rhino stays usable; a report is written when it finishes.");
-        RhinoApp.WriteLine("  (Tip: a cloud provider is far faster than local Ollama for 30 calls. Re-run MantisEval to cancel.)");
+        RhinoApp.WriteLine($"MANTIS eval: running {sample.Count} cases via '{provider}' IN THE BACKGROUND — "
+                           + "Rhino stays usable; a report is written when it finishes. (Re-run MantisEval to cancel.)");
 
         _ = Task.Run(async () =>
         {
             var scores = new List<EvalScore>();
-            foreach (var c in corpus)
+            foreach (var c in sample)
             {
                 if (cts.IsCancellationRequested) { RhinoApp.WriteLine("MANTIS eval: cancelled."); return; }
                 EvalScore s;
@@ -95,5 +105,21 @@ public class MantisEvalCommand : Command
         });
 
         return Result.Success; // return immediately — the UI never blocks
+    }
+
+    /// <summary>Pick <paramref name="count"/> cases round-robin across tiers, so even a small sample
+    /// spans primitive → realproject.</summary>
+    private static List<EvalCase> SampleBalanced(List<EvalCase> corpus, int count)
+    {
+        if (count >= corpus.Count) return corpus;
+        var byTier = corpus.GroupBy(c => c.Tier).Select(g => new Queue<EvalCase>(g)).ToList();
+        var result = new List<EvalCase>();
+        while (result.Count < count && byTier.Any(q => q.Count > 0))
+            foreach (var q in byTier)
+            {
+                if (result.Count >= count) break;
+                if (q.Count > 0) result.Add(q.Dequeue());
+            }
+        return result;
     }
 }
