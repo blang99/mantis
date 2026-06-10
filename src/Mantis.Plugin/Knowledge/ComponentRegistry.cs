@@ -13,12 +13,63 @@ public class ComponentRegistry
 
     public IReadOnlyCollection<ComponentInfo> All => _byName.Values;
 
+    // The pre-install "suggest" layer (harvested from food4rhino / grasshopperdocs). MANTIS
+    // can only BUILD with installed components (the runtime scan covers those); these let it
+    // RECOMMEND the right add-on when the native catalog can't express the request.
+    private readonly List<PluginEntry> _plugins = new();
+    private readonly List<RhinoCommand> _commands = new();
+
+    /// <summary>Popular downloadable Grasshopper plugins MANTIS knows about (metadata only).</summary>
+    public IReadOnlyList<PluginEntry> PopularPlugins => _plugins;
+
+    /// <summary>Rhino command reference (for Ask mode / future Rhino-side actions).</summary>
+    public IReadOnlyList<RhinoCommand> RhinoCommands => _commands;
+
     public void Initialize()
     {
         if (_initialized) return;
         LoadEmbeddedCatalog();
+        _plugins.AddRange(LoadEmbeddedJson<PluginEntry>("PluginRegistry.json"));
+        _commands.AddRange(LoadEmbeddedJson<RhinoCommand>("RhinoCommands.json"));
         ScanInstalledComponents();
         _initialized = true;
+    }
+
+    /// <summary>Deserialize an embedded JSON array resource (case-insensitive). Never throws.</summary>
+    private static List<T> LoadEmbeddedJson<T>(string endsWith)
+    {
+        try
+        {
+            var asm = Assembly.GetExecutingAssembly();
+            var name = asm.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith(endsWith));
+            if (name == null) return new();
+            using var stream = asm.GetManifestResourceStream(name);
+            if (stream == null) return new();
+            return JsonSerializer.Deserialize<List<T>>(stream,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+        }
+        catch { return new(); }
+    }
+
+    /// <summary>
+    /// Compact "plugins you can SUGGEST" block for the prompt — name + capability + a few hero
+    /// components. Used ONLY to recommend an install via requiredPlugins[]; never for building
+    /// (the runtime scan covers installed components). Kept short to limit prompt bloat.
+    /// </summary>
+    public string BuildPluginSuggestions()
+    {
+        if (_plugins.Count == 0) return "";
+        var sb = new System.Text.StringBuilder();
+        foreach (var p in _plugins)
+        {
+            if (string.IsNullOrWhiteSpace(p.Name)) continue;
+            sb.Append("- ").Append(p.Name);
+            if (!string.IsNullOrWhiteSpace(p.Capability)) sb.Append(": ").Append(p.Capability);
+            if (p.HeroComponents.Count > 0)
+                sb.Append(" (e.g. ").Append(string.Join(", ", p.HeroComponents.Take(4))).Append(')');
+            sb.AppendLine();
+        }
+        return sb.ToString();
     }
 
     public ComponentInfo? FindByName(string name)

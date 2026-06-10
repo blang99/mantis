@@ -1,0 +1,355 @@
+[
+  {
+    "name": "LunchBox",
+    "url": "https://www.food4rhino.com/en/app/lunchbox",
+    "capability": "Paneling systems, parametric structures, math surfaces, data/ML utilities and workflow tools for computational design.",
+    "heroComponents": [
+      "Diamond Panels",
+      "Quad Panels",
+      "Triangular Panels A",
+      "Staggered Quad Panels",
+      "Diagrid Structure",
+      "Space Truss Structure 1",
+      "Mobius Surface",
+      "K-Means Clustering"
+    ],
+    "installHint": "Download the .gha from Food4Rhino and unblock + drop into Grasshopper's Libraries folder (File > Special Folders > Components Folder); on Mac/Rhino 8 install via the Rhino Package Manager. Latest builds target .NET 7."
+  },
+  {
+    "name": "Pufferfish",
+    "url": "https://www.food4rhino.com/en/app/pufferfish",
+    "capability": "330 components for tweens, blends, morphs, averages, transforms and interpolations — parameter/factor-driven shape changing.",
+    "heroComponents": [
+      "Tween Two Curves",
+      "Tween Through Curves",
+      "Tween Consecutive Curves",
+      "Morph To Twisted Box",
+      "Twisted Box Loft",
+      "Weighted Average Curve",
+      "Blend Two Meshes",
+      "Curve Graph Mapper"
+    ],
+    "installHint": "Download from Food4Rhino, unblock the .gha, place in Grasshopper Libraries folder (File > Special Folders > Components Folder). Works on Rhino 5/6/7/8, Windows and Mac."
+  },
+  {
+    "name": "Weaverbird",
+    "url": "https://www.giuliopiacentino.com/weaverbird/",
+    "capability": "Topological mesh modeler implementing known subdivision and smoothing operators for designers.",
+    "heroComponents": [
+      "Catmull-Clark Subdivision",
+      "Loop Subdivision",
+      "Laplacian Smoothing",
+      "Mesh Thicken",
+      "Offset Mesh",
+      "Mesh Window",
+      "Picture Frame",
+      "Join Meshes and Weld"
+    ],
+    "installHint": "Download from giuliopiacentino.com/weaverbird (or Food4Rhino), unblock and drop the .gha into the Grasshopper Components/Libraries folder, then restart Rhino."
+  },
+  {
+    "name": "Kangaroo2",
+    "url": "https://www.food4rhino.com/en/app/kangaroo-physics",
+    "capability": "Live physics / constraint solver for form-finding, relaxation, collision and interactive simulation via goal objects.",
+    "heroComponents": [
+      "Solver",
+      "Bouncy Solver",
+      "Anchor",
+      "Length(Line)",
+      "Edge Lengths",
+      "Hinge",
+      "On Mesh",
+      "Show"
+    ],
+    "installHint": "Bundled with Rhino 6/7/8 by default (appears under the Kangaroo2 tab). For Rhino 5, download from Food4Rhino, unblock and place the .gha in the Grasshopper Libraries folder."
+  },
+  {
+    "name": "Ladybug",
+    "url": "https://www.food4rhino.com/en/app/ladybug-tools",
+    "capability": "Imports EPW weather data to run and visualize sun-path, radiation, comfort and environmental analyses in early design.",
+    "heroComponents": [
+      "Sun Path",
+      "Wind Rose",
+      "Radiation Rose",
+      "Psychrometric Chart",
+      "Sky Dome",
+      "PMV Comfort Calculator",
+      "Solar Envelope",
+      "Analysis Period"
+    ],
+    "installHint": "Install the full Ladybug Tools (LBT) bundle, not a bare .gha. Preferred path on Rhino 7/8 is the Pollination one-click installer; otherwise use the Food4Rhino installer, then keep updated with the 'LB Versioner' component."
+  },
+  {
+    "name": "Honeybee",
+    "url": "https://www.food4rhino.com/en/app/ladybug-tools",
+    "capability": "Connects Grasshopper to validated engines (EnergyPlus/OpenStudio, Radiance, THERM) for energy, daylight and thermal simulation.",
+    "heroComponents": [
+      "create HBZones",
+      "create HBSrfs",
+      "Run Energy Simulation",
+      "Export To Open Studio",
+      "Read EP Result",
+      "Run Daylight Simulation",
+      "Radiance Glass Material",
+      "Assign HVAC System"
+    ],
+    "installHint": "Ships inside the Ladybug Tools (LBT) bundle alongside Ladybug; install via the Pollination one-click installer (Rhino 7/8) or the Food4Rhino installer. Requires the backing simulation engines (EnergyPlus, Radiance) which the installer can place."
+  },
+  {
+    "name": "Heteroptera",
+    "url": "https://www.food4rhino.com/en/app/heteroptera",
+    "capability": "112-component toolbox focused on uncertainty/randomness, vector fields, networks/topology, streaming and math utilities.",
+    "heroComponents": [
+      "Network Editor",
+      "Center",
+      "Construct",
+      "Noise Field",
+      "Gaussian Random",
+      "Travelling Salesman Problem",
+      "Minimum Spanning Tree",
+      "Transpose Plane"
+    ],
+    "installHint": "Download from Food4Rhino, unblock the .gha (right-click > Properties > Unblock), and place it in the Grasshopper Libraries folder (File > Special Folders > Components Folder), then restart."
+  },
+  {
+    "name": "Dendro",
+    "url": "https://www.food4rhino.com/en/app/dendro",
+    "capability": "OpenVDB-based volumetric (voxel) modeling — wrap points/curves/meshes into volumes for robust boolean, offset, smooth and blend ops.",
+    "heroComponents": [
+      "Mesh to Volume",
+      "Points To Volume",
+      "Curve To Volume",
+      "Volume to Mesh",
+      "Volume Union",
+      "Volume Difference",
+      "Smooth Volume",
+      "Offset Volume"
+    ],
+    "installHint": "Download from Food4Rhino, unblock and drop the .gha into the Grasshopper Libraries folder. Built on OpenVDB; use the build matching your Rhino version (6/7/8) and architecture."
+  },
+  {
+    "name": "Anemone",
+    "url": "https://www.food4rhino.com/en/app/anemone",
+    "capability": "Adds looping / recursion to Grasshopper (classic, fast and internalized loop modes) for iterative and feedback definitions.",
+    "heroComponents": [
+      "Loop Start",
+      "Loop End",
+      "Fast Loop Start",
+      "Fast Loop End",
+      "Loop Input",
+      "Loop Output",
+      "Run Loop"
+    ],
+    "installHint": "Download from Food4Rhino, unblock the .gha and place it in the Grasshopper Libraries folder (File > Special Folders > Components Folder), then restart Rhino. 10 components by Mateusz Zwierzycki."
+  },
+  {
+    "name": "Fox",
+    "url": "https://www.food4rhino.com/en/app/fox",
+    "capability": "Series of algorithms for graphs, aggregations and iso-surfaces (a faster single-element alternative to Wasp for aggregation).",
+    "heroComponents": [],
+    "installHint": "Download the .gha and .dll from Food4Rhino, unblock both, and place them in the Grasshopper Components folder (File > Special Folders > Components Folder), then restart. Author: Petras Vestartas. NOTE: no authoritative source enumerates Fox's exact component names, so hero components are intentionally omitted rather than guessed."
+  },
+  {
+    "name": "Parakeet",
+    "url": "https://www.food4rhino.com/en/app/parakeet",
+    "capability": "Algorithmic 2D/3D pattern and network generation — tilings, Islamic/star patterns, venation, growth and aggregation.",
+    "heroComponents": [
+      "Venation",
+      "Cymatic Pattern",
+      "Star Pattern I",
+      "Maze",
+      "Tileable Pattern (p4m)",
+      "2D Aggregation",
+      "3D Aggregation",
+      "Penrose"
+    ],
+    "installHint": "Download from Food4Rhino, unblock the .gha and place it in the Grasshopper Libraries folder, then restart Rhino. Components are grouped under categories like Tilings, Pattern Generation and M.C. Escher."
+  },
+  {
+    "name": "Mesh+",
+    "url": "https://www.food4rhino.com/en/app/mesh",
+    "capability": "Topological mesh editing/creation producing effects from faces and point sets via subdivision and normal-based 3D operations.",
+    "heroComponents": [
+      "Weave",
+      "Stellate+0",
+      "Span & Bridge",
+      "Frame+0",
+      "Snub+1",
+      "Pinwheel+2",
+      "Mesh Offset & Extrude",
+      "Aperture+0"
+    ],
+    "installHint": "Download from Food4Rhino (page /app/mesh; grasshopperdocs slug 'meshplus'), unblock and place the user-object/.gha files in the Grasshopper Libraries folder. Supports Rhino 4/5/6/7/8 on Windows; recent build fixes Rhino 8 / .NET Core compatibility."
+  },
+  {
+    "name": "Elk",
+    "url": "https://www.food4rhino.com/en/app/elk",
+    "capability": "Generates map geometry and topographic surfaces from OpenStreetMap (OSM) and USGS/SRTM elevation data for site and context modeling.",
+    "heroComponents": [
+      "Location",
+      "OSM Data",
+      "Topography"
+    ],
+    "installHint": "Download the .gha from Food4Rhino, place it in Grasshopper > File > Special Folders > Components Folder, unblock the file (right-click > Properties > Unblock), and restart Rhino. Only 3 components total."
+  },
+  {
+    "name": "Human",
+    "url": "https://www.food4rhino.com/en/app/human",
+    "capability": "Extends Grasshopper's ability to create and reference Rhino geometry (lights, blocks, text, hatches) and to read/modify document attributes like layers, materials, and lineweights.",
+    "heroComponents": [
+      "CreateLight",
+      "CreateHatch",
+      "JustifiedText3d",
+      "ScreenText",
+      "PreviewMat",
+      "Layers",
+      "Materials",
+      "ModAtts"
+    ],
+    "installHint": "Install the .gha into the Grasshopper Components folder and unblock it. Delete any older HDTReference.gha, TreeFrog.gha, and Human.gha first to avoid duplicate-load conflicts. Restart Rhino."
+  },
+  {
+    "name": "MetaHopper",
+    "url": "https://www.food4rhino.com/en/app/metahopper",
+    "capability": "Meta-programming toolkit that queries and manipulates Grasshopper components/parameters on the canvas (enable/disable, rename, move, set properties, get connected objects) for definition automation and cleanup.",
+    "heroComponents": [
+      "Document Info",
+      "Enable/Disable Object",
+      "Get Connected Objects",
+      "Hide/Show Object Preview",
+      "Best Practicizer",
+      "Get Selected Objects",
+      "Bake Object",
+      "Rename Object"
+    ],
+    "installHint": "Download from Food4Rhino, place the .gha in the Components folder, unblock, and restart Rhino. Components appear under a 'MetaHopper' tab."
+  },
+  {
+    "name": "Telepathy",
+    "url": "https://www.food4rhino.com/en/app/telepathy",
+    "capability": "Wireless sender/receiver that pipes data anywhere on the canvas via shared key names (supports many-to-one, one-to-many, and wildcards) to eliminate long wires and modularize definitions.",
+    "heroComponents": [
+      "Telepathy S",
+      "Telepathy R"
+    ],
+    "installHint": "In Rhino 8, install directly from the Package Manager (Yak) — search 'Telepathy' (v1.0.1). For Rhino 6/7, download the .gha from Food4Rhino, drop into the Components folder, unblock, and restart."
+  },
+  {
+    "name": "Octopus",
+    "url": "https://www.food4rhino.com/en/app/octopus",
+    "capability": "Multi-objective evolutionary solver (SPEA-2 / HypE) that searches many goals at once to produce a Pareto front of trade-off solutions; includes evolutionary/supervised-learning network tools.",
+    "heroComponents": [
+      "Octopus",
+      "Select Solutions",
+      "Octopus Loop",
+      "Octopus Evaluator",
+      "Construct Solution",
+      "Deconstruct Solution",
+      "Hypervolume",
+      "Check Pareto Dominance"
+    ],
+    "installHint": "Download from Food4Rhino, unzip, place all files in the Components folder, unblock each .gha/.dll, and restart Rhino. The main 'Octopus' component is a draggable solver window; wire sliders to its genome input and fitness values to its objectives."
+  },
+  {
+    "name": "Opossum",
+    "url": "https://www.food4rhino.com/en/app/opossum-optimization-solver-surrogate-models",
+    "capability": "Single- and multi-objective black-box optimization solver using model-based RBFOpt/RBFMOpt and evolutionary CMA-ES/NSGA-II; tuned to find good designs with few expensive simulation evaluations.",
+    "heroComponents": [
+      "Optimization Solver with Surrogate Models"
+    ],
+    "installHint": "In Rhino 8, install from the Package Manager (Yak) — search 'Opossum'. Otherwise download from Food4Rhino, place in the Components folder, unblock, restart. The solver is a single dialog component; connect sliders to its variables and an objective number to its input."
+  },
+  {
+    "name": "Wallacei",
+    "url": "https://www.food4rhino.com/en/app/wallacei",
+    "capability": "Evolutionary multi-objective optimization and analytics engine (NSGA-II + K-means clustering) with detailed in-canvas charts and phenotype selection/reconstruction tools.",
+    "heroComponents": [
+      "Wallacei X",
+      "Decode Phenotype",
+      "Decode Genome",
+      "Objective Space",
+      "Parallel Coordinate Plot",
+      "Diamond Fitness Chart",
+      "Pareto Front",
+      "Standard Deviation Graph"
+    ],
+    "installHint": "Download from Food4Rhino, place the files in the Components folder, unblock, and restart Rhino. 'Wallacei X' is the main solver window (double-click to open its UI); the analytics components read its output."
+  },
+  {
+    "name": "Bison",
+    "url": "https://www.food4rhino.com/app/bison",
+    "capability": "Landscape-architecture / terrain toolkit for creating, analyzing, editing, and annotating terrain meshes (slope, aspect, watershed, cut/fill, contours, sections).",
+    "heroComponents": [
+      "Slope",
+      "Aspect",
+      "Watershed",
+      "CutFill",
+      "Contour",
+      "Viewshed",
+      "Triangulate Mesh",
+      "Import Mesh DEM"
+    ],
+    "installHint": "Download the .ghpy from Food4Rhino and save it into Grasshopper > File > Special Folders > Components, then restart Rhino — it loads automatically. (No unblock needed for .ghpy.)"
+  },
+  {
+    "name": "Nautilus",
+    "url": "https://www.food4rhino.com/en/app/nautilus",
+    "capability": "Large 150+ component utility/geometry library by Laurent Delrieu covering spirals, mazes, reaction-diffusion, tessellations, geodesics, single-line paths, noise fields, and mesh tools.",
+    "heroComponents": [
+      "Mesh Groove",
+      "Polyline Divide",
+      "Noise1D",
+      "3D Convex Hull",
+      "LinesTopology",
+      "Reaction Diffusion Extended",
+      "Four Curves To Dome"
+    ],
+    "installHint": "Download from Food4Rhino and place files in %AppData%\\Roaming\\Grasshopper\\Libraries (the Components folder), unblock, and restart Rhino. Note: some components require a paid license (Level 1 ~€50/2yr); unlicensed ones still run."
+  },
+  {
+    "name": "Tarsier",
+    "url": "https://www.food4rhino.com/en/app/tarsier",
+    "capability": "Treats point clouds as a first-class Grasshopper data type — construct/deconstruct, filter, voxellize, reduce, clip, and KD-tree search clouds; also streams from Kinect/OpenNI2 depth sensors.",
+    "heroComponents": [
+      "Construct Point Cloud",
+      "Deconstruct Point Cloud",
+      "Filter Point Cloud",
+      "Voxellize Point Cloud",
+      "Clip Point Cloud",
+      "Construct KDTree",
+      "Sample KDTree",
+      "Preview Point Cloud"
+    ],
+    "installHint": "Download from Food4Rhino, place the .gha in the Components folder, unblock, and restart Rhino. Kinect/OpenNI2 'Vision' components require the corresponding sensor drivers/SDK installed."
+  },
+  {
+    "name": "FlexHopper",
+    "url": "https://www.food4rhino.com/en/app/flexhopper",
+    "capability": "GPU-based, particle physics simulation (NVIDIA Flex) for fluids, rigid/soft bodies, cloth, inflatables, spring systems, and custom constraints inside Grasshopper.",
+    "heroComponents": [
+      "Flex Engine",
+      "Flex Scene",
+      "Flex Solver Options",
+      "Cloth From Mesh",
+      "Rigid From Mesh",
+      "Soft From Mesh",
+      "Particles From Points",
+      "Flex Collision Geometry"
+    ],
+    "installHint": "Download from Food4Rhino (or GitHub HeinzBenjamin/FlexCLI), place all files in the Components folder, unblock, restart. Requires Rhino 6 64-bit and a DirectX 11-capable NVIDIA/AMD GPU — will not run without compatible hardware."
+  },
+  {
+    "name": "Cocoon",
+    "url": "https://grasshopperdocs.com/addons/cocoon.html",
+    "capability": "Marching-cubes isosurface mesher by David Stasiuk that wraps points, curves, and breps into smooth metaball/blobby meshes with adjustable cell size, radius, and strength.",
+    "heroComponents": [
+      "Cocoon",
+      "Point Charge",
+      "Curve Charge",
+      "Curve Group Charge",
+      "Brep Charge",
+      "Refine"
+    ],
+    "installHint": "Cocoon is NOT on Food4Rhino — download the .gha from the developer/community mirror (see grasshopperdocs page), place it in the Components folder, unblock, and restart Rhino. Only 6 components total."
+  }
+]

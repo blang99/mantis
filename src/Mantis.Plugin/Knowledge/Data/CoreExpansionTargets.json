@@ -1,0 +1,1582 @@
+[
+  {
+    "name": "Graft Tree",
+    "category": "Sets/Tree",
+    "purpose": "Adds an extra branch for every item, pushing data deeper into the tree."
+  },
+  {
+    "name": "Flatten Tree",
+    "category": "Sets/Tree",
+    "purpose": "Removes all branching, collapsing a tree into a single list."
+  },
+  {
+    "name": "Simplify Tree",
+    "category": "Sets/Tree",
+    "purpose": "Removes shared/overlapping path segments to clean redundant nesting."
+  },
+  {
+    "name": "Unflatten Tree",
+    "category": "Sets/Tree",
+    "purpose": "Restores a tree's branch structure using a guide tree."
+  },
+  {
+    "name": "Entwine",
+    "category": "Sets/Tree",
+    "purpose": "Combines multiple data streams into one tree, each input as a branch."
+  },
+  {
+    "name": "Merge",
+    "category": "Sets/Tree",
+    "purpose": "Merges several data streams into one flattened-per-input stream."
+  },
+  {
+    "name": "Explode Tree",
+    "category": "Sets/Tree",
+    "purpose": "Splits a tree's branches out into separate numbered outputs."
+  },
+  {
+    "name": "Trim Tree",
+    "category": "Sets/Tree",
+    "purpose": "Removes the deepest path levels, merging branches upward."
+  },
+  {
+    "name": "Prune Tree",
+    "category": "Sets/Tree",
+    "purpose": "Removes branches deeper or shallower than given depths."
+  },
+  {
+    "name": "Clean Tree",
+    "category": "Sets/Tree",
+    "purpose": "Removes null and/or empty items and branches from a tree."
+  },
+  {
+    "name": "Match Tree",
+    "category": "Sets/Tree",
+    "purpose": "Matches one tree's structure to a guide tree."
+  },
+  {
+    "name": "Flip Matrix",
+    "category": "Sets/Tree",
+    "purpose": "Swaps branch paths and item indices (transposes a 2-level tree)."
+  },
+  {
+    "name": "Shift Paths",
+    "category": "Sets/Tree",
+    "purpose": "Shifts the path indices of a tree's branches up or down."
+  },
+  {
+    "name": "Path Mapper",
+    "category": "Sets/Tree",
+    "purpose": "Rewrites tree paths via a lexical source->target mapping mask."
+  },
+  {
+    "name": "Tree Branch",
+    "category": "Sets/Tree",
+    "purpose": "Retrieves a single branch of a tree by its path."
+  },
+  {
+    "name": "Tree Item",
+    "category": "Sets/Tree",
+    "purpose": "Retrieves a specific item from a tree by path and index."
+  },
+  {
+    "name": "Tree Statistics",
+    "category": "Sets/Tree",
+    "purpose": "Reports a tree's paths, branch lengths, and total branch count."
+  },
+  {
+    "name": "Construct Path",
+    "category": "Sets/Tree",
+    "purpose": "Builds a tree path from a list of integer indices."
+  },
+  {
+    "name": "Deconstruct Path",
+    "category": "Sets/Tree",
+    "purpose": "Splits a tree path into its integer index components."
+  },
+  {
+    "name": "Relative Item",
+    "category": "Sets/Tree",
+    "purpose": "Retrieves items at a relative offset within/across branches."
+  },
+  {
+    "name": "Replace Paths",
+    "category": "Sets/Tree",
+    "purpose": "Replaces matching tree paths with new paths via search masks."
+  },
+  {
+    "name": "Split Tree",
+    "category": "Sets/Tree",
+    "purpose": "Splits a tree into two parts using path masks."
+  },
+  {
+    "name": "Stream Filter",
+    "category": "Sets/Tree",
+    "purpose": "Selects one of several input streams by index gate."
+  },
+  {
+    "name": "Stream Gate",
+    "category": "Sets/Tree",
+    "purpose": "Routes a single input stream to one of several outputs by index."
+  },
+  {
+    "name": "Path Compare",
+    "category": "Sets/Tree",
+    "purpose": "Tests tree paths against a comparison mask."
+  },
+  {
+    "name": "Dispatch",
+    "category": "Sets/List",
+    "purpose": "Splits a list into two by a boolean pattern."
+  },
+  {
+    "name": "Partition List",
+    "category": "Sets/List",
+    "purpose": "Partitions a list into sublists of given size(s)."
+  },
+  {
+    "name": "Weave",
+    "category": "Sets/List",
+    "purpose": "Interleaves multiple lists using a weaving pattern."
+  },
+  {
+    "name": "Cross Reference",
+    "category": "Sets/List",
+    "purpose": "Generates all combinations across multiple lists (matrix pairing)."
+  },
+  {
+    "name": "Shift List",
+    "category": "Sets/List",
+    "purpose": "Offsets list items by N, with optional wrap."
+  },
+  {
+    "name": "Sort List",
+    "category": "Sets/List",
+    "purpose": "Sorts a list of keys and reorders parallel value lists to match."
+  },
+  {
+    "name": "List Item",
+    "category": "Sets/List",
+    "purpose": "Retrieves item(s) from a list at given index/indices."
+  },
+  {
+    "name": "List Length",
+    "category": "Sets/List",
+    "purpose": "Returns the number of items in a list."
+  },
+  {
+    "name": "Item Index",
+    "category": "Sets/List",
+    "purpose": "Finds the index of the first matching item in a list."
+  },
+  {
+    "name": "Reverse List",
+    "category": "Sets/List",
+    "purpose": "Reverses the order of items in a list."
+  },
+  {
+    "name": "Insert Items",
+    "category": "Sets/List",
+    "purpose": "Inserts items into a list at specified indices."
+  },
+  {
+    "name": "Replace Items",
+    "category": "Sets/List",
+    "purpose": "Replaces list items at specified indices with new values."
+  },
+  {
+    "name": "Sub List",
+    "category": "Sets/List",
+    "purpose": "Extracts a contiguous subset of a list by domain."
+  },
+  {
+    "name": "Split List",
+    "category": "Sets/List",
+    "purpose": "Splits a list into two at a given index."
+  },
+  {
+    "name": "Combine Data",
+    "category": "Sets/List",
+    "purpose": "Combines streams, filling nulls from later inputs."
+  },
+  {
+    "name": "Shortest List",
+    "category": "Sets/List",
+    "purpose": "Trims multiple lists to the length of the shortest."
+  },
+  {
+    "name": "Longest List",
+    "category": "Sets/List",
+    "purpose": "Extends multiple lists to the length of the longest."
+  },
+  {
+    "name": "Pick'n'Choose",
+    "category": "Sets/List",
+    "purpose": "Selects items from multiple lists using a pattern mask."
+  },
+  {
+    "name": "Sift Pattern",
+    "category": "Sets/List",
+    "purpose": "Distributes list items into multiple outputs by a pattern."
+  },
+  {
+    "name": "Null Item",
+    "category": "Sets/List",
+    "purpose": "Tests whether list items are null or invalid."
+  },
+  {
+    "name": "Replace Nulls",
+    "category": "Sets/List",
+    "purpose": "Replaces null items in a list with given values."
+  },
+  {
+    "name": "Cull Pattern",
+    "category": "Sets/Sequence",
+    "purpose": "Removes list items according to a repeating boolean pattern."
+  },
+  {
+    "name": "Cull Index",
+    "category": "Sets/Sequence",
+    "purpose": "Removes list items at specified indices."
+  },
+  {
+    "name": "Cull Nth",
+    "category": "Sets/Sequence",
+    "purpose": "Removes every Nth item from a list."
+  },
+  {
+    "name": "Range",
+    "category": "Sets/Sequence",
+    "purpose": "Divides a numeric domain into equally spaced values."
+  },
+  {
+    "name": "Series",
+    "category": "Sets/Sequence",
+    "purpose": "Generates a series of numbers from start, step, and count."
+  },
+  {
+    "name": "Random",
+    "category": "Sets/Sequence",
+    "purpose": "Generates pseudo-random numbers within a domain."
+  },
+  {
+    "name": "Random Reduce",
+    "category": "Sets/Sequence",
+    "purpose": "Randomly removes a number of items from a list."
+  },
+  {
+    "name": "Jitter",
+    "category": "Sets/Sequence",
+    "purpose": "Randomly shuffles the order of a list."
+  },
+  {
+    "name": "Repeat Data",
+    "category": "Sets/Sequence",
+    "purpose": "Repeats a data list up to a target length."
+  },
+  {
+    "name": "Duplicate Data",
+    "category": "Sets/Sequence",
+    "purpose": "Duplicates a data list a given number of times."
+  },
+  {
+    "name": "Stack Data",
+    "category": "Sets/Sequence",
+    "purpose": "Duplicates each item N times in place."
+  },
+  {
+    "name": "Char Sequence",
+    "category": "Sets/Sequence",
+    "purpose": "Generates a sequence of characters from a pattern."
+  },
+  {
+    "name": "Fibonacci",
+    "category": "Sets/Sequence",
+    "purpose": "Generates a Fibonacci number sequence."
+  },
+  {
+    "name": "Create Set",
+    "category": "Sets/Sets",
+    "purpose": "Creates the set of unique values from a list."
+  },
+  {
+    "name": "Set Union",
+    "category": "Sets/Sets",
+    "purpose": "Returns the union of two sets."
+  },
+  {
+    "name": "Set Intersection",
+    "category": "Sets/Sets",
+    "purpose": "Returns elements common to two sets."
+  },
+  {
+    "name": "Set Difference",
+    "category": "Sets/Sets",
+    "purpose": "Returns elements in set A not in set B."
+  },
+  {
+    "name": "Member Index",
+    "category": "Sets/Sets",
+    "purpose": "Finds indices where a member occurs in a set."
+  },
+  {
+    "name": "Delete Consecutive",
+    "category": "Sets/Sets",
+    "purpose": "Removes consecutive duplicate values from a list."
+  },
+  {
+    "name": "Key/Value Search",
+    "category": "Sets/Sets",
+    "purpose": "Looks up values by key in parallel key/value lists."
+  },
+  {
+    "name": "Concatenate",
+    "category": "Sets/Text",
+    "purpose": "Joins multiple text fragments into one string."
+  },
+  {
+    "name": "Text Split",
+    "category": "Sets/Text",
+    "purpose": "Splits text into fragments at given separators."
+  },
+  {
+    "name": "Text Join",
+    "category": "Sets/Text",
+    "purpose": "Joins a list of text using a separator/glue."
+  },
+  {
+    "name": "Format",
+    "category": "Sets/Text",
+    "purpose": "Formats values into text using a format string."
+  },
+  {
+    "name": "Replace Text",
+    "category": "Sets/Text",
+    "purpose": "Replaces occurrences of substrings within text."
+  },
+  {
+    "name": "Match Text",
+    "category": "Sets/Text",
+    "purpose": "Tests text against a search/regex pattern."
+  },
+  {
+    "name": "Expression",
+    "category": "Maths/Script",
+    "purpose": "Evaluates a single math/string expression on named inputs."
+  },
+  {
+    "name": "Evaluate",
+    "category": "Maths/Script",
+    "purpose": "Evaluates a free-form expression with variable inputs."
+  },
+  {
+    "name": "C# Script",
+    "category": "Maths/Script",
+    "purpose": "Runs custom C#.NET code as a scriptable component."
+  },
+  {
+    "name": "GhPython Script",
+    "category": "Maths/Script",
+    "purpose": "Runs custom Python script as a component (IronPython 2)."
+  },
+  {
+    "name": "VB Script",
+    "category": "Maths/Script",
+    "purpose": "Runs custom VB.NET code as a scriptable component."
+  },
+  {
+    "name": "Bounds",
+    "category": "Maths/Domain",
+    "purpose": "Returns the numeric domain spanning a list of numbers."
+  },
+  {
+    "name": "Bounds 2D",
+    "category": "Maths/Domain",
+    "purpose": "Returns the 2D domain bounding a set of UV/point values."
+  },
+  {
+    "name": "Construct Domain",
+    "category": "Maths/Domain",
+    "purpose": "Builds a numeric domain from min and max values."
+  },
+  {
+    "name": "Deconstruct Domain",
+    "category": "Maths/Domain",
+    "purpose": "Splits a domain into its start and end values."
+  },
+  {
+    "name": "Divide Domain",
+    "category": "Maths/Domain",
+    "purpose": "Divides a domain into a number of equal subdomains."
+  },
+  {
+    "name": "Includes",
+    "category": "Maths/Domain",
+    "purpose": "Tests whether a value falls within a domain."
+  },
+  {
+    "name": "Remap Numbers",
+    "category": "Maths/Domain",
+    "purpose": "Maps numbers from a source domain to a target domain."
+  },
+  {
+    "name": "Find Domain",
+    "category": "Maths/Domain",
+    "purpose": "Finds which of several domains contains a value."
+  },
+  {
+    "name": "Gate And",
+    "category": "Maths/Boolean",
+    "purpose": "Logical AND of two boolean inputs."
+  },
+  {
+    "name": "Gate Or",
+    "category": "Maths/Boolean",
+    "purpose": "Logical OR of two boolean inputs."
+  },
+  {
+    "name": "Gate Not",
+    "category": "Maths/Boolean",
+    "purpose": "Logical NOT (inverts) a boolean input."
+  },
+  {
+    "name": "Gate Xor",
+    "category": "Maths/Boolean",
+    "purpose": "Logical exclusive-OR of two boolean inputs."
+  },
+  {
+    "name": "Gate Nand",
+    "category": "Maths/Boolean",
+    "purpose": "Logical NAND of two boolean inputs."
+  },
+  {
+    "name": "Gate Nor",
+    "category": "Maths/Boolean",
+    "purpose": "Logical NOR of two boolean inputs."
+  },
+  {
+    "name": "Gate Xnor",
+    "category": "Maths/Boolean",
+    "purpose": "Logical XNOR (equality) of two boolean inputs."
+  },
+  {
+    "name": "Gate Majority",
+    "category": "Maths/Boolean",
+    "purpose": "Returns the majority boolean among three inputs."
+  },
+  {
+    "name": "Larger Than",
+    "category": "Maths/Operators",
+    "purpose": "Tests whether A is greater than B."
+  },
+  {
+    "name": "Smaller Than",
+    "category": "Maths/Operators",
+    "purpose": "Tests whether A is less than B."
+  },
+  {
+    "name": "Equality",
+    "category": "Maths/Operators",
+    "purpose": "Tests equality/inequality of two values."
+  },
+  {
+    "name": "Mass Addition",
+    "category": "Maths/Operators",
+    "purpose": "Sums all values in a list, with partial results."
+  },
+  {
+    "name": "Mass Multiplication",
+    "category": "Maths/Operators",
+    "purpose": "Multiplies all values in a list together."
+  },
+  {
+    "name": "Modulus",
+    "category": "Maths/Operators",
+    "purpose": "Returns the remainder of A divided by B."
+  },
+  {
+    "name": "Clamp",
+    "category": "Maths/Util",
+    "purpose": "Limits a number to lie within a domain."
+  },
+  {
+    "name": "Round",
+    "category": "Maths/Util",
+    "purpose": "Rounds numbers to nearest, floor, and ceiling."
+  },
+  {
+    "name": "Minimum",
+    "category": "Maths/Util",
+    "purpose": "Returns the smaller of two values."
+  },
+  {
+    "name": "Maximum",
+    "category": "Maths/Util",
+    "purpose": "Returns the larger of two values."
+  },
+  {
+    "name": "Average",
+    "category": "Maths/Util",
+    "purpose": "Returns the arithmetic mean of a list of numbers."
+  },
+  {
+    "name": "Construct Point",
+    "category": "Vector/Point",
+    "purpose": "Builds a point from X, Y, Z coordinates."
+  },
+  {
+    "name": "Deconstruct",
+    "category": "Vector/Point",
+    "purpose": "Extracts X, Y, Z coordinates from a point."
+  },
+  {
+    "name": "Distance",
+    "category": "Vector/Point",
+    "purpose": "Measures the distance between two points."
+  },
+  {
+    "name": "Closest Point",
+    "category": "Vector/Point",
+    "purpose": "Finds the closest point in a cloud to a given point."
+  },
+  {
+    "name": "Closest Points",
+    "category": "Vector/Point",
+    "purpose": "Finds the N closest points in a cloud to a given point."
+  },
+  {
+    "name": "Sort Points",
+    "category": "Vector/Point",
+    "purpose": "Sorts points along an axis order."
+  },
+  {
+    "name": "Cull Duplicates",
+    "category": "Vector/Point",
+    "purpose": "Removes duplicate points within a tolerance."
+  },
+  {
+    "name": "Pull Point",
+    "category": "Vector/Point",
+    "purpose": "Pulls a point to the closest position on geometry."
+  },
+  {
+    "name": "Project Point",
+    "category": "Vector/Point",
+    "purpose": "Projects points onto geometry along a direction."
+  },
+  {
+    "name": "Point Polar",
+    "category": "Vector/Point",
+    "purpose": "Builds a point from polar (angle/radius) coordinates."
+  },
+  {
+    "name": "Numbers to Points",
+    "category": "Vector/Point",
+    "purpose": "Converts flat number lists into points."
+  },
+  {
+    "name": "Construct Plane",
+    "category": "Vector/Plane",
+    "purpose": "Builds a plane from origin and X/Y axis vectors."
+  },
+  {
+    "name": "Deconstruct Plane",
+    "category": "Vector/Plane",
+    "purpose": "Extracts origin and axes from a plane."
+  },
+  {
+    "name": "XY Plane",
+    "category": "Vector/Plane",
+    "purpose": "Creates a world XY plane at a given origin."
+  },
+  {
+    "name": "Plane Normal",
+    "category": "Vector/Plane",
+    "purpose": "Builds a plane from an origin and normal vector."
+  },
+  {
+    "name": "Plane 3Pt",
+    "category": "Vector/Plane",
+    "purpose": "Builds a plane through three points."
+  },
+  {
+    "name": "Plane Origin",
+    "category": "Vector/Plane",
+    "purpose": "Re-origins a plane to a new point."
+  },
+  {
+    "name": "Align Plane",
+    "category": "Vector/Plane",
+    "purpose": "Aligns a plane's axes to a guide direction."
+  },
+  {
+    "name": "Rotate Plane",
+    "category": "Vector/Plane",
+    "purpose": "Rotates a plane about its normal by an angle."
+  },
+  {
+    "name": "Plane Coordinates",
+    "category": "Vector/Plane",
+    "purpose": "Returns a point's coordinates in a plane's axis system."
+  },
+  {
+    "name": "Unit X",
+    "category": "Vector/Vector",
+    "purpose": "Returns the world X unit vector scaled by a factor."
+  },
+  {
+    "name": "Unit Y",
+    "category": "Vector/Vector",
+    "purpose": "Returns the world Y unit vector scaled by a factor."
+  },
+  {
+    "name": "Unit Z",
+    "category": "Vector/Vector",
+    "purpose": "Returns the world Z unit vector scaled by a factor."
+  },
+  {
+    "name": "Vector 2Pt",
+    "category": "Vector/Vector",
+    "purpose": "Builds a vector between two points."
+  },
+  {
+    "name": "Vector XYZ",
+    "category": "Vector/Vector",
+    "purpose": "Builds a vector from X, Y, Z components."
+  },
+  {
+    "name": "Unit Vector",
+    "category": "Vector/Vector",
+    "purpose": "Normalizes a vector to unit length."
+  },
+  {
+    "name": "Amplitude",
+    "category": "Vector/Vector",
+    "purpose": "Sets a vector's length to a given amplitude."
+  },
+  {
+    "name": "Cross Product",
+    "category": "Vector/Vector",
+    "purpose": "Returns the vector perpendicular to two vectors."
+  },
+  {
+    "name": "Dot Product",
+    "category": "Vector/Vector",
+    "purpose": "Returns the scalar dot product of two vectors."
+  },
+  {
+    "name": "Angle",
+    "category": "Vector/Vector",
+    "purpose": "Measures the angle between two vectors."
+  },
+  {
+    "name": "Rectangular",
+    "category": "Vector/Grid",
+    "purpose": "Generates a rectangular grid of points/cells."
+  },
+  {
+    "name": "Square",
+    "category": "Vector/Grid",
+    "purpose": "Generates a square grid of points/cells."
+  },
+  {
+    "name": "Hexagonal",
+    "category": "Vector/Grid",
+    "purpose": "Generates a hexagonal grid of cells."
+  },
+  {
+    "name": "Populate 2D",
+    "category": "Vector/Grid",
+    "purpose": "Scatters points randomly within a 2D region."
+  },
+  {
+    "name": "Populate 3D",
+    "category": "Vector/Grid",
+    "purpose": "Scatters points randomly within a 3D box."
+  },
+  {
+    "name": "Evaluate Curve",
+    "category": "Curve/Analysis",
+    "purpose": "Evaluates a curve at a normalized parameter."
+  },
+  {
+    "name": "Curve Closest Point",
+    "category": "Curve/Analysis",
+    "purpose": "Finds the closest point on a curve to a test point."
+  },
+  {
+    "name": "Length",
+    "category": "Curve/Analysis",
+    "purpose": "Measures the total length of a curve."
+  },
+  {
+    "name": "End Points",
+    "category": "Curve/Analysis",
+    "purpose": "Returns the start and end points of a curve."
+  },
+  {
+    "name": "Control Points",
+    "category": "Curve/Analysis",
+    "purpose": "Returns the control points of a NURBS curve."
+  },
+  {
+    "name": "Curve Domain",
+    "category": "Curve/Analysis",
+    "purpose": "Returns or sets the parametric domain of a curve."
+  },
+  {
+    "name": "Discontinuity",
+    "category": "Curve/Analysis",
+    "purpose": "Finds discontinuity (kink) points on a curve."
+  },
+  {
+    "name": "Point In Curve",
+    "category": "Curve/Analysis",
+    "purpose": "Tests whether a point lies inside a closed curve."
+  },
+  {
+    "name": "Divide Curve",
+    "category": "Curve/Division",
+    "purpose": "Divides a curve into equal-count segments returning points."
+  },
+  {
+    "name": "Divide Length",
+    "category": "Curve/Division",
+    "purpose": "Divides a curve into segments of equal length."
+  },
+  {
+    "name": "Divide Distance",
+    "category": "Curve/Division",
+    "purpose": "Divides a curve by straight-line chord distance."
+  },
+  {
+    "name": "Shatter",
+    "category": "Curve/Division",
+    "purpose": "Splits a curve at given parameters into pieces."
+  },
+  {
+    "name": "Contour",
+    "category": "Curve/Division",
+    "purpose": "Creates parallel contour curves across geometry."
+  },
+  {
+    "name": "Perp Frames",
+    "category": "Curve/Division",
+    "purpose": "Generates perpendicular frame planes along a curve."
+  },
+  {
+    "name": "Polygon",
+    "category": "Curve/Primitive",
+    "purpose": "Creates a regular polygon from plane, radius, and sides."
+  },
+  {
+    "name": "Circle",
+    "category": "Curve/Primitive",
+    "purpose": "Creates a circle from a plane and radius."
+  },
+  {
+    "name": "Circle CNR",
+    "category": "Curve/Primitive",
+    "purpose": "Creates a circle from center, normal, and radius."
+  },
+  {
+    "name": "Line SDL",
+    "category": "Curve/Primitive",
+    "purpose": "Creates a line from start, direction, and length."
+  },
+  {
+    "name": "Rectangle",
+    "category": "Curve/Primitive",
+    "purpose": "Creates a rectangle from a plane and two domains."
+  },
+  {
+    "name": "Arc",
+    "category": "Curve/Primitive",
+    "purpose": "Creates an arc from a plane, radius, and angle domain."
+  },
+  {
+    "name": "Arc 3Pt",
+    "category": "Curve/Primitive",
+    "purpose": "Creates an arc through three points."
+  },
+  {
+    "name": "Interpolate",
+    "category": "Curve/Spline",
+    "purpose": "Builds an interpolated NURBS curve through points."
+  },
+  {
+    "name": "Nurbs Curve",
+    "category": "Curve/Spline",
+    "purpose": "Builds a NURBS curve from control points and degree."
+  },
+  {
+    "name": "PolyLine",
+    "category": "Curve/Spline",
+    "purpose": "Builds a polyline through a sequence of points."
+  },
+  {
+    "name": "Kinky Curve",
+    "category": "Curve/Spline",
+    "purpose": "Builds an interpolated curve allowing sharp kinks."
+  },
+  {
+    "name": "Offset Curve",
+    "category": "Curve/Util",
+    "purpose": "Offsets a curve by a distance in its plane."
+  },
+  {
+    "name": "Join Curves",
+    "category": "Curve/Util",
+    "purpose": "Joins touching curves into polycurves."
+  },
+  {
+    "name": "Explode",
+    "category": "Curve/Util",
+    "purpose": "Explodes a curve into its constituent segments."
+  },
+  {
+    "name": "Fillet",
+    "category": "Curve/Util",
+    "purpose": "Fillets curve corners with a given radius."
+  },
+  {
+    "name": "Flip Curve",
+    "category": "Curve/Util",
+    "purpose": "Reverses a curve's direction, optionally to match a guide."
+  },
+  {
+    "name": "Project",
+    "category": "Curve/Util",
+    "purpose": "Projects curves onto a Brep along a direction."
+  },
+  {
+    "name": "Pull Curve",
+    "category": "Curve/Util",
+    "purpose": "Pulls a curve onto a surface."
+  },
+  {
+    "name": "Region Union",
+    "category": "Curve/Region",
+    "purpose": "Boolean-unions overlapping planar regions."
+  },
+  {
+    "name": "Region Difference",
+    "category": "Curve/Region",
+    "purpose": "Subtracts one planar region from another."
+  },
+  {
+    "name": "Boundary Surfaces",
+    "category": "Surface/Freeform",
+    "purpose": "Creates planar surfaces from closed boundary curves."
+  },
+  {
+    "name": "Loft",
+    "category": "Surface/Freeform",
+    "purpose": "Lofts a surface through a set of section curves."
+  },
+  {
+    "name": "Extrude",
+    "category": "Surface/Freeform",
+    "purpose": "Extrudes a curve or surface along a vector."
+  },
+  {
+    "name": "Extrude Linear",
+    "category": "Surface/Freeform",
+    "purpose": "Extrudes geometry between two guide rails/directions."
+  },
+  {
+    "name": "Sweep1",
+    "category": "Surface/Freeform",
+    "purpose": "Sweeps a section along a single rail curve."
+  },
+  {
+    "name": "Sweep2",
+    "category": "Surface/Freeform",
+    "purpose": "Sweeps a section along two rail curves."
+  },
+  {
+    "name": "Pipe",
+    "category": "Surface/Freeform",
+    "purpose": "Creates a pipe surface around a curve at a radius."
+  },
+  {
+    "name": "Revolution",
+    "category": "Surface/Freeform",
+    "purpose": "Revolves a profile curve around an axis."
+  },
+  {
+    "name": "Patch",
+    "category": "Surface/Freeform",
+    "purpose": "Fits a surface patch through curves and points."
+  },
+  {
+    "name": "Edge Surface",
+    "category": "Surface/Freeform",
+    "purpose": "Builds a surface from 2-4 edge curves."
+  },
+  {
+    "name": "Network Surface",
+    "category": "Surface/Freeform",
+    "purpose": "Builds a surface from a network of crossing curves."
+  },
+  {
+    "name": "Bounding Box",
+    "category": "Surface/Primitive",
+    "purpose": "Computes the axis-aligned bounding box of geometry."
+  },
+  {
+    "name": "Center Box",
+    "category": "Surface/Primitive",
+    "purpose": "Creates a box centered on a plane with X/Y/Z sizes."
+  },
+  {
+    "name": "Box 2Pt",
+    "category": "Surface/Primitive",
+    "purpose": "Creates a box from two diagonal corner points."
+  },
+  {
+    "name": "Plane Surface",
+    "category": "Surface/Primitive",
+    "purpose": "Creates a rectangular planar surface from a plane."
+  },
+  {
+    "name": "Sphere",
+    "category": "Surface/Primitive",
+    "purpose": "Creates a sphere from a plane and radius."
+  },
+  {
+    "name": "Cylinder",
+    "category": "Surface/Primitive",
+    "purpose": "Creates a cylinder from a base plane, radius, length."
+  },
+  {
+    "name": "Evaluate Surface",
+    "category": "Surface/Analysis",
+    "purpose": "Evaluates a surface at a UV parameter."
+  },
+  {
+    "name": "Surface Closest Point",
+    "category": "Surface/Analysis",
+    "purpose": "Finds the closest UV point on a surface to a test point."
+  },
+  {
+    "name": "Deconstruct Brep",
+    "category": "Surface/Analysis",
+    "purpose": "Splits a Brep into its faces, edges, and vertices."
+  },
+  {
+    "name": "Brep Edges",
+    "category": "Surface/Analysis",
+    "purpose": "Extracts edge curves from a Brep, grouped by type."
+  },
+  {
+    "name": "Area",
+    "category": "Surface/Analysis",
+    "purpose": "Computes area and centroid of a surface or region."
+  },
+  {
+    "name": "Volume",
+    "category": "Surface/Analysis",
+    "purpose": "Computes volume and centroid of a closed solid."
+  },
+  {
+    "name": "Point In Brep",
+    "category": "Surface/Analysis",
+    "purpose": "Tests whether a point lies inside a closed Brep."
+  },
+  {
+    "name": "Surface Curvature",
+    "category": "Surface/Analysis",
+    "purpose": "Evaluates curvature and frame at a surface UV point."
+  },
+  {
+    "name": "Isotrim",
+    "category": "Surface/Util",
+    "purpose": "Extracts an isoparametric subsurface from a UV domain."
+  },
+  {
+    "name": "Divide Surface",
+    "category": "Surface/Util",
+    "purpose": "Divides a surface into a UV grid of points."
+  },
+  {
+    "name": "Surface Frames",
+    "category": "Surface/Util",
+    "purpose": "Generates a UV grid of frame planes on a surface."
+  },
+  {
+    "name": "Offset Surface",
+    "category": "Surface/Util",
+    "purpose": "Offsets a surface by a distance along its normal."
+  },
+  {
+    "name": "Cap Holes",
+    "category": "Surface/Util",
+    "purpose": "Caps planar openings in an open Brep."
+  },
+  {
+    "name": "Brep Join",
+    "category": "Surface/Util",
+    "purpose": "Joins adjacent Breps into a single Brep."
+  },
+  {
+    "name": "Merge Faces",
+    "category": "Surface/Util",
+    "purpose": "Merges coplanar faces of a Brep."
+  },
+  {
+    "name": "SubD from Mesh",
+    "category": "Surface/SubD",
+    "purpose": "Creates a SubD object from a mesh."
+  },
+  {
+    "name": "Mesh from SubD",
+    "category": "Surface/SubD",
+    "purpose": "Converts a SubD into a mesh."
+  },
+  {
+    "name": "SubD Control Polygon",
+    "category": "Surface/SubD",
+    "purpose": "Extracts the control polygon of a SubD."
+  },
+  {
+    "name": "SubD Edges",
+    "category": "Surface/SubD",
+    "purpose": "Extracts edges from a SubD by tag."
+  },
+  {
+    "name": "Construct Mesh",
+    "category": "Mesh/Primitive",
+    "purpose": "Builds a mesh from vertices, faces, and colors."
+  },
+  {
+    "name": "Deconstruct Mesh",
+    "category": "Mesh/Analysis",
+    "purpose": "Splits a mesh into vertices, faces, colors, normals."
+  },
+  {
+    "name": "Mesh Box",
+    "category": "Mesh/Primitive",
+    "purpose": "Creates a meshed box with given subdivisions."
+  },
+  {
+    "name": "Mesh Sphere",
+    "category": "Mesh/Primitive",
+    "purpose": "Creates a meshed sphere with U/V subdivisions."
+  },
+  {
+    "name": "Mesh Plane",
+    "category": "Mesh/Primitive",
+    "purpose": "Creates a meshed planar grid from a rectangle."
+  },
+  {
+    "name": "Mesh Surface",
+    "category": "Mesh/Util",
+    "purpose": "Meshes a surface using U/V counts."
+  },
+  {
+    "name": "Mesh Brep",
+    "category": "Mesh/Util",
+    "purpose": "Meshes a Brep using meshing settings."
+  },
+  {
+    "name": "Mesh Join",
+    "category": "Mesh/Util",
+    "purpose": "Joins multiple meshes into one mesh."
+  },
+  {
+    "name": "Weld Mesh",
+    "category": "Mesh/Util",
+    "purpose": "Welds mesh vertices within an angle threshold."
+  },
+  {
+    "name": "Mesh Closest Point",
+    "category": "Mesh/Analysis",
+    "purpose": "Finds the closest point and face on a mesh."
+  },
+  {
+    "name": "Face Normals",
+    "category": "Mesh/Analysis",
+    "purpose": "Returns face center points and normal vectors."
+  },
+  {
+    "name": "Mesh Edges",
+    "category": "Mesh/Analysis",
+    "purpose": "Returns naked, clothed, and interior mesh edges."
+  },
+  {
+    "name": "Delaunay Mesh",
+    "category": "Mesh/Triangulation",
+    "purpose": "Builds a Delaunay-triangulated mesh from points."
+  },
+  {
+    "name": "Voronoi",
+    "category": "Mesh/Triangulation",
+    "purpose": "Generates 2D Voronoi cells from points."
+  },
+  {
+    "name": "Convex Hull",
+    "category": "Mesh/Triangulation",
+    "purpose": "Computes the convex hull of a set of points."
+  },
+  {
+    "name": "Quad Remesh",
+    "category": "Mesh/Util",
+    "purpose": "Remeshes geometry into a clean quad-dominant mesh."
+  },
+  {
+    "name": "Curve | Curve",
+    "category": "Intersect/Physical",
+    "purpose": "Finds intersection points/overlaps between two curves."
+  },
+  {
+    "name": "Brep | Brep",
+    "category": "Intersect/Physical",
+    "purpose": "Computes intersection curves between two Breps."
+  },
+  {
+    "name": "Brep | Curve",
+    "category": "Intersect/Physical",
+    "purpose": "Intersects a curve with a Brep, returning points/curves."
+  },
+  {
+    "name": "Brep | Plane",
+    "category": "Intersect/Mathematical",
+    "purpose": "Intersects a Brep with a plane, returning section curves."
+  },
+  {
+    "name": "Mesh | Plane",
+    "category": "Intersect/Mathematical",
+    "purpose": "Intersects a mesh with a plane, returning polylines."
+  },
+  {
+    "name": "Curve | Plane",
+    "category": "Intersect/Mathematical",
+    "purpose": "Finds intersection points of a curve and a plane."
+  },
+  {
+    "name": "Surface Split",
+    "category": "Intersect/Physical",
+    "purpose": "Splits a surface with cutting curves."
+  },
+  {
+    "name": "Solid Union",
+    "category": "Intersect/Shape",
+    "purpose": "Boolean-unions multiple solids."
+  },
+  {
+    "name": "Solid Difference",
+    "category": "Intersect/Shape",
+    "purpose": "Boolean-subtracts solids from a base solid."
+  },
+  {
+    "name": "Solid Intersection",
+    "category": "Intersect/Shape",
+    "purpose": "Returns the boolean intersection of two solids."
+  },
+  {
+    "name": "Trim Solid",
+    "category": "Intersect/Shape",
+    "purpose": "Trims a solid with cutter geometry."
+  },
+  {
+    "name": "Split Brep",
+    "category": "Intersect/Shape",
+    "purpose": "Splits a Brep with cutting geometry."
+  },
+  {
+    "name": "Boundary Volume",
+    "category": "Intersect/Shape",
+    "purpose": "Builds a closed solid from boundary surfaces."
+  },
+  {
+    "name": "Mesh | Mesh",
+    "category": "Intersect/Physical",
+    "purpose": "Computes intersection polylines between two meshes."
+  },
+  {
+    "name": "Clash",
+    "category": "Intersect/Physical",
+    "purpose": "Detects clashes/collisions between geometry sets."
+  },
+  {
+    "name": "Trim with Brep",
+    "category": "Intersect/Region",
+    "purpose": "Trims geometry, keeping the part outside a Brep."
+  },
+  {
+    "name": "Split with Breps",
+    "category": "Intersect/Region",
+    "purpose": "Splits geometry using multiple Breps."
+  },
+  {
+    "name": "IsoVist",
+    "category": "Intersect/Mathematical",
+    "purpose": "Computes radial sightlines from a point against obstacles."
+  },
+  {
+    "name": "Move",
+    "category": "Transform/Euclidean",
+    "purpose": "Translates geometry by a motion vector."
+  },
+  {
+    "name": "Rotate",
+    "category": "Transform/Euclidean",
+    "purpose": "Rotates geometry about a plane by an angle."
+  },
+  {
+    "name": "Rotate Axis",
+    "category": "Transform/Euclidean",
+    "purpose": "Rotates geometry about an arbitrary axis line."
+  },
+  {
+    "name": "Mirror",
+    "category": "Transform/Euclidean",
+    "purpose": "Mirrors geometry across a plane."
+  },
+  {
+    "name": "Scale",
+    "category": "Transform/Affine",
+    "purpose": "Scales geometry uniformly about a center point."
+  },
+  {
+    "name": "Scale NU",
+    "category": "Transform/Affine",
+    "purpose": "Scales geometry non-uniformly along plane axes."
+  },
+  {
+    "name": "Orient",
+    "category": "Transform/Euclidean",
+    "purpose": "Reorients geometry from a source to a target plane."
+  },
+  {
+    "name": "Move To Plane",
+    "category": "Transform/Euclidean",
+    "purpose": "Moves geometry onto a target plane."
+  },
+  {
+    "name": "Linear Array",
+    "category": "Transform/Array",
+    "purpose": "Copies geometry along a direction at a count."
+  },
+  {
+    "name": "Rectangular Array",
+    "category": "Transform/Array",
+    "purpose": "Copies geometry into a 2D grid of cells."
+  },
+  {
+    "name": "Polar Array",
+    "category": "Transform/Array",
+    "purpose": "Copies geometry radially around a plane."
+  },
+  {
+    "name": "Box Array",
+    "category": "Transform/Array",
+    "purpose": "Copies geometry into a 3D grid of cells."
+  },
+  {
+    "name": "Curve Array",
+    "category": "Transform/Array",
+    "purpose": "Copies geometry along a curve."
+  },
+  {
+    "name": "Box Morph",
+    "category": "Transform/Morph",
+    "purpose": "Morphs geometry from a bounding box into a twisted box."
+  },
+  {
+    "name": "Surface Morph",
+    "category": "Transform/Morph",
+    "purpose": "Maps geometry from a box onto a surface UVW space."
+  },
+  {
+    "name": "Map to Surface",
+    "category": "Transform/Morph",
+    "purpose": "Maps curves from one surface onto another."
+  },
+  {
+    "name": "Flow",
+    "category": "Transform/Morph",
+    "purpose": "Flows geometry from a base curve onto a target curve."
+  },
+  {
+    "name": "Group",
+    "category": "Transform/Util",
+    "purpose": "Groups objects together as a single group."
+  },
+  {
+    "name": "Ungroup",
+    "category": "Transform/Util",
+    "purpose": "Breaks a group into its member objects."
+  },
+  {
+    "name": "Colour RGB",
+    "category": "Display/Colour",
+    "purpose": "Builds a colour from red, green, blue (and alpha)."
+  },
+  {
+    "name": "Colour HSL",
+    "category": "Display/Colour",
+    "purpose": "Builds a colour from hue, saturation, luminance."
+  },
+  {
+    "name": "Split ARGB",
+    "category": "Display/Colour",
+    "purpose": "Splits a colour into alpha, red, green, blue channels."
+  },
+  {
+    "name": "Gradient",
+    "category": "Display/Colour",
+    "purpose": "Maps numeric values to colours along a gradient."
+  },
+  {
+    "name": "Custom Preview",
+    "category": "Display/Preview",
+    "purpose": "Previews geometry with a custom colour/material."
+  },
+  {
+    "name": "Create Material",
+    "category": "Display/Preview",
+    "purpose": "Creates a display material with colour and transparency."
+  },
+  {
+    "name": "Text Tag",
+    "category": "Display/Dimensions",
+    "purpose": "Draws 2D text tags at points in the viewport."
+  },
+  {
+    "name": "Text Tag 3D",
+    "category": "Display/Dimensions",
+    "purpose": "Draws oriented 3D text tags in the viewport."
+  },
+  {
+    "name": "Legend",
+    "category": "Display/Graphs",
+    "purpose": "Draws a colour legend for a value range."
+  },
+  {
+    "name": "Point List",
+    "category": "Display/Vector",
+    "purpose": "Displays point indices and order in the viewport."
+  },
+  {
+    "name": "Vector Display",
+    "category": "Display/Vector",
+    "purpose": "Draws vectors as arrows from anchor points."
+  },
+  {
+    "name": "Dot Display",
+    "category": "Display/Vector",
+    "purpose": "Displays coloured dots at points with size control."
+  },
+  {
+    "name": "Number Slider",
+    "category": "Params/Input",
+    "purpose": "Provides an interactive numeric input value."
+  },
+  {
+    "name": "Panel",
+    "category": "Params/Input",
+    "purpose": "Displays or inputs text/data as a panel."
+  },
+  {
+    "name": "Boolean Toggle",
+    "category": "Params/Input",
+    "purpose": "Provides a true/false toggle input."
+  },
+  {
+    "name": "Value List",
+    "category": "Params/Input",
+    "purpose": "Provides a dropdown/list of preset selectable values."
+  },
+  {
+    "name": "Graph Mapper",
+    "category": "Params/Input",
+    "purpose": "Remaps values through an editable function graph."
+  },
+  {
+    "name": "MD Slider",
+    "category": "Params/Input",
+    "purpose": "Provides a multi-dimensional (2D) slider input."
+  },
+  {
+    "name": "Gene Pool",
+    "category": "Params/Input",
+    "purpose": "Provides a bank of sliders as a number list."
+  },
+  {
+    "name": "Data Dam",
+    "category": "Params/Util",
+    "purpose": "Delays data flow downstream by a set time."
+  },
+  {
+    "name": "Cluster",
+    "category": "Params/Util",
+    "purpose": "Encapsulates a group of components as a reusable cluster."
+  },
+  {
+    "name": "Relay",
+    "category": "Params/Util",
+    "purpose": "Passes data through to tidy up wires."
+  },
+  {
+    "name": "Image Sampler",
+    "category": "Params/Input",
+    "purpose": "Samples colour/brightness values from an image by UV."
+  },
+  {
+    "name": "Geometry Pipeline",
+    "category": "Params/Geometry",
+    "purpose": "References Rhino geometry by layer/name filters live."
+  },
+  {
+    "name": "Geometry",
+    "category": "Params/Geometry",
+    "purpose": "References geometry from the Rhino document."
+  },
+  {
+    "name": "Query Model Objects",
+    "category": "Rhino/Objects",
+    "purpose": "Queries the active Rhino document for model objects by filter."
+  },
+  {
+    "name": "Model Object",
+    "category": "Rhino/Objects",
+    "purpose": "Constructs/deconstructs a Rhino model object with attributes."
+  },
+  {
+    "name": "Explode Object",
+    "category": "Rhino/Objects",
+    "purpose": "Splits a model object into geometry and attributes."
+  },
+  {
+    "name": "Display Colour",
+    "category": "Rhino/Objects",
+    "purpose": "Sets a model object's display colour attribute."
+  },
+  {
+    "name": "Render Material",
+    "category": "Rhino/Objects",
+    "purpose": "Assigns a render material to a model object."
+  },
+  {
+    "name": "Object Linetype",
+    "category": "Rhino/Objects",
+    "purpose": "Sets a model object's linetype attribute."
+  },
+  {
+    "name": "Visibility Attributes",
+    "category": "Rhino/Objects",
+    "purpose": "Sets visibility/hidden attributes on a model object."
+  },
+  {
+    "name": "Query Model Layers",
+    "category": "Rhino/Model",
+    "purpose": "Queries the Rhino document for its layers."
+  },
+  {
+    "name": "Model Layer",
+    "category": "Rhino/Model",
+    "purpose": "Constructs/deconstructs a Rhino layer with properties."
+  },
+  {
+    "name": "Query Model Block Definitions",
+    "category": "Rhino/Model",
+    "purpose": "Queries the Rhino document for block definitions."
+  },
+  {
+    "name": "Model Block Instance",
+    "category": "Rhino/Model",
+    "purpose": "Constructs/deconstructs a block instance reference."
+  },
+  {
+    "name": "Model Block Definition",
+    "category": "Rhino/Model",
+    "purpose": "Constructs/deconstructs a block definition."
+  },
+  {
+    "name": "Query Model Materials",
+    "category": "Rhino/Render",
+    "purpose": "Queries the Rhino document for its materials."
+  },
+  {
+    "name": "Model Material",
+    "category": "Rhino/Render",
+    "purpose": "Constructs/deconstructs a Rhino render material."
+  },
+  {
+    "name": "Content Cache",
+    "category": "Rhino/Content",
+    "purpose": "Caches referenced document content for stable downstream use."
+  },
+  {
+    "name": "Import Content",
+    "category": "Rhino/Content",
+    "purpose": "Imports geometry/content from an external file."
+  },
+  {
+    "name": "User Text",
+    "category": "Rhino/Content",
+    "purpose": "Reads/writes user-text key/value attributes on objects."
+  },
+  {
+    "name": "Linear Dimension",
+    "category": "Rhino/Annotations",
+    "purpose": "Creates a linear dimension annotation entity."
+  },
+  {
+    "name": "Aligned Dimension",
+    "category": "Rhino/Annotations",
+    "purpose": "Creates an aligned dimension annotation entity."
+  },
+  {
+    "name": "Radial Dimension",
+    "category": "Rhino/Annotations",
+    "purpose": "Creates a radial dimension annotation entity."
+  },
+  {
+    "name": "Angle Dimension (Points)",
+    "category": "Rhino/Annotations",
+    "purpose": "Creates an angular dimension from points."
+  },
+  {
+    "name": "Leader",
+    "category": "Rhino/Annotations",
+    "purpose": "Creates a leader annotation with text."
+  },
+  {
+    "name": "Text Entity",
+    "category": "Rhino/Annotations",
+    "purpose": "Creates a text annotation entity in model space."
+  },
+  {
+    "name": "Text Dot",
+    "category": "Rhino/Annotations",
+    "purpose": "Creates a text dot annotation."
+  },
+  {
+    "name": "Annotation Style",
+    "category": "Rhino/Annotations",
+    "purpose": "Constructs/deconstructs an annotation (dimension) style."
+  },
+  {
+    "name": "Query Installed Fonts",
+    "category": "Rhino/Annotations",
+    "purpose": "Queries the fonts installed on the system."
+  },
+  {
+    "name": "Model Hatch",
+    "category": "Rhino/Drafting",
+    "purpose": "Creates a hatch fill from boundary curves and a pattern."
+  },
+  {
+    "name": "Query Model Hatch Patterns",
+    "category": "Rhino/Drafting",
+    "purpose": "Queries the Rhino document for hatch patterns."
+  },
+  {
+    "name": "Model Linetype",
+    "category": "Rhino/Drafting",
+    "purpose": "Constructs/deconstructs a Rhino linetype."
+  }
+]

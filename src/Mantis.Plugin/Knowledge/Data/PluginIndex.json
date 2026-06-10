@@ -1,0 +1,602 @@
+[
+  {
+    "name": "Kangaroo 2",
+    "url": "https://grasshopperdocs.com/addons/kangaroo2.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 98
+  },
+  {
+    "name": "FlexHopper",
+    "url": "https://grasshopperdocs.com/addons/flexhopper.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 24
+  },
+  {
+    "name": "Nuclei",
+    "url": "https://grasshopperdocs.com/addons/nuclei.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 28
+  },
+  {
+    "name": "Nudibranch",
+    "url": "https://grasshopperdocs.com/addons/nudibranch.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 20
+  },
+  {
+    "name": "PhysX GH",
+    "url": "https://grasshopperdocs.com/addons/physx-gh.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 6
+  },
+  {
+    "name": "Anemone",
+    "url": "https://grasshopperdocs.com/addons/anemone.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 10
+  },
+  {
+    "name": "Box2D",
+    "url": "https://grasshopperdocs.com/addons/box2d.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 8
+  },
+  {
+    "name": "Centipede",
+    "url": "https://grasshopperdocs.com/addons/centipede.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 2
+  },
+  {
+    "name": "SPM",
+    "url": "https://grasshopperdocs.com/addons/spm.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 24
+  },
+  {
+    "name": "Animation",
+    "url": "https://grasshopperdocs.com/addons/animation.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 7
+  },
+  {
+    "name": "Tweener",
+    "url": "https://grasshopperdocs.com/addons/tweener.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 21
+  },
+  {
+    "name": "Firefly",
+    "url": "https://grasshopperdocs.com/addons/firefly.html",
+    "domain": "physics/simulation",
+    "approxComponentCount": 88
+  },
+  {
+    "name": "Ladybug",
+    "url": "https://grasshopperdocs.com/addons/ladybug.html",
+    "domain": "environmental/daylight",
+    "approxComponentCount": 153
+  },
+  {
+    "name": "Honeybee",
+    "url": "https://grasshopperdocs.com/addons/honeybee.html",
+    "domain": "environmental/daylight",
+    "approxComponentCount": 220
+  },
+  {
+    "name": "Dragonfly",
+    "url": "https://grasshopperdocs.com/addons/dragonfly.html",
+    "domain": "environmental/daylight",
+    "approxComponentCount": 53
+  },
+  {
+    "name": "Butterfly",
+    "url": "https://grasshopperdocs.com/addons/butterfly.html",
+    "domain": "environmental/daylight",
+    "approxComponentCount": 59
+  },
+  {
+    "name": "DIVA",
+    "url": "https://grasshopperdocs.com/addons/diva.html",
+    "domain": "environmental/daylight",
+    "approxComponentCount": 53
+  },
+  {
+    "name": "Sunflower",
+    "url": "https://grasshopperdocs.com/addons/sunflower.html",
+    "domain": "environmental/daylight",
+    "approxComponentCount": 19
+  },
+  {
+    "name": "TRNLizard",
+    "url": "https://grasshopperdocs.com/addons/trnlizard.html",
+    "domain": "environmental/daylight",
+    "approxComponentCount": 23
+  },
+  {
+    "name": "Mosquito",
+    "url": "https://grasshopperdocs.com/addons/mosquito.html",
+    "domain": "environmental/daylight",
+    "approxComponentCount": 30
+  },
+  {
+    "name": "Karamba3D",
+    "url": "https://grasshopperdocs.com/addons/karamba3d.html",
+    "domain": "structural",
+    "approxComponentCount": 98
+  },
+  {
+    "name": "Millipede",
+    "url": "https://grasshopperdocs.com/addons/millipede.html",
+    "domain": "structural",
+    "approxComponentCount": 69
+  },
+  {
+    "name": "Kiwi3D",
+    "url": "https://grasshopperdocs.com/addons/kiwi3d.html",
+    "domain": "structural",
+    "approxComponentCount": 50
+  },
+  {
+    "name": "K2Engineering",
+    "url": "https://grasshopperdocs.com/addons/k2engineering.html",
+    "domain": "structural",
+    "approxComponentCount": 36
+  },
+  {
+    "name": "Salamander",
+    "url": "https://grasshopperdocs.com/addons/salamander.html",
+    "domain": "structural",
+    "approxComponentCount": 72
+  },
+  {
+    "name": "Peregrine",
+    "url": "https://grasshopperdocs.com/addons/peregrine.html",
+    "domain": "structural",
+    "approxComponentCount": 27
+  },
+  {
+    "name": "Parametric FEM Toolbox",
+    "url": "https://grasshopperdocs.com/addons/parametric-fem-toolbox.html",
+    "domain": "structural",
+    "approxComponentCount": 42
+  },
+  {
+    "name": "ProceduralCS",
+    "url": "https://grasshopperdocs.com/addons/proceduralcs.html",
+    "domain": "structural",
+    "approxComponentCount": 36
+  },
+  {
+    "name": "Emu",
+    "url": "https://grasshopperdocs.com/addons/emu.html",
+    "domain": "structural",
+    "approxComponentCount": 31
+  },
+  {
+    "name": "Fenix",
+    "url": "https://grasshopperdocs.com/addons/fenix.html",
+    "domain": "structural",
+    "approxComponentCount": 172
+  },
+  {
+    "name": "BullAnt",
+    "url": "https://grasshopperdocs.com/addons/bullant.html",
+    "domain": "structural",
+    "approxComponentCount": 67
+  },
+  {
+    "name": "Struc Scripts",
+    "url": "https://grasshopperdocs.com/addons/struc-scripts.html",
+    "domain": "structural",
+    "approxComponentCount": 23
+  },
+  {
+    "name": "Weaverbird",
+    "url": "https://grasshopperdocs.com/addons/weaverbird.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 36
+  },
+  {
+    "name": "NGon",
+    "url": "https://grasshopperdocs.com/addons/ngon.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 81
+  },
+  {
+    "name": "Plankton",
+    "url": "https://grasshopperdocs.com/addons/plankton.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 3
+  },
+  {
+    "name": "MeshPlus",
+    "url": "https://grasshopperdocs.com/addons/meshplus.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 136
+  },
+  {
+    "name": "MeshEdit",
+    "url": "https://grasshopperdocs.com/addons/meshedit.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 10
+  },
+  {
+    "name": "MeshTools",
+    "url": "https://grasshopperdocs.com/addons/meshtools.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 2
+  },
+  {
+    "name": "MeshMachine",
+    "url": "https://grasshopperdocs.com/addons/meshmachine.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 2
+  },
+  {
+    "name": "IG-Mesh",
+    "url": "https://grasshopperdocs.com/addons/ig-mesh.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 26
+  },
+  {
+    "name": "Starling",
+    "url": "https://grasshopperdocs.com/addons/starling.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 23
+  },
+  {
+    "name": "Leopard",
+    "url": "https://grasshopperdocs.com/addons/leopard.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 13
+  },
+  {
+    "name": "Cocoon",
+    "url": "https://grasshopperdocs.com/addons/cocoon.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 6
+  },
+  {
+    "name": "3DVoronoi",
+    "url": "https://grasshopperdocs.com/addons/3dvoronoi.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 1
+  },
+  {
+    "name": "CarveRhino",
+    "url": "https://grasshopperdocs.com/addons/carverhino.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 1
+  },
+  {
+    "name": "InstantMeshes",
+    "url": "https://grasshopperdocs.com/addons/instantmeshes.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 1
+  },
+  {
+    "name": "Sandbox Topology",
+    "url": "https://grasshopperdocs.com/addons/sandbox-topology.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 14
+  },
+  {
+    "name": "MinSurf",
+    "url": "https://grasshopperdocs.com/addons/minsurf.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 5
+  },
+  {
+    "name": "Dendro",
+    "url": "https://grasshopperdocs.com/addons/dendro.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 14
+  },
+  {
+    "name": "IntraLattice",
+    "url": "https://grasshopperdocs.com/addons/intralattice.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 16
+  },
+  {
+    "name": "Monolith",
+    "url": "https://grasshopperdocs.com/addons/monolith.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 38
+  },
+  {
+    "name": "Bowerbird",
+    "url": "https://grasshopperdocs.com/addons/bowerbird.html",
+    "domain": "meshing/subd",
+    "approxComponentCount": 29
+  },
+  {
+    "name": "Biomorpher",
+    "url": "https://grasshopperdocs.com/addons/biomorpher.html",
+    "domain": "optimization/ml",
+    "approxComponentCount": 2
+  },
+  {
+    "name": "Robots",
+    "url": "https://grasshopperdocs.com/addons/robots.html",
+    "domain": "fabrication",
+    "approxComponentCount": 31
+  },
+  {
+    "name": "Robot Components",
+    "url": "https://grasshopperdocs.com/addons/robot-components.html",
+    "domain": "fabrication",
+    "approxComponentCount": 129
+  },
+  {
+    "name": "KUKA Prc Pro",
+    "url": "https://grasshopperdocs.com/addons/kuka-prc-pro.html",
+    "domain": "fabrication",
+    "approxComponentCount": 89
+  },
+  {
+    "name": "OpenNest",
+    "url": "https://grasshopperdocs.com/addons/opennest.html",
+    "domain": "fabrication",
+    "approxComponentCount": 1
+  },
+  {
+    "name": "FabTools",
+    "url": "https://grasshopperdocs.com/addons/fabtools.html",
+    "domain": "fabrication",
+    "approxComponentCount": 18
+  },
+  {
+    "name": "Xylinus",
+    "url": "https://grasshopperdocs.com/addons/xylinus.html",
+    "domain": "fabrication",
+    "approxComponentCount": 43
+  },
+  {
+    "name": "Droid",
+    "url": "https://grasshopperdocs.com/addons/droid.html",
+    "domain": "fabrication",
+    "approxComponentCount": 9
+  },
+  {
+    "name": "Crane",
+    "url": "https://grasshopperdocs.com/addons/crane.html",
+    "domain": "fabrication",
+    "approxComponentCount": 38
+  },
+  {
+    "name": "Elefront",
+    "url": "https://grasshopperdocs.com/addons/elefront.html",
+    "domain": "data/io",
+    "approxComponentCount": 60
+  },
+  {
+    "name": "Pancake",
+    "url": "https://grasshopperdocs.com/addons/pancake.html",
+    "domain": "data/io",
+    "approxComponentCount": 63
+  },
+  {
+    "name": "Swiftlet",
+    "url": "https://grasshopperdocs.com/addons/swiftlet.html",
+    "domain": "data/io",
+    "approxComponentCount": 87
+  },
+  {
+    "name": "gHowl",
+    "url": "https://grasshopperdocs.com/addons/ghowl.html",
+    "domain": "data/io",
+    "approxComponentCount": 15
+  },
+  {
+    "name": "Slingshot",
+    "url": "https://grasshopperdocs.com/addons/slingshot.html",
+    "domain": "data/io",
+    "approxComponentCount": 24
+  },
+  {
+    "name": "TT Toolbox",
+    "url": "https://grasshopperdocs.com/addons/tt-toolbox.html",
+    "domain": "data/io",
+    "approxComponentCount": 43
+  },
+  {
+    "name": "Grasshopper IO",
+    "url": "https://grasshopperdocs.com/addons/grasshopper-io.html",
+    "domain": "data/io",
+    "approxComponentCount": 0
+  },
+  {
+    "name": "Clipper",
+    "url": "https://grasshopperdocs.com/addons/clipper.html",
+    "domain": "data/io",
+    "approxComponentCount": 0
+  },
+  {
+    "name": "Elk",
+    "url": "https://grasshopperdocs.com/addons/elk.html",
+    "domain": "data/io",
+    "approxComponentCount": 3
+  },
+  {
+    "name": "Galapagos",
+    "url": "https://grasshopperdocs.com/addons/galapagos.html",
+    "domain": "optimization/ml",
+    "approxComponentCount": 1
+  },
+  {
+    "name": "Octopus",
+    "url": "https://grasshopperdocs.com/addons/octopus.html",
+    "domain": "optimization/ml",
+    "approxComponentCount": 35
+  },
+  {
+    "name": "Wallacei",
+    "url": "https://grasshopperdocs.com/addons/wallacei.html",
+    "domain": "optimization/ml",
+    "approxComponentCount": 16
+  },
+  {
+    "name": "Opossum",
+    "url": "https://grasshopperdocs.com/addons/opossum.html",
+    "domain": "optimization/ml",
+    "approxComponentCount": 3
+  },
+  {
+    "name": "Impala",
+    "url": "https://grasshopperdocs.com/addons/impala.html",
+    "domain": "optimization/ml",
+    "approxComponentCount": 41
+  },
+  {
+    "name": "Design Space Exploration",
+    "url": "https://grasshopperdocs.com/addons/design-space-exploration.html",
+    "domain": "optimization/ml",
+    "approxComponentCount": 15
+  },
+  {
+    "name": "NM Optimisation",
+    "url": "https://grasshopperdocs.com/addons/nm-optimisation.html",
+    "domain": "optimization/ml",
+    "approxComponentCount": 1
+  },
+  {
+    "name": "Dodo",
+    "url": "https://grasshopperdocs.com/addons/dodo.html",
+    "domain": "optimization/ml",
+    "approxComponentCount": 44
+  },
+  {
+    "name": "Owl",
+    "url": "https://grasshopperdocs.com/addons/owl.html",
+    "domain": "optimization/ml",
+    "approxComponentCount": 73
+  },
+  {
+    "name": "Hypar Elements",
+    "url": "https://grasshopperdocs.com/addons/hypar-elements.html",
+    "domain": "optimization/ml",
+    "approxComponentCount": 13
+  },
+  {
+    "name": "Paneling Tools",
+    "url": "https://grasshopperdocs.com/addons/paneling-tools.html",
+    "domain": "paneling",
+    "approxComponentCount": 68
+  },
+  {
+    "name": "SkinDesigner",
+    "url": "https://grasshopperdocs.com/addons/skindesigner.html",
+    "domain": "paneling",
+    "approxComponentCount": 35
+  },
+  {
+    "name": "LunchBox",
+    "url": "https://grasshopperdocs.com/addons/lunchbox.html",
+    "domain": "paneling",
+    "approxComponentCount": 169
+  },
+  {
+    "name": "Parakeet",
+    "url": "https://grasshopperdocs.com/addons/parakeet.html",
+    "domain": "paneling",
+    "approxComponentCount": 119
+  },
+  {
+    "name": "Pufferfish",
+    "url": "https://grasshopperdocs.com/addons/pufferfish.html",
+    "domain": "utilities",
+    "approxComponentCount": 330
+  },
+  {
+    "name": "Human",
+    "url": "https://grasshopperdocs.com/addons/human.html",
+    "domain": "utilities",
+    "approxComponentCount": 53
+  },
+  {
+    "name": "MetaHopper",
+    "url": "https://grasshopperdocs.com/addons/metahopper.html",
+    "domain": "utilities",
+    "approxComponentCount": 50
+  },
+  {
+    "name": "Nautilus",
+    "url": "https://grasshopperdocs.com/addons/nautilus.html",
+    "domain": "utilities",
+    "approxComponentCount": 165
+  },
+  {
+    "name": "Telepathy",
+    "url": "https://grasshopperdocs.com/addons/telepathy.html",
+    "domain": "utilities",
+    "approxComponentCount": 0
+  },
+  {
+    "name": "Heteroptera",
+    "url": "https://grasshopperdocs.com/addons/heteroptera.html",
+    "domain": "utilities",
+    "approxComponentCount": 146
+  },
+  {
+    "name": "Bumblebee",
+    "url": "https://grasshopperdocs.com/addons/bumblebee.html",
+    "domain": "data/io",
+    "approxComponentCount": 20
+  },
+  {
+    "name": "VisualARQ",
+    "url": "https://grasshopperdocs.com/addons/visualarq.html",
+    "domain": "architecture/bim",
+    "approxComponentCount": 213
+  },
+  {
+    "name": "Params",
+    "url": "https://grasshopperdocs.com/categories/core-grasshopper.html",
+    "domain": "core",
+    "approxComponentCount": 70
+  },
+  {
+    "name": "Curve",
+    "url": "https://grasshopperdocs.com/categories/core-grasshopper.html",
+    "domain": "core",
+    "approxComponentCount": 80
+  },
+  {
+    "name": "Mesh",
+    "url": "https://grasshopperdocs.com/categories/core-grasshopper.html",
+    "domain": "core",
+    "approxComponentCount": 60
+  },
+  {
+    "name": "Surface",
+    "url": "https://grasshopperdocs.com/categories/core-grasshopper.html",
+    "domain": "core",
+    "approxComponentCount": 85
+  },
+  {
+    "name": "Vector",
+    "url": "https://grasshopperdocs.com/categories/core-grasshopper.html",
+    "domain": "core",
+    "approxComponentCount": 55
+  },
+  {
+    "name": "Transform",
+    "url": "https://grasshopperdocs.com/categories/core-grasshopper.html",
+    "domain": "core",
+    "approxComponentCount": 45
+  },
+  {
+    "name": "Sets",
+    "url": "https://grasshopperdocs.com/categories/core-grasshopper.html",
+    "domain": "core",
+    "approxComponentCount": 75
+  },
+  {
+    "name": "Maths",
+    "url": "https://grasshopperdocs.com/categories/core-grasshopper.html",
+    "domain": "core",
+    "approxComponentCount": 90
+  }
+]

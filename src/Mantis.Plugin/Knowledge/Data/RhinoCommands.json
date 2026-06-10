@@ -1,0 +1,452 @@
+[
+  {
+    "name": "Line",
+    "category": "Create curves",
+    "description": "Draws a single straight line segment between two points."
+  },
+  {
+    "name": "Polyline",
+    "category": "Create curves",
+    "description": "Draws a series of connected straight line segments as one curve."
+  },
+  {
+    "name": "Curve",
+    "category": "Create curves",
+    "description": "Draws a freeform NURBS curve through control points."
+  },
+  {
+    "name": "InterpCrv",
+    "category": "Create curves",
+    "description": "Draws a curve that passes through (interpolates) the picked points."
+  },
+  {
+    "name": "Arc",
+    "category": "Create curves",
+    "description": "Draws an arc from center, start, and end or other inputs."
+  },
+  {
+    "name": "Circle",
+    "category": "Create curves",
+    "description": "Draws a circle from center and radius or other definitions."
+  },
+  {
+    "name": "Ellipse",
+    "category": "Create curves",
+    "description": "Draws an ellipse from center and two axis endpoints."
+  },
+  {
+    "name": "Rectangle",
+    "category": "Create curves",
+    "description": "Draws a rectangular closed polyline from corner or center inputs."
+  },
+  {
+    "name": "Polygon",
+    "category": "Create curves",
+    "description": "Draws a regular polygon inscribed or circumscribed about a circle."
+  },
+  {
+    "name": "Point",
+    "category": "Create curves",
+    "description": "Creates one or more point objects at picked locations."
+  },
+  {
+    "name": "Text",
+    "category": "Create curves",
+    "description": "Creates an annotation text object placed in the model."
+  },
+  {
+    "name": "Box",
+    "category": "Create solids",
+    "description": "Creates a solid box from corner points and a height."
+  },
+  {
+    "name": "Sphere",
+    "category": "Create solids",
+    "description": "Creates a solid sphere from a center and radius or other inputs."
+  },
+  {
+    "name": "Cylinder",
+    "category": "Create solids",
+    "description": "Creates a solid cylinder from a base circle and a height."
+  },
+  {
+    "name": "Cone",
+    "category": "Create solids",
+    "description": "Creates a solid cone from a base circle and an apex."
+  },
+  {
+    "name": "Pipe",
+    "category": "Create solids",
+    "description": "Creates a solid pipe of given radius around a rail curve."
+  },
+  {
+    "name": "Torus",
+    "category": "Create solids",
+    "description": "Creates a solid torus from a center, ring radius, and tube radius."
+  },
+  {
+    "name": "ExtrudeCrv",
+    "category": "Create solids",
+    "description": "Creates a surface or extrusion by tracing a curve in a straight line."
+  },
+  {
+    "name": "ExtrudeSrf",
+    "category": "Create solids",
+    "description": "Extrudes a surface in a straight line to create a solid."
+  },
+  {
+    "name": "Loft",
+    "category": "Surface",
+    "description": "Fits a surface through selected profile curves defining its shape."
+  },
+  {
+    "name": "Sweep1",
+    "category": "Surface",
+    "description": "Fits a surface through cross-section curves along one rail curve."
+  },
+  {
+    "name": "Sweep2",
+    "category": "Surface",
+    "description": "Fits a surface through cross-section curves along two rail curves."
+  },
+  {
+    "name": "Revolve",
+    "category": "Surface",
+    "description": "Creates a surface by revolving a profile curve around an axis."
+  },
+  {
+    "name": "RailRevolve",
+    "category": "Surface",
+    "description": "Revolves a profile around an axis while following a rail curve."
+  },
+  {
+    "name": "EdgeSrf",
+    "category": "Surface",
+    "description": "Creates a surface from two, three, or four selected edge curves."
+  },
+  {
+    "name": "NetworkSrf",
+    "category": "Surface",
+    "description": "Creates a surface from a network of crossing curves."
+  },
+  {
+    "name": "PlanarSrf",
+    "category": "Surface",
+    "description": "Creates a planar surface from a set of planar boundary curves."
+  },
+  {
+    "name": "Patch",
+    "category": "Surface",
+    "description": "Fits a surface through selected curves, points, meshes, or point clouds."
+  },
+  {
+    "name": "OffsetSrf",
+    "category": "Surface",
+    "description": "Offsets a surface or polysurface a constant distance from the original."
+  },
+  {
+    "name": "BlendSrf",
+    "category": "Surface",
+    "description": "Creates a smooth blend surface between two surface edges with continuity control."
+  },
+  {
+    "name": "Trim",
+    "category": "Edit",
+    "description": "Cuts and deletes parts of objects at intersections with cutting objects."
+  },
+  {
+    "name": "Split",
+    "category": "Edit",
+    "description": "Divides objects into parts using cutting objects without deleting any."
+  },
+  {
+    "name": "Join",
+    "category": "Edit",
+    "description": "Connects curves, surfaces, or meshes into a single object."
+  },
+  {
+    "name": "Explode",
+    "category": "Edit",
+    "description": "Breaks an object into its component segments, faces, or parts."
+  },
+  {
+    "name": "Fillet",
+    "category": "Edit",
+    "description": "Connects two curves with an arc of a specified radius."
+  },
+  {
+    "name": "Chamfer",
+    "category": "Edit",
+    "description": "Connects two curves with a straight, beveled line."
+  },
+  {
+    "name": "FilletEdge",
+    "category": "Edit",
+    "description": "Creates variable or constant radius fillets along polysurface edges."
+  },
+  {
+    "name": "ChamferEdge",
+    "category": "Edit",
+    "description": "Creates beveled (chamfered) surfaces along selected polysurface edges."
+  },
+  {
+    "name": "OffsetCrv",
+    "category": "Edit",
+    "description": "Offsets a curve a specified distance to one side."
+  },
+  {
+    "name": "Cap",
+    "category": "Edit",
+    "description": "Closes planar holes of an open surface or polysurface with planar faces."
+  },
+  {
+    "name": "Extend",
+    "category": "Edit",
+    "description": "Lengthens a curve by a distance or to a boundary object."
+  },
+  {
+    "name": "Rebuild",
+    "category": "Edit",
+    "description": "Rebuilds a curve or surface with a new point count and degree."
+  },
+  {
+    "name": "MergeSrf",
+    "category": "Edit",
+    "description": "Combines two untrimmed surfaces into one at a shared edge."
+  },
+  {
+    "name": "BooleanUnion",
+    "category": "Edit",
+    "description": "Combines selected solids by removing their shared volume regions."
+  },
+  {
+    "name": "BooleanDifference",
+    "category": "Edit",
+    "description": "Subtracts one set of solids from another set of solids."
+  },
+  {
+    "name": "BooleanIntersection",
+    "category": "Edit",
+    "description": "Keeps only the shared volume of the selected solids."
+  },
+  {
+    "name": "BooleanSplit",
+    "category": "Edit",
+    "description": "Splits solids by other solids, keeping both the inside and outside parts."
+  },
+  {
+    "name": "Move",
+    "category": "Transform",
+    "description": "Moves objects from a base point to a target point."
+  },
+  {
+    "name": "Copy",
+    "category": "Transform",
+    "description": "Copies objects from a base point to one or more target points."
+  },
+  {
+    "name": "Rotate",
+    "category": "Transform",
+    "description": "Rotates objects about a base point by an angle in the construction plane."
+  },
+  {
+    "name": "Rotate3D",
+    "category": "Transform",
+    "description": "Rotates objects about an arbitrary axis in space."
+  },
+  {
+    "name": "Scale",
+    "category": "Transform",
+    "description": "Uniformly scales objects in three dimensions about a base point."
+  },
+  {
+    "name": "Scale1D",
+    "category": "Transform",
+    "description": "Scales objects along a single direction (one dimension)."
+  },
+  {
+    "name": "Mirror",
+    "category": "Transform",
+    "description": "Creates a mirror-image copy of objects across a mirror line."
+  },
+  {
+    "name": "Array",
+    "category": "Transform",
+    "description": "Creates a rectangular grid of copies of selected objects."
+  },
+  {
+    "name": "ArrayPolar",
+    "category": "Transform",
+    "description": "Creates copies of objects arranged radially around a center point."
+  },
+  {
+    "name": "Orient",
+    "category": "Transform",
+    "description": "Moves and rotates objects from reference points to target points."
+  },
+  {
+    "name": "FlowAlongSrf",
+    "category": "Transform",
+    "description": "Morphs objects from a source surface to a target surface."
+  },
+  {
+    "name": "Flow",
+    "category": "Transform",
+    "description": "Morphs objects along a base curve onto a target curve."
+  },
+  {
+    "name": "Bend",
+    "category": "Transform",
+    "description": "Reshapes an object by bending it along a defined spine."
+  },
+  {
+    "name": "Twist",
+    "category": "Transform",
+    "description": "Deforms objects by twisting them around an axis."
+  },
+  {
+    "name": "Taper",
+    "category": "Transform",
+    "description": "Deforms objects by tapering them along an axis."
+  },
+  {
+    "name": "CageEdit",
+    "category": "Transform",
+    "description": "Smoothly deforms objects by editing a surrounding control cage."
+  },
+  {
+    "name": "ToSubD",
+    "category": "SubD",
+    "description": "Converts meshes, surfaces, or polysurfaces into SubD objects."
+  },
+  {
+    "name": "QuadRemesh",
+    "category": "SubD",
+    "description": "Creates a quad mesh or SubD with optimized topology from existing geometry."
+  },
+  {
+    "name": "SubDLoft",
+    "category": "SubD",
+    "description": "Creates a SubD object lofted through selected profile curves."
+  },
+  {
+    "name": "SubDSweep1",
+    "category": "SubD",
+    "description": "Creates a SubD by sweeping cross-section curves along one rail."
+  },
+  {
+    "name": "SubDSweep2",
+    "category": "SubD",
+    "description": "Creates a SubD by sweeping cross-section curves along two rails."
+  },
+  {
+    "name": "SubDBox",
+    "category": "SubD",
+    "description": "Creates a SubD box primitive with a specified face count."
+  },
+  {
+    "name": "SubDSphere",
+    "category": "SubD",
+    "description": "Creates a SubD sphere primitive."
+  },
+  {
+    "name": "InsertEdge",
+    "category": "SubD",
+    "description": "Inserts a new edge loop or edge into a SubD object."
+  },
+  {
+    "name": "Bridge",
+    "category": "SubD",
+    "description": "Connects two SubD or mesh boundaries with a bridging strip of faces."
+  },
+  {
+    "name": "RemoveCrease",
+    "category": "SubD",
+    "description": "Removes creases from selected SubD edges to make them smooth."
+  },
+  {
+    "name": "Mesh",
+    "category": "Mesh",
+    "description": "Creates a polygon mesh from a NURBS surface or polysurface."
+  },
+  {
+    "name": "ReduceMesh",
+    "category": "Mesh",
+    "description": "Decreases mesh face count while minimizing geometric and texture distortion."
+  },
+  {
+    "name": "MeshRepair",
+    "category": "Mesh",
+    "description": "Opens the Mesh Repair panel to diagnose and fix problem meshes."
+  },
+  {
+    "name": "UnifyMeshNormals",
+    "category": "Mesh",
+    "description": "Makes all face normals of a mesh point in a consistent direction."
+  },
+  {
+    "name": "MeshToNURB",
+    "category": "Mesh",
+    "description": "Creates a NURBS surface for each polygon face of a mesh."
+  },
+  {
+    "name": "Distance",
+    "category": "Analyze",
+    "description": "Reports the distance between two picked points."
+  },
+  {
+    "name": "Area",
+    "category": "Analyze",
+    "description": "Reports the area of selected curves, surfaces, or meshes."
+  },
+  {
+    "name": "Volume",
+    "category": "Analyze",
+    "description": "Reports the volume of selected closed solids or meshes."
+  },
+  {
+    "name": "CurvatureAnalysis",
+    "category": "Analyze",
+    "description": "Displays surface curvature using a false-color analysis mesh."
+  },
+  {
+    "name": "Contour",
+    "category": "Analyze",
+    "description": "Creates a series of equally spaced section curves through objects."
+  },
+  {
+    "name": "Section",
+    "category": "Analyze",
+    "description": "Creates curves at the intersection of a cutting plane and objects."
+  },
+  {
+    "name": "NamedView",
+    "category": "View/Display",
+    "description": "Saves, restores, and manages named viewport views."
+  },
+  {
+    "name": "Shade",
+    "category": "View/Display",
+    "description": "Displays a shaded preview of the model in the current viewport."
+  },
+  {
+    "name": "Block",
+    "category": "Block",
+    "description": "Defines a block from selected objects and replaces them with an instance."
+  },
+  {
+    "name": "Insert",
+    "category": "Block",
+    "description": "Inserts an instance of a block definition or a linked file."
+  },
+  {
+    "name": "Hatch",
+    "category": "Annotate",
+    "description": "Fills selected closed boundary curves with a hatch pattern."
+  },
+  {
+    "name": "Render",
+    "category": "Render",
+    "description": "Renders the current view using the active render engine."
+  }
+]

@@ -125,6 +125,20 @@ public class PromptBuilder
         sb.AppendLine("- Read input INDICES from the catalog and wire to the exact index. Verify every REQUIRED (no '?') input is satisfied.");
         sb.AppendLine();
 
+        // Pre-install "suggest" layer — only for large-context (cloud) models, to keep small
+        // local-model prompts lean. Never used for building, only for recommending installs.
+        if (contextWindowTokens >= CatalogTrimThreshold)
+        {
+            var pluginSuggest = _registry.BuildPluginSuggestions();
+            if (!string.IsNullOrWhiteSpace(pluginSuggest))
+            {
+                sb.AppendLine("=== POPULAR PLUGINS (suggest only — may NOT be installed) ===");
+                sb.AppendLine("These add-ons are NOT in the catalog above. Build with native catalog components whenever possible. ONLY if the native catalog genuinely cannot do what the user asked, name the matching plugin in requiredPlugins[] and tell the user to install it — never wire a component that isn't in the catalog above.");
+                sb.Append(pluginSuggest);
+                sb.AppendLine();
+            }
+        }
+
         sb.AppendLine("=== WORKFLOW GROUPING & REASONING (REQUIRED) ===");
         sb.AppendLine("Organize the whole script into 2-5 logical STAGES and emit them in the \"groups\" array. Each group becomes a labelled box on the canvas AND its reasoning is shown to the user as your thought process — so this is how MANTIS explains its wiring.");
         sb.AppendLine("- Typical stages in left-to-right order: \"Parameters\" (the sliders/toggles) → \"Base Geometry\" → \"Transform / Array\" → \"Combine\" → \"Output\". Name stages for what THIS script does, not generically.");
