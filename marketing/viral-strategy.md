@@ -99,7 +99,7 @@
 
 **Thread:**
 1. "Most AI tools for architects require a $20/month subscription. MANTIS works with free models out of the box."
-2. "Gemini 2.0 Flash — free API, fast, handles most scripts perfectly"
+2. "Gemini 2.0 Flash — free API, fast, handles most everyday scripts well"
 3. "Ollama — runs entirely on your laptop. No internet. No API key. Zero cost."
 4. "Or use Claude/OpenRouter for complex scripts. Your choice, always."
 5. "Oh, and it's open source. Fork it, modify it, contribute."
