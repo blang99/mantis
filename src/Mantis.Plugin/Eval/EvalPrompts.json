@@ -31,5 +31,14 @@
   { "id": "r04", "tier": "realproject", "prompt": "Use Kangaroo to relax a mesh grid into a minimal surface anchored at its corners.", "minComponents": 5, "traits": ["Kangaroo", "Mesh"], "geometry": "mesh" },
   { "id": "r05", "tier": "realproject", "prompt": "Optimize a tower's floor rotation to minimize overlap using Galapagos.", "minComponents": 6, "traits": ["Galapagos", "Rotate"], "geometry": "curve" },
   { "id": "r06", "tier": "realproject", "prompt": "Take a referenced Rhino surface and populate it with a Voronoi pattern of openings.", "minComponents": 5, "traits": ["Surface", "Voronoi", "Populate"], "geometry": "surface" },
-  { "id": "r07", "tier": "realproject", "prompt": "Build a gridshell: a quad grid on a doubly-curved surface, extract the edges as structural members, keep the data tree intact per bay.", "minComponents": 7, "traits": ["Surface", "Graft", "Isotrim"], "geometry": "curve" }
+  { "id": "r07", "tier": "realproject", "prompt": "Build a gridshell: a quad grid on a doubly-curved surface, extract the edges as structural members, keep the data tree intact per bay.", "minComponents": 7, "traits": ["Surface", "Graft", "Isotrim"], "geometry": "curve" },
+
+  { "id": "h01", "tier": "hard", "prompt": "Create a grid of points and draw a vertical line at each one, keeping each line on its own data-tree branch (grafted), not flattened.", "minComponents": 4, "traits": ["Graft", "Line"], "geometry": "curve" },
+  { "id": "h02", "tier": "hard", "prompt": "Make two separate sets of circles, then merge them into a single flat list of curves.", "minComponents": 5, "traits": ["Merge", "Flatten", "Circle"], "geometry": "curve" },
+  { "id": "h03", "tier": "hard", "prompt": "Dispatch a list of points by a true/false pattern into two groups, and move only the 'true' group upward.", "minComponents": 5, "traits": ["Dispatch", "Move"], "geometry": "point" },
+  { "id": "h04", "tier": "hard", "prompt": "Draw a line from every point in a grid to every other point (a full graph of connections), using cross-reference matching.", "minComponents": 4, "traits": ["Cross Reference", "Line"], "geometry": "curve" },
+  { "id": "h05", "tier": "hard", "prompt": "Grow a recursive branching tree that splits into two smaller branches at each step, for several generations.", "minComponents": 6, "traits": ["Loop Start", "Loop End"], "geometry": "curve" },
+  { "id": "h06", "tier": "hard", "prompt": "Sort a set of scattered points by their distance from the origin and keep only the ten closest.", "minComponents": 5, "traits": ["Sort List", "Cull Pattern"], "geometry": "point" },
+  { "id": "h07", "tier": "hard", "prompt": "Build an N by M grid of boxes where each box's height is driven by both its row and its column index (one height per cell).", "minComponents": 6, "traits": ["Series", "Cross Reference", "Move"], "geometry": "solid" },
+  { "id": "h08", "tier": "hard", "prompt": "Take a list of curves, reverse the direction of only every second curve, then loft them all in order.", "minComponents": 5, "traits": ["Dispatch", "Flip Curve", "Loft"], "geometry": "surface" }
 ]
