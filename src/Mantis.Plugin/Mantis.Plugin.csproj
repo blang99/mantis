@@ -23,7 +23,12 @@
     <PackageReference Include="Grasshopper" Version="8.30.26103.11001" ExcludeAssets="runtime" />
     <PackageReference Include="RhinoCommon" Version="8.30.26103.11001" ExcludeAssets="runtime" />
     <PackageReference Include="Eto.Forms" Version="2.8.*" ExcludeAssets="runtime" />
-    <PackageReference Include="System.Text.Json" Version="7.*" />
+    <!-- CRITICAL: Rhino 8 runs on the .NET 8 runtime, which already provides System.Text.Json +
+         System.Text.Encodings.Web (8.x). Bundling our own 7.x copy caused a version collision and
+         "Error loading Mantis.Plugin.rhp". ExcludeAssets="runtime" = compile against it but DON'T
+         ship it; use the one Rhino's runtime already loaded — exactly like RhinoCommon/Grasshopper. -->
+    <PackageReference Include="System.Text.Json" Version="7.*" ExcludeAssets="runtime" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="7.*" ExcludeAssets="runtime" />
     <!-- Build-time reference only — Rhino provides the runtime shim on both platforms -->
     <PackageReference Include="System.Drawing.Common" Version="8.*" ExcludeAssets="runtime" />
   </ItemGroup>
