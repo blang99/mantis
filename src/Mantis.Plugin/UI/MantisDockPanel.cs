@@ -30,9 +30,8 @@ public class MantisDockPanel : Panel
         MantisService service;
         try
         {
-            // Creating the service loads Grasshopper in the background and scans the
-            // component catalog — so a build works even though the user never opened
-            // the Grasshopper editor.
+            // Creating the service is lightweight — it does NOT load Grasshopper. Grasshopper
+            // loads lazily on the first build/ask, so opening this panel is instant.
             service = MantisPanelHost.GetOrCreateService();
             MantisLog.Info("Dock panel: service ready.");
         }

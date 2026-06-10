@@ -6,14 +6,14 @@ using Mantis.Plugin.UI;
 namespace Mantis.Plugin;
 
 /// <summary>
-/// Optional Grasshopper component for toggling the MANTIS panel.
-/// The panel also auto-opens when Grasshopper loads (via MantisLoader).
+/// Optional Grasshopper component for toggling the MANTIS panel from the canvas. MANTIS also
+/// opens from the Rhino side (the "Mantis" command or Panels menu) without loading Grasshopper.
 /// </summary>
 public class MantisComponent : GH_Component
 {
     public MantisComponent()
         : base("MANTIS", "Mantis",
-            "Toggle the MANTIS AI chat panel. The panel also opens automatically when Grasshopper starts.",
+            "Toggle the MANTIS AI chat panel.",
             "Mantis", "AI")
     {
     }
@@ -47,6 +47,6 @@ public class MantisComponent : GH_Component
 
         var visible = MantisPanelHost.IsVisible ? "visible" : "hidden";
         var provider = MantisPanelHost.Service?.ProviderManager?.ActiveProviderName ?? "none";
-        DA.SetData(0, $"MANTIS v0.1.1 — panel {visible} — provider: {provider}");
+        DA.SetData(0, $"MANTIS — panel {visible} — provider: {provider}");
     }
 }

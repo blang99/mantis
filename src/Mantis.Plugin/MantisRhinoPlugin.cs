@@ -28,18 +28,19 @@ public class MantisRhinoPlugin : PlugIn
         {
             // Register the panel TYPE only — Rhino instantiates it lazily the
             // first time it's shown, so Grasshopper is not force-loaded here.
+            MantisLog.Info("Rhino plugin OnLoad: registering MANTIS panel…");
             Rhino.UI.Panels.RegisterPanel(
                 this,
                 typeof(MantisDockPanel),
                 "MANTIS",
                 null);
+            MantisLog.Info("Rhino plugin OnLoad: panel registered. Open MANTIS via the 'Mantis' command "
+                           + "or Panels menu — Grasshopper is NOT loaded until you actually build.");
         }
         catch (Exception ex)
         {
             errorMessage = $"MANTIS panel registration failed: {ex.Message}";
-            // Don't abort the whole plugin load just because the panel failed —
-            // the Grasshopper component side must still work.
-            System.Diagnostics.Debug.WriteLine(errorMessage);
+            MantisLog.Error("Rhino plugin OnLoad: panel registration failed", ex);
         }
 
         return LoadReturnCode.Success;

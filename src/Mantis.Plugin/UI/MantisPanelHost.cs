@@ -32,13 +32,10 @@ public static class MantisPanelHost
     }
 
     /// <summary>
-    /// Return the one shared <see cref="MantisService"/>, creating and
-    /// initializing it on first use. Both entry points — the Grasshopper float
-    /// (via <see cref="MantisLoader"/>) and the Rhino dock panel (via
-    /// <see cref="MantisDockPanel"/>) — funnel through here so there is a single
-    /// service, conversation, and component catalog. Ensures Grasshopper is
-    /// loaded first so the catalog scan succeeds even when opened from a Rhino
-    /// tab with the Grasshopper editor closed.
+    /// Return the one shared <see cref="MantisService"/>, creating it on first use. The Rhino
+    /// dock panel (<see cref="MantisDockPanel"/>) and the optional Grasshopper toggle component
+    /// funnel through here so there is a single service, conversation, and catalog. Deliberately
+    /// does NOT load Grasshopper — that is deferred to the first build/ask.
     /// </summary>
     public static MantisService GetOrCreateService()
     {
