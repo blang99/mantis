@@ -103,6 +103,11 @@ public class MantisService : IDisposable
         _registry.Initialize();
         _ready = true;
         OnStatus?.Invoke($"Loaded {_registry.All.Count} components");
+
+        // Phase 5: if the user opted into cross-user learning, pull the community lesson
+        // bundle once per session (best-effort; inert unless sharing is on + endpoint set).
+        if (Knowledge.LessonSync.Enabled)
+            _ = Knowledge.LessonSync.PullAsync(Knowledge.LessonStore.Shared);
     }
 
     /// <summary>Back-compat alias for <see cref="EnsureReady"/>.</summary>
@@ -509,11 +514,17 @@ public class MantisService : IDisposable
                     // correction — record it so MANTIS doesn't reach for that bad name again.
                     if (suggestions.Count > 0 && !string.IsNullOrWhiteSpace(badName)
                         && MantisSettings.Get("useLessons") != "off")
-                        Knowledge.LessonStore.Shared.Record(
-                            key: $"name:{badName.ToLowerInvariant()}",
-                            trigger: $"\"{badName}\" is not a real Grasshopper component",
-                            remedy: $"use \"{suggestions[0]}\"",
-                            tags: $"{badName} {suggestions[0]}");
+                    {
+                        var lesson = new Knowledge.Lesson
+                        {
+                            Key = $"name:{badName.ToLowerInvariant()}",
+                            Trigger = $"\"{badName}\" is not a real Grasshopper component",
+                            Remedy = $"use \"{suggestions[0]}\"",
+                            Tags = $"{badName} {suggestions[0]}"
+                        };
+                        Knowledge.LessonStore.Shared.Record(lesson.Key, lesson.Trigger, lesson.Remedy, lesson.Tags);
+                        Knowledge.LessonSync.TryShare(lesson);   // no-op unless the user opted into sharing
+                    }
                     break;
                 }
                 case "PORT_OUT_OF_RANGE":

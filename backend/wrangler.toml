@@ -1,0 +1,10 @@
+name = "mantis-lessons"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# 1. Create the KV namespace:  wrangler kv namespace create LESSONS
+# 2. Paste the returned id below.
+# 3. Deploy:  wrangler deploy
+[[kv_namespaces]]
+binding = "LESSONS"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
