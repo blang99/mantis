@@ -176,6 +176,42 @@ public class MantisService : IDisposable
         catch { return null; }   // never let a planning hiccup block the build
     }
 
+    /// <summary>The active LLM provider's name (for eval reports / status).</summary>
+    public string ActiveProviderName => _providerManager.ActiveProviderName;
+
+    // ── EVAL HARNESS (in-Rhino): generate WITHOUT building, then score through the EXACT
+    //    production resolver + validator. Drives the MantisEval command — MANTIS's quality system. ──
+
+    /// <summary>
+    /// Generate a ScriptDefinition from a prompt WITHOUT building it on the canvas. Isolated (its own
+    /// conversation + parser) so an eval run never pollutes a live session. Measures the raw first-pass
+    /// model output (before the repair loop), which is what the eval is meant to grade.
+    /// </summary>
+    public async Task<ScriptDefinition?> GenerateScriptOnlyAsync(string userPrompt, CancellationToken ct = default)
+    {
+        EnsureReady();
+        var systemPrompt = _promptBuilder.BuildSystemPrompt(
+            PromptMode.Generate, null, userPrompt, _providerManager.Active.ContextWindowTokens);
+        var convo = new ConversationManager();
+        convo.AddUserMessage(userPrompt);
+        var sb = new System.Text.StringBuilder();
+        await foreach (var chunk in _providerManager.Active.StreamAsync(systemPrompt, convo.GetMessagesForApi(), ct))
+            sb.Append(chunk);
+        return new ResponseParser().ParseComplete(sb.ToString());
+    }
+
+    /// <summary>
+    /// Score a generated script against an eval case using the SAME name-resolver + validator the
+    /// build path uses, so the number reflects real production behaviour (incl. flagging the
+    /// silent-mis-resolution failure mode as an unresolved name).
+    /// </summary>
+    public Eval.EvalScore ScoreStructural(Eval.EvalCase c, ScriptDefinition? script)
+    {
+        bool clean = script != null
+            && !ScriptValidator.HasErrors(ScriptValidator.Validate(script, _factory.CanResolve, PortArityOf));
+        return Eval.EvalScorer.ScoreStructural(c, script, _factory.CanResolve, clean);
+    }
+
     public async Task GenerateAsync(
         string userPrompt, GH_Document document,
         bool streaming = true, CancellationToken ct = default,
