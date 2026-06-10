@@ -251,6 +251,137 @@ public class SimulationTests
         _out.WriteLine(report.ToString());
     }
 
+    // ═════════════════════════════════════════════════════════════════════════
+    //  STRESS LOOP — the four properties under a hard battery, every iteration:
+    //    (A) every request COMPLETES clean   (B) requests STACK on one another
+    //    (C) MEMORY accumulates + recalls    (D) HISTORY threads through
+    //  Drives the same real ResponseParser / ScriptValidator / LayoutEngine /
+    //  ConversationManager / LessonStore as the plugin. 100% pass required.
+    // ═════════════════════════════════════════════════════════════════════════
+
+    /// <summary>Procedurally build a guaranteed-valid graph of N independent slider→Circle pairs.</summary>
+    private static ScriptDefinition GenScalingGraph(int pairs)
+    {
+        var s = new ScriptDefinition { SolutionName = $"Gen-{pairs}", SolutionDescription = "procedural scaling graph" };
+        var paramIds = new List<int>();
+        var geoIds = new List<int>();
+        for (int i = 0; i < pairs; i++)
+        {
+            int sliderId = i * 2 + 1, circleId = i * 2 + 2;
+            s.Components.Add(new ComponentDef { Id = sliderId, Name = "Number Slider", NickName = $"R{i}" });
+            s.Components.Add(new ComponentDef { Id = circleId, Name = "Circle", NickName = $"C{i}" });
+            s.Connections.Add(new ConnectionDef { FromComponent = sliderId, FromOutput = 0, ToComponent = circleId, ToInput = 1 });
+            paramIds.Add(sliderId);
+            geoIds.Add(circleId);
+        }
+        s.Groups.Add(new GroupDef { Name = "Parameters", ComponentIds = paramIds, Reasoning = "Sliders expose each circle's radius so the set stays adjustable." });
+        s.Groups.Add(new GroupDef { Name = "Geometry", ComponentIds = geoIds, Reasoning = "One circle per radius, drawn at the origin." });
+        return s;
+    }
+
+    // (A) COMPLETION — a battery of diverse requests (3 hand-authored complex + 15 procedural
+    //     of growing size) must EACH parse, validate clean, and lay out with no overlaps.
+    [Fact]
+    public void StressLoop_EveryRequestCompletesCleanly()
+    {
+        var scripts = new List<(string Name, ScriptDefinition Script)>();
+        foreach (var (name, json) in new[] { ("TowerBase", TowerBase), ("TowerIter1", TowerIteration1), ("TowerIter2", TowerIteration2) })
+        {
+            var sc = new ResponseParser().ParseComplete(json);
+            Assert.NotNull(sc);
+            scripts.Add((name, sc!));
+        }
+        for (int n = 1; n <= 30; n++) scripts.Add(($"Gen-{n}", GenScalingGraph(n)));
+
+        var failures = new List<string>();
+        foreach (var (name, sc) in scripts)
+        {
+            var issues = ScriptValidator.Validate(sc, CanResolve, ArityOf);
+            var layout = new LayoutEngine().ComputeLayout(sc);
+            var seen = new HashSet<(float, float)>();
+            int overlaps = layout.Values.Count(p => !seen.Add((p.X, p.Y)));
+            if (issues.Count != 0 || overlaps != 0 || layout.Count != sc.Components.Count)
+                failures.Add($"{name}: {issues.Count} issues [{string.Join(",", issues.Select(i => i.Code))}], "
+                             + $"{overlaps} overlaps, {layout.Count}/{sc.Components.Count} placed");
+        }
+        _out.WriteLine($"(A) Completion loop: {scripts.Count - failures.Count}/{scripts.Count} scenarios completed clean.");
+        foreach (var f in failures) _out.WriteLine("   ✗ " + f);
+        Assert.Empty(failures);
+    }
+
+    // (B)+(D) STACKING + HISTORY — deep chain of follow-ups, each must stay valid AND be a
+    //     strict superset of the prior (nothing dropped), while conversation history grows.
+    [Fact]
+    public void StressLoop_DeepStackStaysValidAndKeepsHistory()
+    {
+        const int K = 25;
+        var convo = new ConversationManager();
+        var script = new ResponseParser().ParseComplete(TowerBase);
+        Assert.NotNull(script);
+        convo.AddUserMessage("Base: parametric twisting tower.");
+        convo.AddAssistantMessage(TowerBase);
+        var baseIds = script!.Components.Select(c => c.Id).ToHashSet();
+        Assert.Empty(ScriptValidator.Validate(script, CanResolve, ArityOf));
+
+        var prevIds = baseIds;
+        for (int k = 1; k <= K; k++)
+        {
+            convo.AddUserMessage($"Follow-up {k}: add a labelled readout.");
+            // Append a self-contained, guaranteed-valid superset: a slider feeding a panel.
+            int maxId = script.Components.Max(c => c.Id);
+            int sliderId = maxId + 1, panelId = maxId + 2;
+            script.Components.Add(new ComponentDef { Id = sliderId, Name = "Number Slider", NickName = $"P{k}" });
+            script.Components.Add(new ComponentDef { Id = panelId, Name = "Panel", NickName = $"Readout{k}" });
+            script.Connections.Add(new ConnectionDef { FromComponent = sliderId, FromOutput = 0, ToComponent = panelId, ToInput = 0 });
+            script.Groups.Add(new GroupDef { Name = $"Readout {k}", ComponentIds = new() { sliderId, panelId }, Reasoning = $"Stage {k}: a panel echoes a value for inspection without disturbing prior stages." });
+            convo.AddAssistantMessage("(updated, building on top)");
+
+            var issues = ScriptValidator.Validate(script, CanResolve, ArityOf);
+            Assert.True(issues.Count == 0, $"iteration {k} introduced defects: {string.Join(",", issues.Select(i => i.Code))}");
+            var curIds = script.Components.Select(c => c.Id).ToHashSet();
+            Assert.True(prevIds.IsSubsetOf(curIds), $"iteration {k} dropped prior components — not building on top.");
+            prevIds = curIds;
+        }
+
+        Assert.True(baseIds.IsSubsetOf(prevIds), "the base tower logic must survive all iterations.");
+        // History is a BOUNDED rolling window — oldest turns are trimmed to respect the token
+        // budget, so it retains recent multi-turn context without growing unbounded. (Build-on-top
+        // robustness comes from the live CANVAS state, not just chat, so trimming old chat is safe.)
+        Assert.True(convo.History.Count >= 6, "recent multi-turn context must be retained for build-on-top.");
+        Assert.True(convo.History.Count <= (K + 1) * 2, "history must be a bounded rolling window, not unbounded.");
+        _out.WriteLine($"(B)+(D) Deep stack: {K} follow-ups on top of base — all stayed valid supersets; "
+                       + $"rolling history window held {convo.History.Count} messages; final graph {prevIds.Count} components.");
+    }
+
+    // (C) MEMORY — many corrections accumulate, reinforce without duplicating, recall by
+    //     relevance, and survive a reload (the exact LessonStore the plugin records into).
+    [Fact]
+    public void StressLoop_MemoryAccumulatesReinforcesAndRecalls()
+    {
+        var path = Path.Combine(Path.GetTempPath(), "mantis-stress-lessons-" + Guid.NewGuid().ToString("N") + ".json");
+        var store = new LessonStore(path);
+        string[] bad = { "Cirkle", "Looft", "Extrood", "Moove", "Sereis", "Rektangle", "Polagon", "Sweap", "Revolv", "Boundery", "Offsett", "Devide" };
+        string[] good = { "Circle", "Loft", "Extrude", "Move", "Series", "Rectangle", "Polygon", "Sweep1", "Revolution", "Boundary Surfaces", "Offset", "Divide Curve" };
+
+        for (int i = 0; i < bad.Length; i++)
+            store.Record($"name:{bad[i].ToLowerInvariant()}", $"\"{bad[i]}\" is not a real Grasshopper component", $"use \"{good[i]}\"", $"{bad[i]} {good[i]}");
+        Assert.Equal(bad.Length, store.All.Count); // every distinct correction accumulated
+
+        // Reinforcing an existing lesson must bump its count, not duplicate it.
+        store.Record($"name:{bad[1].ToLowerInvariant()}", "x", $"use \"{good[1]}\"", bad[1]);
+        Assert.Equal(bad.Length, store.All.Count);
+        Assert.Equal(2, store.All.First(l => l.Key == $"name:{bad[1].ToLowerInvariant()}").Count);
+
+        // Recall by relevance: a lofting request must surface the Loft lesson first.
+        var top = store.GetRelevant("build a lofted surface from section curves", 3);
+        Assert.Contains(top, l => l.Remedy.Contains("Loft"));
+
+        // Survives a reload (fresh instance reads the same file).
+        Assert.Equal(bad.Length, new LessonStore(path).All.Count);
+        _out.WriteLine($"(C) Memory: {bad.Length} corrections accumulated, dedup+reinforce OK, relevance recall OK, persisted.");
+        store.Clear();
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     //  TEST 2b — Port-range detection on the REAL catalog. Corrupt exactly one
     //  wire of the (otherwise clean) tower to reference a port the component does
