@@ -139,6 +139,28 @@ public class SimulationTests
             $"'{hallucinated}' must NOT silently resolve to '{real}' — it should surface as unresolvable so repair fixes it.");
     }
 
+    // TYPE compatibility (review Weakness #2, part 2). A scalar number wired into a geometry input
+    // must be flagged — but the conservative check must NOT fire on any valid scenario (the complex
+    // tower + stress completion tests run WITH TypeOfMirror and still assert zero issues).
+    [Fact]
+    public void Validator_flags_a_clear_type_mismatch_number_into_geometry()
+    {
+        // Guard: this only proves anything if the catalog types these as Number / geometry.
+        Assert.Equal("Number", TypeOfMirror("Series", 0, true));
+        var moveIn0 = TypeOfMirror("Move", 0, false);
+        Assert.True(moveIn0 is "Geometry" or "Curve" or "Brep" or "Mesh",
+            $"expected Move input 0 to be a geometry type, got '{moveIn0}'");
+
+        var script = new ScriptDefinition { SolutionName = "type mismatch" };
+        script.Components.Add(new ComponentDef { Id = 1, Name = "Series" });
+        script.Components.Add(new ComponentDef { Id = 2, Name = "Move" });
+        script.Connections.Add(new ConnectionDef { FromComponent = 1, FromOutput = 0, ToComponent = 2, ToInput = 0 });
+        script.Groups.Add(new GroupDef { Name = "x", ComponentIds = new() { 1, 2 }, Reasoning = "test" });
+
+        var issues = ScriptValidator.Validate(script, CanResolve, ArityOf, TypeOfMirror);
+        Assert.Contains(issues, i => i.Code == "TYPE_MISMATCH");
+    }
+
     /// <summary>
     /// Mirror of MantisService.PortArityOf: the (inputs, outputs) the SAME catalog
     /// advertises for a component, or null when unknown (specials/params aren't in the
@@ -150,6 +172,15 @@ public class SimulationTests
     {
         var info = FindByName(name);
         return info == null ? null : (info.Inputs.Count, info.Outputs.Count);
+    }
+
+    /// <summary>Mirror of MantisService.TypeOf — the catalog TypeName of a component's port.</summary>
+    private static string? TypeOfMirror(string name, int port, bool isOutput)
+    {
+        var info = FindByName(name);
+        if (info == null) return null;
+        var ports = isOutput ? info.Outputs : info.Inputs;
+        return (port >= 0 && port < ports.Count) ? ports[port].TypeName : null;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -172,7 +203,7 @@ public class SimulationTests
 
         // Uses the REAL shipping validator (Mantis.Plugin.ScriptBuilder.ScriptValidator),
         // now with catalog-backed port arity so the port-range check runs too.
-        var issues = ScriptValidator.Validate(script!, CanResolve, ArityOf);
+        var issues = ScriptValidator.Validate(script!, CanResolve, ArityOf, TypeOfMirror);
 
         // Four planted defects must each be reported, with the right code/severity.
         Assert.Contains(issues, i => i.Code == "UNRESOLVABLE_NAME" && i.Message.Contains("Quantum Twist Engine"));
@@ -231,7 +262,7 @@ public class SimulationTests
 
             // ---- Invariants: must be a clean, buildable script (REAL validator,
             //      now including catalog-backed PORT-RANGE validation) ----
-            var issues = ScriptValidator.Validate(script!, CanResolve, ArityOf);
+            var issues = ScriptValidator.Validate(script!, CanResolve, ArityOf, TypeOfMirror);
 
             // ---- Real auto-layout: every component placed, no two overlapping ----
             var layout = new LayoutEngine().ComputeLayout(script!);
@@ -338,7 +369,7 @@ public class SimulationTests
         var failures = new List<string>();
         foreach (var (name, sc) in scripts)
         {
-            var issues = ScriptValidator.Validate(sc, CanResolve, ArityOf);
+            var issues = ScriptValidator.Validate(sc, CanResolve, ArityOf, TypeOfMirror);
             var layout = new LayoutEngine().ComputeLayout(sc);
             var seen = new HashSet<(float, float)>();
             int overlaps = layout.Values.Count(p => !seen.Add((p.X, p.Y)));
@@ -363,7 +394,7 @@ public class SimulationTests
         convo.AddUserMessage("Base: parametric twisting tower.");
         convo.AddAssistantMessage(TowerBase);
         var baseIds = script!.Components.Select(c => c.Id).ToHashSet();
-        Assert.Empty(ScriptValidator.Validate(script, CanResolve, ArityOf));
+        Assert.Empty(ScriptValidator.Validate(script, CanResolve, ArityOf, TypeOfMirror));
 
         var prevIds = baseIds;
         for (int k = 1; k <= K; k++)
@@ -378,7 +409,7 @@ public class SimulationTests
             script.Groups.Add(new GroupDef { Name = $"Readout {k}", ComponentIds = new() { sliderId, panelId }, Reasoning = $"Stage {k}: a panel echoes a value for inspection without disturbing prior stages." });
             convo.AddAssistantMessage("(updated, building on top)");
 
-            var issues = ScriptValidator.Validate(script, CanResolve, ArityOf);
+            var issues = ScriptValidator.Validate(script, CanResolve, ArityOf, TypeOfMirror);
             Assert.True(issues.Count == 0, $"iteration {k} introduced defects: {string.Join(",", issues.Select(i => i.Code))}");
             var curIds = script.Components.Select(c => c.Id).ToHashSet();
             Assert.True(prevIds.IsSubsetOf(curIds), $"iteration {k} dropped prior components — not building on top.");
@@ -438,7 +469,7 @@ public class SimulationTests
         // Pristine base is port-clean (no false positives against real catalog arity).
         var clean = parser.ParseComplete(TowerBase);
         Assert.NotNull(clean);
-        Assert.DoesNotContain(ScriptValidator.Validate(clean!, CanResolve, ArityOf),
+        Assert.DoesNotContain(ScriptValidator.Validate(clean!, CanResolve, ArityOf, TypeOfMirror),
             i => i.Code == "PORT_OUT_OF_RANGE");
 
         // Corrupt ONE wire: feed Loft (id 12, which has just 2 inputs) on input #9.
@@ -446,7 +477,7 @@ public class SimulationTests
         var wire = corrupt.Connections.First(c => c.ToComponent == 12);
         wire.ToInput = 9;
 
-        var issues = ScriptValidator.Validate(corrupt, CanResolve, ArityOf);
+        var issues = ScriptValidator.Validate(corrupt, CanResolve, ArityOf, TypeOfMirror);
 
         Assert.Contains(issues, i => i.Code == "PORT_OUT_OF_RANGE"
                                      && i.Severity == IssueSeverity.Error

@@ -208,7 +208,7 @@ public class MantisService : IDisposable
     public Eval.EvalScore ScoreStructural(Eval.EvalCase c, ScriptDefinition? script)
     {
         bool clean = script != null
-            && !ScriptValidator.HasErrors(ScriptValidator.Validate(script, _factory.CanResolve, PortArityOf));
+            && !ScriptValidator.HasErrors(ScriptValidator.Validate(script, _factory.CanResolve, PortArityOf, TypeOf));
         return Eval.EvalScorer.ScoreStructural(c, script, _factory.CanResolve, clean);
     }
 
@@ -458,7 +458,7 @@ public class MantisService : IDisposable
         const int maxRounds = 2;
 
         var errors = ScriptValidator.Errors(
-            ScriptValidator.Validate(script, _factory.CanResolve, PortArityOf));
+            ScriptValidator.Validate(script, _factory.CanResolve, PortArityOf, TypeOf));
 
         for (int round = 1; round <= maxRounds && errors.Count > 0; round++)
         {
@@ -490,7 +490,7 @@ public class MantisService : IDisposable
                 break;
 
             var correctedErrors = ScriptValidator.Errors(
-                ScriptValidator.Validate(corrected, _factory.CanResolve, PortArityOf));
+                ScriptValidator.Validate(corrected, _factory.CanResolve, PortArityOf, TypeOf));
 
             // Accept ONLY a strict improvement; otherwise keep the best and stop so a
             // worse re-roll can't regress the script.
@@ -518,6 +518,16 @@ public class MantisService : IDisposable
     {
         var info = _registry.FindByName(name);
         return info == null ? null : (info.Inputs.Count, info.Outputs.Count);
+    }
+
+    /// <summary>The TypeName of a component's port (output or input) from the same catalog — lets
+    /// the validator catch a scalar number wired into a geometry port. Null when unknown.</summary>
+    private string? TypeOf(string name, int port, bool isOutput)
+    {
+        var info = _registry.FindByName(name);
+        if (info == null) return null;
+        var ports = isOutput ? info.Outputs : info.Inputs;
+        return (port >= 0 && port < ports.Count) ? ports[port].TypeName : null;
     }
 
     /// <summary>
@@ -569,6 +579,9 @@ public class MantisService : IDisposable
                 case "DANGLING_CONNECTION":
                     sb.AppendLine($"  - {e.Message} Add the missing component or delete that connection.");
                     break;
+                case "TYPE_MISMATCH":
+                    sb.AppendLine($"  - {e.Message} Rewire so the data types match (insert a converter, or pick a component whose output type fits the target input).");
+                    break;
                 case "DUPLICATE_ID":
                     sb.AppendLine($"  - {e.Message} Give every component a unique id and update its connections to match.");
                     break;
@@ -593,7 +606,7 @@ public class MantisService : IDisposable
     private void ReportStructuralIssues(ScriptDefinition script)
     {
         var errors = ScriptValidator.Errors(
-            ScriptValidator.Validate(script, _factory.CanResolve, PortArityOf));
+            ScriptValidator.Validate(script, _factory.CanResolve, PortArityOf, TypeOf));
         if (errors.Count == 0) return;
 
         var shown = errors.Take(6).Select(e => "  - " + e.Message);

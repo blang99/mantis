@@ -46,7 +46,8 @@ public static class ScriptValidator
     public static List<ScriptIssue> Validate(
         ScriptDefinition? script,
         Func<string, bool> canResolve,
-        Func<string, (int Inputs, int Outputs)?>? portArity = null)
+        Func<string, (int Inputs, int Outputs)?>? portArity = null,
+        Func<string, int, bool, string?>? typeOf = null)
     {
         var issues = new List<ScriptIssue>();
 
@@ -161,6 +162,26 @@ public static class ScriptValidator
                                   $"(valid 0–{Math.Max(ta.Inputs - 1, 0)})."
                     });
             }
+
+            // --- TYPE compatibility (conservative): flag ONLY the clearest mismatch — a scalar
+            //   number wired to/from a geometry port. Unknown types or the Generic wildcard are
+            //   never flagged, since Grasshopper's coercion is permissive. ---
+            if (typeOf != null
+                && idToName.TryGetValue(conn.FromComponent, out var fromTn)
+                && idToName.TryGetValue(conn.ToComponent, out var toTn))
+            {
+                var srcType = typeOf(fromTn, conn.FromOutput, true);
+                var dstType = typeOf(toTn, conn.ToInput, false);
+                if (IsClearTypeMismatch(srcType, dstType))
+                    issues.Add(new ScriptIssue
+                    {
+                        Severity = IssueSeverity.Error,
+                        Code = "TYPE_MISMATCH",
+                        ComponentId = conn.ToComponent,
+                        Message = $"Output of component {conn.FromComponent} (\"{fromTn}\", {srcType}) is wired into a " +
+                                  $"{dstType} input of component {conn.ToComponent} (\"{toTn}\") — incompatible types."
+                    });
+            }
         }
 
         // --- Stages (groups) must cover every component exactly once and narrate ---
@@ -223,4 +244,20 @@ public static class ScriptValidator
 
     public static List<ScriptIssue> Errors(IEnumerable<ScriptIssue> issues) =>
         issues.Where(i => i.Severity == IssueSeverity.Error).ToList();
+
+    // Conservative type buckets. Anything not in either bucket (Point, Vector, Plane, Domain,
+    // Transform, Generic, …) is treated as "could coerce" and is NEVER flagged.
+    private static readonly HashSet<string> NumericTypes = new(StringComparer.OrdinalIgnoreCase)
+        { "Number", "Integer", "Boolean", "Double", "Int", "Bool" };
+    private static readonly HashSet<string> GeometryTypes = new(StringComparer.OrdinalIgnoreCase)
+        { "Curve", "Surface", "Brep", "Mesh", "Geometry", "Rectangle", "Polyline", "Box", "Solid", "SubD" };
+
+    /// <summary>True only for the clearest mismatch: a scalar number wired to/from a geometry port.</summary>
+    private static bool IsClearTypeMismatch(string? a, string? b)
+    {
+        if (string.IsNullOrWhiteSpace(a) || string.IsNullOrWhiteSpace(b)) return false;
+        bool aNum = NumericTypes.Contains(a!), bNum = NumericTypes.Contains(b!);
+        bool aGeo = GeometryTypes.Contains(a!), bGeo = GeometryTypes.Contains(b!);
+        return (aNum && bGeo) || (aGeo && bNum);
+    }
 }
