@@ -1,0 +1,35 @@
+[
+  { "id": "p01", "tier": "primitive", "prompt": "Create a circle with radius 5.", "minComponents": 2, "traits": ["Number Slider", "Circle"], "geometry": "curve" },
+  { "id": "p02", "tier": "primitive", "prompt": "Make a rectangle 20 by 30.", "minComponents": 2, "traits": ["Rectangle"], "geometry": "curve" },
+  { "id": "p03", "tier": "primitive", "prompt": "Draw a hexagon with an adjustable radius.", "minComponents": 2, "traits": ["Polygon", "Number Slider"], "geometry": "curve" },
+  { "id": "p04", "tier": "primitive", "prompt": "Create a box 10 x 10 x 10 at the origin.", "minComponents": 2, "traits": ["Box"], "geometry": "solid" },
+  { "id": "p05", "tier": "primitive", "prompt": "Make a sphere with a slider for the radius.", "minComponents": 2, "traits": ["Sphere", "Number Slider"], "geometry": "solid" },
+  { "id": "p06", "tier": "primitive", "prompt": "Draw a line between two points.", "minComponents": 2, "traits": ["Line"], "geometry": "curve" },
+  { "id": "p07", "tier": "primitive", "prompt": "Create a circle and extrude it 20 units upward into a cylinder.", "minComponents": 4, "traits": ["Circle", "Extrude", "Unit Z"], "geometry": "solid" },
+  { "id": "p08", "tier": "primitive", "prompt": "Make a point at coordinates 3, 4, 5.", "minComponents": 1, "traits": ["Construct Point"], "geometry": "point" },
+
+  { "id": "a01", "tier": "array", "prompt": "Make a vertical stack of circles, like the floor outlines of a tower.", "minComponents": 5, "traits": ["Circle", "Series", "Move"], "geometry": "curve" },
+  { "id": "a02", "tier": "array", "prompt": "Array 10 boxes in a straight row evenly spaced.", "minComponents": 4, "traits": ["Box", "Series", "Move"], "geometry": "solid" },
+  { "id": "a03", "tier": "array", "prompt": "Create a grid of points, N by M, with adjustable spacing.", "minComponents": 3, "traits": ["Number Slider", "Series"], "geometry": "point" },
+  { "id": "a04", "tier": "array", "prompt": "Make a radial array of 12 lines rotating around the origin like spokes.", "minComponents": 4, "traits": ["Rotate", "Series", "Line"], "geometry": "curve" },
+  { "id": "a05", "tier": "array", "prompt": "Stack rectangles into a tower, each floor a fixed height above the last.", "minComponents": 5, "traits": ["Rectangle", "Series", "Move"], "geometry": "curve" },
+  { "id": "a06", "tier": "array", "prompt": "Create a row of spheres whose radius grows from small to large.", "minComponents": 4, "traits": ["Sphere", "Series", "Move"], "geometry": "solid" },
+  { "id": "a07", "tier": "array", "prompt": "Divide a circle into 24 points around its circumference.", "minComponents": 2, "traits": ["Circle", "Divide Curve"], "geometry": "point" },
+  { "id": "a08", "tier": "array", "prompt": "Make a staircase of boxes, each stepped over and up from the previous.", "minComponents": 5, "traits": ["Box", "Series", "Move"], "geometry": "solid" },
+
+  { "id": "m01", "tier": "multistage", "prompt": "Build a twisting tower: stack rectangular floor plates and rotate each one a bit more than the last.", "minComponents": 6, "traits": ["Rectangle", "Series", "Rotate", "Move"], "geometry": "curve" },
+  { "id": "m02", "tier": "multistage", "prompt": "Make a tapering cylinder tower: stacked circles that shrink as they go up, then loft them.", "minComponents": 7, "traits": ["Circle", "Series", "Loft"], "geometry": "surface" },
+  { "id": "m03", "tier": "multistage", "prompt": "Create a wavy line of points using a sine function and connect them into a curve.", "minComponents": 5, "traits": ["Series", "Sine", "Interpolate"], "geometry": "curve" },
+  { "id": "m04", "tier": "multistage", "prompt": "Extrude a hexagon into a prism and then scale it taller with a slider.", "minComponents": 5, "traits": ["Polygon", "Extrude", "Scale"], "geometry": "solid" },
+  { "id": "m05", "tier": "multistage", "prompt": "Make a spiral of points climbing upward, then pipe a curve through them.", "minComponents": 6, "traits": ["Series", "Rotate", "Pipe"], "geometry": "solid" },
+  { "id": "m06", "tier": "multistage", "prompt": "Create a grid of circles and extrude each into a column.", "minComponents": 6, "traits": ["Circle", "Series", "Extrude"], "geometry": "solid" },
+  { "id": "m07", "tier": "multistage", "prompt": "Loft between three circles at different heights and radii into a vase shape.", "minComponents": 6, "traits": ["Circle", "Loft", "Move"], "geometry": "surface" },
+
+  { "id": "r01", "tier": "realproject", "prompt": "Panelize a freeform surface into a grid of quad panels, one panel per UV cell.", "minComponents": 5, "traits": ["Surface", "Divide Domain", "Isotrim"], "geometry": "surface" },
+  { "id": "r02", "tier": "realproject", "prompt": "Create a diagrid structural facade on a surface, one diagonal member per bay, kept grafted per cell.", "minComponents": 6, "traits": ["Surface", "Graft"], "geometry": "curve" },
+  { "id": "r03", "tier": "realproject", "prompt": "Generate a louver system: one rotating fin per floor, angle driven by an attractor point.", "minComponents": 7, "traits": ["Series", "Rotate"], "geometry": "surface" },
+  { "id": "r04", "tier": "realproject", "prompt": "Use Kangaroo to relax a mesh grid into a minimal surface anchored at its corners.", "minComponents": 5, "traits": ["Kangaroo", "Mesh"], "geometry": "mesh" },
+  { "id": "r05", "tier": "realproject", "prompt": "Optimize a tower's floor rotation to minimize overlap using Galapagos.", "minComponents": 6, "traits": ["Galapagos", "Rotate"], "geometry": "curve" },
+  { "id": "r06", "tier": "realproject", "prompt": "Take a referenced Rhino surface and populate it with a Voronoi pattern of openings.", "minComponents": 5, "traits": ["Surface", "Voronoi", "Populate"], "geometry": "surface" },
+  { "id": "r07", "tier": "realproject", "prompt": "Build a gridshell: a quad grid on a doubly-curved surface, extract the edges as structural members, keep the data tree intact per bay.", "minComponents": 7, "traits": ["Surface", "Graft", "Isotrim"], "geometry": "curve" }
+]

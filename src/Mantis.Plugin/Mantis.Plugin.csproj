@@ -39,6 +39,7 @@
     <EmbeddedResource Include="AI\Prompts\*.txt" />
     <EmbeddedResource Include="AI\Prompts\*.json" />
     <EmbeddedResource Include="Knowledge\Data\*.json" />
+    <EmbeddedResource Include="Eval\*.json" />
     <EmbeddedResource Include="Resources\Fonts\*.ttf" />
     <EmbeddedResource Include="Resources\mantis-icon.png" />
   </ItemGroup>

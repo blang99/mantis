@@ -33,6 +33,8 @@
     <Compile Include="..\Mantis.Plugin\AI\ClaudeClient.cs" Link="Linked\ClaudeClient.cs" />
     <Compile Include="..\Mantis.Plugin\AI\ILlmClient.cs" Link="Linked\ILlmClient.cs" />
     <Compile Include="..\Mantis.Plugin\Knowledge\LessonStore.cs" Link="Linked\LessonStore.cs" />
+    <Compile Include="..\Mantis.Plugin\Eval\EvalModels.cs" Link="Linked\EvalModels.cs" />
+    <Compile Include="..\Mantis.Plugin\Eval\EvalScorer.cs" Link="Linked\EvalScorer.cs" />
   </ItemGroup>
 
 </Project>
