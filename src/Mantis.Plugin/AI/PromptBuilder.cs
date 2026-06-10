@@ -330,6 +330,14 @@ public class PromptBuilder
         sb.AppendLine("=== COMPONENT CATALOG (so you name real components) ===");
         sb.AppendLine(catalog);
 
+        var commands = _registry.BuildCommandReference();
+        if (!string.IsNullOrWhiteSpace(commands))
+        {
+            sb.AppendLine();
+            sb.AppendLine("=== RHINO COMMANDS (name these when asked how to do something in Rhino) ===");
+            sb.Append(commands);
+        }
+
         if (!string.IsNullOrWhiteSpace(canvasState))
         {
             sb.AppendLine();

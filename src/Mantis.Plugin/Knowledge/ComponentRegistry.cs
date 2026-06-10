@@ -72,6 +72,24 @@ public class ComponentRegistry
         return sb.ToString();
     }
 
+    /// <summary>
+    /// Compact Rhino command reference for Ask mode — "Category: Cmd1, Cmd2, …" per line, so
+    /// MANTIS can name real Rhino commands when answering "how do I X in Rhino" questions.
+    /// </summary>
+    public string BuildCommandReference()
+    {
+        if (_commands.Count == 0) return "";
+        var sb = new System.Text.StringBuilder();
+        foreach (var grp in _commands
+                     .Where(c => !string.IsNullOrWhiteSpace(c.Name))
+                     .GroupBy(c => string.IsNullOrWhiteSpace(c.Category) ? "Other" : c.Category))
+        {
+            sb.Append(grp.Key).Append(": ");
+            sb.AppendLine(string.Join(", ", grp.Select(c => c.Name)));
+        }
+        return sb.ToString();
+    }
+
     public ComponentInfo? FindByName(string name)
     {
         if (_byName.TryGetValue(name, out var info))
