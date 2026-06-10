@@ -161,6 +161,72 @@ public class SimulationTests
         Assert.Contains(issues, i => i.Code == "TYPE_MISMATCH");
     }
 
+    // ═════════════════════════════════════════════════════════════════════════
+    //  COMPLEXITY RAMP — drive the REAL build engine (parse → validate → layout)
+    //  with a graph that climbs a tier of complexity every iteration, and confirm
+    //  it stays clean (zero defects, zero overlaps, everything placed) as it grows.
+    //  Stresses the deterministic engine; the LLM-generation ramp is MantisEval run
+    //  live on the user's model. A failure here is a real engine ceiling.
+    // ═════════════════════════════════════════════════════════════════════════
+
+    /// <summary>A valid graph of <paramref name="towers"/> independent parametric towers (replicas
+    /// of the known-good TowerBase, id-offset, positions cleared for the layout engine) — a reliable
+    /// way to ramp REAL complexity (components, stages, parallel sub-graphs) without authoring
+    /// invalid wiring.</summary>
+    private static ScriptDefinition GenComplexGraph(int towers)
+    {
+        var basis = new ResponseParser().ParseComplete(TowerBase)!;
+        var combined = new ScriptDefinition { SolutionName = $"Ramp-{towers}", SolutionDescription = $"{towers} parametric towers" };
+        for (int r = 0; r < towers; r++)
+        {
+            int off = r * 1000;
+            foreach (var c in basis.Components)
+                combined.Components.Add(new ComponentDef { Id = c.Id + off, Name = c.Name, NickName = c.NickName, InputValues = c.InputValues });
+            foreach (var k in basis.Connections)
+                combined.Connections.Add(new ConnectionDef { FromComponent = k.FromComponent + off, FromOutput = k.FromOutput, ToComponent = k.ToComponent + off, ToInput = k.ToInput });
+            foreach (var g in basis.Groups)
+                combined.Groups.Add(new GroupDef { Name = $"{g.Name} #{r + 1}", ComponentIds = g.ComponentIds.Select(id => id + off).ToList(), Reasoning = g.Reasoning, Color = g.Color });
+        }
+        return combined;
+    }
+
+    [Fact]
+    public void ComplexityRamp_PipelineStaysCleanAsComplexityClimbs()
+    {
+        const int maxTier = 40;
+        var report = new StringBuilder();
+        report.AppendLine("# MANTIS — complexity ramp (deterministic build engine)");
+        report.AppendLine();
+        report.AppendLine("Each tier adds another full parametric tower; the whole graph is round-tripped through the");
+        report.AppendLine("REAL ResponseParser, validated (names + ports + types + stage coverage) and auto-laid-out.");
+        report.AppendLine();
+
+        for (int tier = 1; tier <= maxTier; tier++)
+        {
+            var script = GenComplexGraph(tier);
+
+            // Round-trip through the REAL parser (stress it with the growing JSON).
+            var json = JsonSerializer.Serialize(script);
+            var parsed = new ResponseParser().ParseComplete(json);
+            Assert.True(parsed != null, $"tier {tier}: parser FAILED on a {script.Components.Count}-component graph");
+
+            var errors = ScriptValidator.Errors(ScriptValidator.Validate(parsed!, CanResolve, ArityOf, TypeOfMirror));
+            var layout = new LayoutEngine().ComputeLayout(parsed!);
+            var seen = new HashSet<(float, float)>();
+            int overlaps = layout.Values.Count(p => !seen.Add((p.X, p.Y)));
+
+            report.AppendLine($"tier {tier,2}: {parsed!.Components.Count,4} components · {parsed.Connections.Count,4} wires · "
+                              + $"{parsed.Groups.Count,3} stages → errors={errors.Count} overlaps={overlaps} placed={layout.Count}");
+
+            Assert.True(errors.Count == 0, $"tier {tier}: {errors.Count} validation errors at {parsed.Components.Count} components");
+            Assert.True(overlaps == 0, $"tier {tier}: {overlaps} layout overlaps at {parsed.Components.Count} components");
+            Assert.Equal(parsed.Components.Count, layout.Count);
+        }
+
+        WriteReport(report.ToString());
+        _out.WriteLine(report.ToString());
+    }
+
     /// <summary>
     /// Mirror of MantisService.PortArityOf: the (inputs, outputs) the SAME catalog
     /// advertises for a component, or null when unknown (specials/params aren't in the
