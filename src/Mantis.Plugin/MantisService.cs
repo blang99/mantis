@@ -504,6 +504,16 @@ public class MantisService : IDisposable
                         ? string.Join(", ", suggestions)
                         : "(no close match — pick a different catalog component that achieves the same result)";
                     sb.AppendLine($"  - Component id {e.ComponentId}: \"{badName}\" is NOT in the catalog. Use one of: {hint}");
+
+                    // LEARN (Phase 4): a hallucinated name with a clear best match is a reusable
+                    // correction — record it so MANTIS doesn't reach for that bad name again.
+                    if (suggestions.Count > 0 && !string.IsNullOrWhiteSpace(badName)
+                        && MantisSettings.Get("useLessons") != "off")
+                        Knowledge.LessonStore.Shared.Record(
+                            key: $"name:{badName.ToLowerInvariant()}",
+                            trigger: $"\"{badName}\" is not a real Grasshopper component",
+                            remedy: $"use \"{suggestions[0]}\"",
+                            tags: $"{badName} {suggestions[0]}");
                     break;
                 }
                 case "PORT_OUT_OF_RANGE":

@@ -147,6 +147,20 @@ public class PromptBuilder
         sb.AppendLine("- color is optional: a hex like \"#5CDB7A\". If omitted, MANTIS auto-assigns a distinct tint per stage.");
         sb.AppendLine();
 
+        // Learned corrections from this user's PAST builds (Phase 4 — local memory): the most
+        // relevant lessons MANTIS recorded when it previously got something wrong. Applying
+        // these is how MANTIS stops repeating its own mistakes.
+        if (MantisSettings.Get("useLessons") != "off")
+        {
+            var lessons = LessonStore.Shared.BuildPromptBlock(userRequest, 6);
+            if (!string.IsNullOrWhiteSpace(lessons))
+            {
+                sb.AppendLine("=== LEARNED CORRECTIONS (from past builds — apply these) ===");
+                sb.Append(lessons);
+                sb.AppendLine();
+            }
+        }
+
         // User's standing preferences (units, favourite plugins, house style). Placed
         // BEFORE the output-format mandate so the JSON contract still has the last word.
         AppendCustomInstructions(sb);
