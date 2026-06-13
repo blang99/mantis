@@ -489,71 +489,81 @@ img{max-width:100%}
    0.5.1 — AMBIENT REPOSITION: orb hero · day-track · build demo
    ============================================================ */
 
-/* ---- the orb (hero prime slot) ---- */
-.orb-wrap{position:relative;border:1px solid var(--line-2);border-radius:16px;overflow:hidden;
-    background:linear-gradient(180deg,var(--panel),var(--bg-2))}
-.orb-wrap::before{content:"";position:absolute;inset:-1px;border-radius:17px;padding:1px;pointer-events:none;
-    background:linear-gradient(140deg,var(--green-d),transparent 45%,transparent 70%,var(--green-dd));
-    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-    -webkit-mask-composite:xor;mask-composite:exclude;opacity:.6}
-.orb-stage{--orb:var(--green);--orbglow:rgba(92,219,122,.30);
-    position:relative;height:392px;display:grid;place-items:center;overflow:hidden}
-.orb-stage::after{content:"";position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(circle at 50% 46%,var(--orbglow),transparent 60%);
-    transition:background .8s var(--ease)}
-.orb{position:relative;width:120px;height:120px;display:grid;place-items:center;z-index:2}
-.orb-core{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff,var(--orb) 55%,transparent 78%);
-    box-shadow:0 0 26px 4px var(--orb);animation:orbBreathe 3.4s ease-in-out infinite;transition:background .6s,box-shadow .6s}
-.orb-ring{position:absolute;inset:0;margin:auto;width:34px;height:34px;border-radius:50%;
-    border:1px solid var(--orb);opacity:0;animation:orbPulse 3.4s ease-out infinite}
-.orb-ring.r2{animation-delay:1.13s}
-.orb-ring.r3{animation-delay:2.26s}
-@keyframes orbBreathe{0%,100%{transform:scale(.92);opacity:.85}50%{transform:scale(1.08);opacity:1}}
-@keyframes orbPulse{0%{transform:scale(1);opacity:.55}80%{opacity:0}100%{transform:scale(3.1);opacity:0}}
-.orb-caption{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-family:var(--font-mono);
-    font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);transition:color .5s,opacity .5s;z-index:2}
-.orb-stage.is-aware,.orb-stage.is-active{--orb:var(--amber);--orbglow:rgba(232,184,77,.26)}
-.orb-stage.is-aware .orb-caption,.orb-stage.is-active .orb-caption{color:var(--amber)}
+/* ---- the orb — a living bead of light (no chrome), mirrors CompanionOrb.cs ---- */
+.orb-scene{--orb:var(--green);--orb-rgb:92,219,122;
+    position:relative;min-height:500px;z-index:2}
+/* soft ambient halo that bleeds into the hero — presence, not a panel */
+.orb-aura{position:absolute;top:38%;left:50%;width:520px;height:520px;border-radius:50%;
+    transform:translate(-50%,-50%);pointer-events:none;
+    background:radial-gradient(circle,rgba(var(--orb-rgb),.20) 0%,rgba(var(--orb-rgb),.07) 33%,transparent 62%);
+    animation:auraBreathe 6s ease-in-out infinite;transition:background .8s var(--ease)}
+.orb{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);
+    width:160px;height:160px;display:grid;place-items:center;z-index:2}
+/* the bead: a bright 3D drop of light with a specular highlight */
+.orb-bead{position:relative;width:38px;height:38px;border-radius:50%;
+    background:radial-gradient(circle at 36% 30%,#fff 0%,var(--orb) 46%,rgba(var(--orb-rgb),.6) 70%,transparent 82%);
+    box-shadow:0 0 30px 6px rgba(var(--orb-rgb),.85),0 0 80px 24px rgba(var(--orb-rgb),.40);
+    animation:beadBreathe 3.6s ease-in-out infinite;transition:background .6s,box-shadow .6s}
+/* watching pulses radiating outward — the orb is alive and scanning */
+.orb-ring{position:absolute;inset:0;margin:auto;width:46px;height:46px;border-radius:50%;
+    border:1px solid rgba(var(--orb-rgb),.7);opacity:0;animation:orbWatch 4.2s ease-out infinite}
+.orb-ring.r2{animation-delay:1.4s}
+.orb-ring.r3{animation-delay:2.8s}
+@keyframes beadBreathe{0%,100%{transform:scale(.9)}50%{transform:scale(1.12)}}
+@keyframes auraBreathe{0%,100%{transform:translate(-50%,-50%) scale(.94);opacity:.82}50%{transform:translate(-50%,-50%) scale(1.06);opacity:1}}
+@keyframes orbWatch{0%{transform:scale(.8);opacity:.5}70%{opacity:0}100%{transform:scale(4.4);opacity:0}}
 
-/* live label flips amber while aware/active */
-.orb-stage.is-aware ~ .orb-legend, .orb-stage.is-active ~ .orb-legend{}
-#orb-live.amber .live-dot{background:var(--amber);box-shadow:0 0 8px var(--amber)}
-#orb-live.amber{color:var(--amber)}
+/* aware / nudge → the product's amber (earned attention), breathing quickens */
+.orb-scene.is-aware,.orb-scene.is-active{--orb:#f59e0b;--orb-rgb:245,158,11}
+.orb-scene.is-active .orb-bead{animation-duration:1.9s}
+.orb-scene.is-active .orb-ring{animation-duration:2.4s}
 
-/* the fix card — slides up only when a verified catch fires */
-.fix-card{position:absolute;left:18px;right:18px;bottom:18px;z-index:3;
-    background:rgba(11,18,13,.92);backdrop-filter:blur(8px);border:1px solid var(--line-2);
-    border-radius:12px;padding:15px 16px;box-shadow:0 18px 50px rgba(0,0,0,.5);
-    opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .45s var(--ease),transform .45s var(--ease)}
-.orb-stage.is-active + .orb-caption,.orb-stage.is-active .orb-caption{opacity:0}
-.orb-stage.is-active .fix-card{opacity:1;transform:translateY(0);pointer-events:auto}
-.fix-head{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.62rem;
-    letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
-.fix-spark{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber)}
-.fix-body{color:var(--ink);font-size:.9rem;line-height:1.55;margin-bottom:13px}
-.fix-body b{color:var(--green-br);font-weight:500}
-.fix-actions{display:flex;gap:9px}
+/* floating status line under the orb (no chrome) */
+.orb-caption{position:absolute;top:62%;left:0;right:0;text-align:center;font-family:var(--font-mono);
+    font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+    transition:color .5s,opacity .5s;z-index:2}
+.orb-caption::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:var(--orb);box-shadow:0 0 8px var(--orb);margin-right:10px;vertical-align:middle}
+.orb-scene.is-aware .orb-caption{color:#f59e0b}
+.orb-scene.is-active .orb-caption,.orb-scene.is-fixed .orb-caption{opacity:0}
+
+/* the whisper — a soft, frameless card that blooms from the orb on a verified catch */
+.whisper{position:absolute;top:58%;left:50%;transform:translate(-50%,16px);z-index:3;
+    width:min(380px,84%);text-align:left;
+    background:linear-gradient(180deg,rgba(13,20,15,.78),rgba(5,10,7,.82));
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(245,158,11,.30);border-radius:16px;padding:16px 18px;
+    box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 50px rgba(245,158,11,.10);
+    opacity:0;pointer-events:none;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.orb-scene.is-active .whisper{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.whisper-head{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.6rem;
+    letter-spacing:.14em;text-transform:uppercase;color:#f59e0b;margin-bottom:9px}
+.fix-spark{width:7px;height:7px;border-radius:50%;background:#f59e0b;box-shadow:0 0 9px #f59e0b;flex-shrink:0}
+.whisper-body{color:var(--ink);font-size:.92rem;line-height:1.55;margin-bottom:14px}
+.whisper-body b{color:var(--green-br);font-weight:500}
+.whisper-actions{display:flex;gap:9px}
 .fix-btn{font-family:var(--font-display);font-weight:700;font-size:.72rem;letter-spacing:.04em;
-    border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid transparent;transition:all .2s}
-.fix-btn.primary{background:var(--green);color:var(--bg);box-shadow:0 0 18px var(--glow)}
-.fix-btn.primary:hover{background:var(--green-br)}
+    border-radius:9px;padding:9px 15px;cursor:pointer;border:1px solid transparent;transition:all .2s}
+.fix-btn.primary{background:var(--green);color:var(--bg);box-shadow:0 0 20px var(--glow)}
+.fix-btn.primary:hover{background:var(--green-br);transform:translateY(-1px)}
 .fix-btn.ghost{background:transparent;color:var(--mut);border-color:var(--line-2)}
 .fix-btn.ghost:hover{color:var(--ink);border-color:var(--green-d)}
-.fix-receipt{position:absolute;left:0;right:0;bottom:18px;text-align:center;z-index:3;
-    font-family:var(--font-mono);font-size:.74rem;letter-spacing:.04em;color:var(--mut);
-    opacity:0;transform:translateY(8px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
-.fix-receipt b{color:var(--green-br);font-weight:500}
-.fix-receipt .rcheck{color:var(--green);margin-right:6px}
-.orb-stage.is-fixed .fix-receipt{opacity:1;transform:translateY(0)}
-.orb-stage.is-fixed .orb-caption{opacity:0}
 
-/* state legend under the orb */
-.orb-legend{display:flex;justify-content:center;gap:22px;padding:14px 0 16px;border-top:1px solid var(--line);
+/* the receipt — quiet confirmation, frameless */
+.fix-receipt{position:absolute;top:62%;left:0;right:0;text-align:center;z-index:3;
+    font-family:var(--font-mono);font-size:.78rem;letter-spacing:.03em;color:var(--mut);
+    opacity:0;transform:translateY(8px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.fix-receipt b{color:var(--green-br);font-weight:500}
+.fix-receipt .rcheck{color:var(--green);margin-right:7px}
+.orb-scene.is-fixed .fix-receipt{opacity:1;transform:translateY(0)}
+
+/* state legend — frameless, floating at the base of the scene */
+.orb-legend{position:absolute;bottom:34px;left:0;right:0;display:flex;justify-content:center;gap:24px;z-index:2;
     font-family:var(--font-mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
 .orb-legend .ol{display:inline-flex;align-items:center;gap:7px}
 .dot-clean,.dot-aware,.dot-active{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block}
 .dot-clean{background:var(--green);box-shadow:0 0 7px var(--glow)}
-.dot-aware{background:var(--amber);box-shadow:0 0 7px rgba(232,184,77,.4)}
+.dot-aware{background:#f59e0b;box-shadow:0 0 7px rgba(245,158,11,.45)}
 .dot-active{background:var(--green-br);box-shadow:0 0 9px var(--green-br)}
 
 /* ---- a day with the orb (timeline) ---- */
@@ -622,6 +632,7 @@ img{max-width:100%}
 @media(max-width:480px){.modes-strip{grid-template-columns:1fr}}
 
 @media(max-width:560px){
-    .orb-stage{height:320px}
+    .orb-scene{min-height:420px}
+    .orb-aura{width:380px;height:380px}
     #build-canvas{min-height:280px}
 }
