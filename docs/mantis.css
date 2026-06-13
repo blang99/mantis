@@ -636,3 +636,43 @@ img{max-width:100%}
     .orb-aura{width:380px;height:380px}
     #build-canvas{min-height:280px}
 }
+
+/* ============================================================
+   0.5.1 — DOCKED COMPANION: frameless quick-ask + panel on demand (Siri/Reer)
+   ============================================================ */
+/* the dock — a frameless, glassy quick-ask pill; always present at the base of the scene */
+.ask-dock{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:4;
+    display:flex;align-items:center;gap:11px;width:min(330px,84%);padding:10px 11px 10px 15px;
+    border-radius:999px;background:linear-gradient(180deg,rgba(13,20,15,.72),rgba(5,10,7,.66));
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(92,219,122,.16);
+    box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 30px rgba(92,219,122,.06),inset 0 1px 0 rgba(255,255,255,.04)}
+.ask-mini{width:13px;height:13px;border-radius:50%;flex-shrink:0;
+    background:radial-gradient(circle at 38% 32%,#fff,var(--green) 55%,transparent 80%);
+    box-shadow:0 0 12px 2px rgba(92,219,122,.7);animation:beadBreathe 3.6s ease-in-out infinite}
+.ask-ph{flex:1;font-family:var(--font-body);font-size:.92rem;color:var(--dim);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ask-dock.typing .ask-ph{color:var(--ink)}
+.ask-dock.typing .ask-ph::after{content:"";display:inline-block;width:2px;height:1.02em;
+    background:var(--green-br);margin-left:2px;vertical-align:text-bottom;animation:bcaret 1s step-end infinite}
+.ask-expand{flex-shrink:0;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+    background:rgba(255,255,255,.04);border:1px solid var(--line-2);color:var(--mut);cursor:pointer;transition:all .2s}
+.ask-expand:hover{color:var(--green-br);border-color:var(--green-d);background:rgba(92,219,122,.09)}
+.ask-expand svg{width:14px;height:14px}
+.ask-dock::after{content:"full panel";position:absolute;right:14px;bottom:-19px;font-family:var(--font-mono);
+    font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);opacity:0;transition:opacity .2s}
+.ask-dock:hover::after{opacity:.8}
+
+/* the floating conversation — quick ask, no window. Bubbles, frameless+glassy. */
+.ask-thread{position:absolute;top:6%;left:50%;transform:translateX(-50%);z-index:3;
+    width:min(340px,86%);display:flex;flex-direction:column;gap:9px;
+    opacity:0;transition:opacity .45s var(--ease);pointer-events:none}
+.orb-scene.is-asking .ask-thread{opacity:1}
+.ask-bubble{font-size:.9rem;line-height:1.5;padding:11px 15px;border-radius:16px;max-width:90%;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.ask-bubble.user{align-self:flex-end;background:rgba(92,219,122,.15);border:1px solid rgba(92,219,122,.26);
+    color:var(--ink);border-bottom-right-radius:5px}
+.ask-bubble.ai{align-self:flex-start;background:rgba(13,20,15,.74);border:1px solid var(--line);
+    color:var(--mut);border-bottom-left-radius:5px;opacity:0;transform:translateY(7px);
+    transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.orb-scene.is-asking.answered .ask-bubble.ai{opacity:1;transform:translateY(0)}

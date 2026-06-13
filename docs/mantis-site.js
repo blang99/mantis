@@ -242,44 +242,60 @@ window.mantisCopy=function(btn,text){
   function loadScript(src,cb){var s=document.createElement('script');s.src=src;s.onload=function(){cb(null);};s.onerror=function(){cb(true);};document.head.appendChild(s);}
 })();
 
-/* ---------- 8. THE ORB — ambient presence state machine ---------- */
-(function orb(){
+/* ---------- 8. THE DOCKED COMPANION — quick-ask bubble + ambient catch ---------- */
+(function companion(){
   var stage=document.getElementById('orb-stage'); if(!stage) return;
-  var cap=document.getElementById('orb-caption'), live=document.getElementById('orb-live'),
-      fixBtn=document.getElementById('fix-do');
-  function set(cls,caption,amber){
+  var cap=document.getElementById('orb-caption'), fixBtn=document.getElementById('fix-do'),
+      dock=document.getElementById('ask-dock'), ph=document.getElementById('ask-ph'),
+      typed=document.getElementById('ask-typed');
+  var Q='taper this tower to 12° — put it on a slider';
+  function ambient(cls,caption){
     stage.classList.remove('is-aware','is-active','is-fixed');
     if(cls) stage.classList.add(cls);
-    if(caption!=null) cap.textContent=caption;
-    if(live) live.classList.toggle('amber',!!amber);
+    if(caption!=null && cap) cap.textContent=caption;
   }
-  // reduced-motion: show the meaningful moment (a caught + offered fix), then rest.
-  if(reduce){ set('is-active','',true); return; }
+  function resetDock(){ stage.classList.remove('is-asking','answered'); if(dock) dock.classList.remove('typing'); if(ph) ph.textContent='Ask Mantis…'; }
+
+  // reduced-motion: show the quick-ask answered (the floating exchange); dock rests at its prompt.
+  if(reduce){ if(typed) typed.textContent=Q; stage.classList.add('is-asking','answered'); return; }
 
   var timers=[];
   function at(ms,fn){ timers.push(setTimeout(fn,ms)); }
-  function cycle(){
-    timers.forEach(clearTimeout); timers=[];
-    set(null,'watching · all clear',false);
-    at(2600, function(){ set('is-aware','something just went quiet…',true); });
-    at(5200, function(){ set('is-active',null,true); });        // fix card slides up
-    // auto-resolve if the visitor doesn't click Fix
-    at(9000, function(){ if(stage.classList.contains('is-active')) resolve(); });
-    at(15500, cycle);
+  function clearT(){ timers.forEach(clearTimeout); timers=[]; }
+
+  // BEAT A — you ask, quickly: type into the dock, the reply floats up. No window.
+  function askBeat(next){
+    clearT(); ambient(null,'watching · all clear'); resetDock();
+    if(!dock||!ph){ next(); return; }
+    dock.classList.add('typing'); var i=0;
+    (function type(){
+      if(i<=Q.length){ ph.textContent=Q.slice(0,i++)||'​'; timers.push(setTimeout(type,44)); return; }
+      if(typed) typed.textContent=Q;                 // "send": it moves into the thread
+      dock.classList.remove('typing'); ph.textContent='Ask Mantis…';
+      stage.classList.add('is-asking');
+      at(780, function(){ stage.classList.add('answered'); });
+      at(4400, function(){ stage.classList.remove('is-asking','answered'); at(1100,next); });
+    })();
   }
-  function resolve(){
-    timers.forEach(clearTimeout); timers=[];
-    set('is-fixed','',false);
-    at(4200, cycle);
+
+  // BEAT B — it catches something on its own. No asking. (the ambient story)
+  function catchBeat(next){
+    clearT(); ambient(null,'watching · all clear');
+    at(2200, function(){ ambient('is-aware','something just went quiet…'); });
+    at(4800, function(){ ambient('is-active',null); });   // the whisper blooms
+    at(8400, function(){ ambient('is-fixed',''); });      // the receipt
+    at(12200, next);
   }
-  if(fixBtn) fixBtn.addEventListener('click',resolve);
-  // only run the cycle while the hero is on screen
+  function resolveEarly(){ if(stage.classList.contains('is-active')){ clearT(); ambient('is-fixed',''); at(3400, start); } }
+  if(fixBtn) fixBtn.addEventListener('click', resolveEarly);
+
+  function start(){ askBeat(function(){ catchBeat(start); }); }
   if('IntersectionObserver'in window){
     var io=new IntersectionObserver(function(es){
-      es.forEach(function(e){ if(e.isIntersecting) cycle(); else { timers.forEach(clearTimeout); timers=[]; } });
+      es.forEach(function(e){ if(e.isIntersecting) start(); else clearT(); });
     },{threshold:.3});
     io.observe(stage);
-  } else cycle();
+  } else start();
 })();
 
 /* ---------- 9. BUILD DEMO — type → think → tower ---------- */
