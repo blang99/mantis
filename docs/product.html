@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MANTIS — Product: modes, image-to-geometry, self-healing</title>
+<meta name="description" content="How MANTIS builds: streamed reasoning, four intent modes, image-to-geometry, click-to-jump plan steps, self-healing graphs, and provider-agnostic models."/>
+<link rel="canonical" href="https://blang99.github.io/mantis/product.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Space+Grotesk:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="mantis.css"/>
+</head>
+<body>
+<canvas id="field"></canvas>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a>
+    <button class="nav-burger" aria-label="Menu">☰</button>
+    <div class="nav-links">
+      <a href="why.html">Why Mantis</a>
+      <a href="product.html" class="active">Product</a>
+      <a href="story.html">Story</a>
+      <a href="https://github.com/blang99/mantis" target="_blank" rel="noopener">GitHub</a>
+      <a href="setup.html" class="nav-cta">Get started</a>
+    </div>
+  </div>
+</nav>
+<div class="page">
+
+<header class="page-hero">
+  <div class="hero-aurora"></div>
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span>Product</span>
+    <h1>Everything MANTIS does,<br/>and how it does it.</h1>
+    <p class="lead">A streamed plan you can read, four intent modes, image-to-geometry, click-to-jump plan steps, and a builder that heals its own warnings before it hands the file back.</p>
+  </div>
+</header>
+
+<!-- ═══ DEMO PLACEHOLDER ═══ -->
+<section class="section tight" id="demo">
+  <div class="wrap">
+    <div class="codeframe reveal" style="max-width:920px;margin:0 auto">
+      <div class="cf-bar"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title" style="margin-left:8px;font-family:var(--font-mono);font-size:.68rem;color:var(--dim)">mantis — live build</span></div>
+      <div style="aspect-ratio:16/9;display:grid;place-items:center;background:radial-gradient(ellipse at center,rgba(92,219,122,.06),transparent 70%);text-align:center;padding:40px">
+        <div>
+          <div style="font-family:var(--font-display);font-weight:800;font-size:1.3rem;color:var(--mut);letter-spacing:.04em">▶ Demo recording</div>
+          <p style="color:var(--dim);font-family:var(--font-mono);font-size:.8rem;margin-top:12px;max-width:420px">15–45s screen capture of a real streaming build — prompt → reasoning → native nodes appear → click a plan step to jump. Drops in here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOUR MODES (deep) ═══ -->
+<section class="section">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:46px">
+      <div class="kicker reveal">The composer</div>
+      <h2 class="reveal">Four intents. One always active.</h2>
+      <p class="lead reveal">A single segmented selector — Build is the default. Pick an intent and the input self-documents what it will do.</p>
+    </div>
+    <div class="grid cols-2">
+      <div class="card reveal"><span class="tag">Build · default</span><h3>Build</h3><p>Describe a design in plain English. MANTIS plans it, streams the reasoning, then places native Grasshopper components on your canvas — wired, grouped by stage, and labelled. Click any plan step to frame its group.</p></div>
+      <div class="card reveal"><span class="tag">Agent</span><h3>Agent</h3><p>A design assistant across <em>both</em> Rhino and Grasshopper. It creates and edits geometry, runs Rhino commands, and builds definitions step by step — recording undo points and asking before anything destructive.</p></div>
+      <div class="card reveal"><span class="tag">Ask</span><h3>Ask</h3><p>A conversational answer about Grasshopper or your current canvas. MANTIS reads what's there and explains or advises — no building. The fastest way to learn the parametric move you're missing.</p></div>
+      <div class="card reveal"><span class="tag">Iterate · Multi</span><h3>Iterate &amp; Multi-Solution</h3><p>Iterate builds on top of the existing graph — add panelization, floor thickness, mullions, nothing dropped. Multi-Solution generates 2–3 alternative approaches so you can compare before committing.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ IMAGE TO GEOMETRY ═══ -->
+<section class="section tight">
+  <div class="wrap">
+    <div class="split rev">
+      <div>
+        <div class="kicker reveal">Image → geometry</div>
+        <h2 class="reveal">Drop an image.<br/>Get precise geometry.</h2>
+        <p class="lead reveal">Hand MANTIS a reference photo, a sketch, or a drawing with a dimension on it. A vision model reads the form <em>and the numbers</em> — a "6000" callout becomes a 6000&nbsp;mm reference — then builds a parametric definition scaled to match. Not a traced mesh: a real, editable graph.</p>
+      </div>
+      <div class="codeframe reveal">
+        <div class="cf-bar"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span></div>
+        <pre><span class="c"># facade_elevation.jpg →</span>
+<span class="g">read</span>   grid 12 × 8 bays, mullion @ 1500mm
+<span class="g">scale</span>  dim callout "6000" → 6000mm
+<span class="g">build</span>  surface → bay grid → mullion sweep
+<span class="a">verify</span> 96 panels · 0 warnings · editable</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ THE INTELLIGENCE ═══ -->
+<section class="section">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:46px">
+      <div class="kicker reveal">Under the hood</div>
+      <h2 class="reveal">It reads the canvas it just built.</h2>
+    </div>
+    <div class="grid cols-3">
+      <div class="card reveal"><div class="ic">◉</div><h3>Streamed reasoning</h3><p>A folded plan emits before the JSON — you see how MANTIS stages the graph and why, in one streamed call. Educational, not decorative.</p></div>
+      <div class="card reveal"><div class="ic">⟲</div><h3>Self-healing</h3><p>After building, it reads back live component values, detects warnings and type mismatches, and repairs them — then reports a verdict.</p></div>
+      <div class="card reveal"><div class="ic">⌖</div><h3>Click-to-jump plan</h3><p>Each plan step maps to a labelled group on the canvas. Click a step and MANTIS frames that exact cluster of components.</p></div>
+      <div class="card reveal"><div class="ic">▤</div><h3>Project memory</h3><p>It remembers what worked in your file — a lessons flywheel that makes later builds in the same project sharper.</p></div>
+      <div class="card reveal"><div class="ic">⚑</div><h3>Honest verdicts</h3><p>Runs end with a chip: green "verified" or amber "issues remain." You always know the health of what it built.</p></div>
+      <div class="card reveal"><div class="ic">⌦</div><h3>Always undoable</h3><p>Every action records an undo point. Destructive operations ask first. Nothing happens to your model you can't reverse.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROVIDERS ═══ -->
+<section class="section tight">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:40px">
+      <div class="kicker reveal">Provider-agnostic</div>
+      <h2 class="reveal">Bring any model. Or none at all.</h2>
+      <p class="lead reveal">Five providers, latest generation each — or run fully offline.</p>
+    </div>
+    <div class="grid cols-3">
+      <div class="card reveal"><h3>Claude</h3><p>Sonnet &amp; Opus over HTTP, or the Claude CLI for local-key streaming with vision.</p></div>
+      <div class="card reveal"><h3>OpenAI</h3><p>GPT-4.1, GPT-4.1 Mini, o3-mini — JSON-mode reliable, vision-capable.</p></div>
+      <div class="card reveal"><h3>Gemini</h3><p>2.5 Flash (free) and 2.5 Pro, 1M-token context for big catalogs.</p></div>
+      <div class="card reveal"><h3>OpenRouter</h3><p>One key, many models — a curated shortlist of the strongest builders.</p></div>
+      <div class="card reveal"><h3>Ollama</h3><p>Fully local, no key, no network. Your prompts never leave the machine.</p></div>
+      <div class="card reveal"><div class="ic">🔒</div><h3>Your choice, always</h3><p>Switch providers per-task from the panel. No MANTIS account, no telemetry gate.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <h2 class="reveal">Ready to build?</h2>
+    <p class="lead reveal">Install free in Rhino 8 and describe your first definition.</p>
+    <div class="reveal"><a class="btn btn-p" href="setup.html">Get started</a></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="fbrand"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a><p>The AI layer for Grasshopper. Native nodes, streamed reasoning, runs on your machine.</p></div>
+      <div><h4>Product</h4><a href="why.html">Why Mantis</a><a href="product.html">Product</a><a href="setup.html">Get started</a></div>
+      <div><h4>Learn</h4><a href="story.html">Story</a><a href="product.html#demo">Demo</a><a href="https://www.food4rhino.com/" target="_blank" rel="noopener">food4rhino</a></div>
+      <div><h4>Open source</h4><a href="https://github.com/blang99/mantis" target="_blank" rel="noopener">GitHub</a><a href="https://github.com/blang99/mantis/issues" target="_blank" rel="noopener">Issues</a><a href="https://github.com/blang99/mantis/blob/main/LICENSE" target="_blank" rel="noopener">License</a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 MANTIS · MIT licensed</span><span>Built for Rhino 8 · Mac &amp; Windows</span></div>
+  </div>
+</footer>
+</div>
+<script src="mantis-site.js"></script>
+</body>
+</html>

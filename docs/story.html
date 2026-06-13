@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MANTIS — Story: why we built an honest AI for Grasshopper</title>
+<meta name="description" content="The story behind MANTIS — why parametric design deserves an AI that builds native, editable definitions on your own machine instead of opaque cloud output."/>
+<link rel="canonical" href="https://blang99.github.io/mantis/story.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Space+Grotesk:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="mantis.css"/>
+</head>
+<body>
+<canvas id="field"></canvas>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a>
+    <button class="nav-burger" aria-label="Menu">☰</button>
+    <div class="nav-links">
+      <a href="why.html">Why Mantis</a>
+      <a href="product.html">Product</a>
+      <a href="story.html" class="active">Story</a>
+      <a href="https://github.com/blang99/mantis" target="_blank" rel="noopener">GitHub</a>
+      <a href="setup.html" class="nav-cta">Get started</a>
+    </div>
+  </div>
+</nav>
+<div class="page">
+
+<header class="page-hero">
+  <div class="hero-aurora"></div>
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span>Story</span>
+    <h1>Parametric design deserves<br/>an honest assistant.</h1>
+    <p class="lead">Most "AI for CAD" hides the work — a cloud call, a mesh you can't open, a subscription meter running. MANTIS was built on the opposite bet: that designers want to <em>see</em> the logic and <em>own</em> the file.</p>
+  </div>
+</header>
+
+<section class="section tight">
+  <div class="wrap" style="max-width:760px">
+    <div class="reveal" style="margin-bottom:40px">
+      <div class="kicker">The frustration</div>
+      <h2>The wall every Grasshopper user hits.</h2>
+      <p class="lead">You know what you want — a diagrid that responds to an attractor, a facade that panelizes cleanly, a stair with adjustable rise. But getting there means remembering which thirty components to drag out and how to wire them. The idea is instant; the assembly is not.</p>
+    </div>
+    <div class="reveal" style="margin-bottom:40px">
+      <div class="kicker">The wrong fix</div>
+      <h2>Generated scripts aren't the answer.</h2>
+      <p class="lead">The first wave of AI-CAD tools answered with opaque C# blocks or cloud-rendered meshes. They produce <em>a</em> result — but not one you can read, tune, or learn from. The moment you want to change a parameter, you're stuck, because there's no graph to change.</p>
+    </div>
+    <div class="reveal">
+      <div class="kicker">The bet</div>
+      <h2>Build the real thing, on the real canvas.</h2>
+      <p class="lead">MANTIS writes the actual native Grasshopper definition — every component placed, wired, grouped and labelled — and streams its reasoning so you learn the move as it happens. It runs on your machine, with your model. When it's done, you have a file that's entirely yours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRINCIPLES ═══ -->
+<section class="section">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:46px">
+      <div class="kicker reveal">What we won't compromise</div>
+      <h2 class="reveal">Four principles.</h2>
+    </div>
+    <div class="grid cols-2">
+      <div class="card reveal"><span class="tag">01</span><h3>Native or nothing</h3><p>If the output isn't a real, editable Grasshopper graph, it isn't MANTIS. No black boxes, no proprietary geometry you can't extend.</p></div>
+      <div class="card reveal"><span class="tag">02</span><h3>Show the reasoning</h3><p>Every build streams a plan. You should finish a session knowing more about parametric design than you started with.</p></div>
+      <div class="card reveal"><span class="tag">03</span><h3>Your machine, your model</h3><p>Bring your own key or run fully local. We never put ourselves between you and your work, and never meter it.</p></div>
+      <div class="card reveal"><span class="tag">04</span><h3>Open source</h3><p>MIT licensed, on GitHub. Read it, fork it, audit exactly what it sends. Trust is earned by being inspectable.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <h2 class="reveal">Built in the open.<br/>Free for everyone.</h2>
+    <p class="lead reveal">Star it on GitHub, or install it and build something today.</p>
+    <div class="cta-row reveal" style="justify-content:center">
+      <a class="btn btn-p" href="setup.html">Get started</a>
+      <a class="btn btn-s" href="https://github.com/blang99/mantis" target="_blank" rel="noopener">View on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="fbrand"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a><p>The AI layer for Grasshopper. Native nodes, streamed reasoning, runs on your machine.</p></div>
+      <div><h4>Product</h4><a href="why.html">Why Mantis</a><a href="product.html">Product</a><a href="setup.html">Get started</a></div>
+      <div><h4>Learn</h4><a href="story.html">Story</a><a href="product.html#demo">Demo</a><a href="https://www.food4rhino.com/" target="_blank" rel="noopener">food4rhino</a></div>
+      <div><h4>Open source</h4><a href="https://github.com/blang99/mantis" target="_blank" rel="noopener">GitHub</a><a href="https://github.com/blang99/mantis/issues" target="_blank" rel="noopener">Issues</a><a href="https://github.com/blang99/mantis/blob/main/LICENSE" target="_blank" rel="noopener">License</a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 MANTIS · MIT licensed</span><span>Built for Rhino 8 · Mac &amp; Windows</span></div>
+  </div>
+</footer>
+</div>
+<script src="mantis-site.js"></script>
+</body>
+</html>

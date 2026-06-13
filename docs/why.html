@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Why MANTIS — vs Rhino-MCP &amp; cloud CAD tools</title>
+<meta name="description" content="Why MANTIS beats Rhino-MCP and cloud AI-CAD tools: one-shot native definitions, runs on your machine, your key, fully editable. No per-action round-trips, no black boxes."/>
+<link rel="canonical" href="https://blang99.github.io/mantis/why.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Space+Grotesk:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="mantis.css"/>
+</head>
+<body>
+<canvas id="field"></canvas>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a>
+    <button class="nav-burger" aria-label="Menu">☰</button>
+    <div class="nav-links">
+      <a href="why.html" class="active">Why Mantis</a>
+      <a href="product.html">Product</a>
+      <a href="story.html">Story</a>
+      <a href="https://github.com/blang99/mantis" target="_blank" rel="noopener">GitHub</a>
+      <a href="setup.html" class="nav-cta">Get started</a>
+    </div>
+  </div>
+</nav>
+<div class="page">
+
+<header class="page-hero">
+  <div class="hero-aurora"></div>
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span>Why Mantis</span>
+    <h1>Faster than MCP.<br/>More honest than the cloud.</h1>
+    <p class="lead">MANTIS isn't another agent that pokes Rhino one action at a time, and it isn't a cloud box that returns a mesh you can't edit. It writes the whole native Grasshopper definition in one pass — on your machine, with your key.</p>
+  </div>
+</header>
+
+<!-- ═══ THE SPEED STORY (vs MCP) ═══ -->
+<section class="section tight">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <div class="kicker reveal">Why it's faster than Rhino-MCP</div>
+        <h2 class="reveal">One spec, one build —<br/>not N round-trips.</h2>
+        <p class="lead reveal">An MCP agent works the canvas like a remote control: place a component, wait, read the result, decide the next action, repeat. Every step is a full model round-trip. A 20-component definition is 20+ sequential calls.</p>
+        <p class="lead reveal">MANTIS emits the entire definition as one structured spec, then a deterministic builder lays it down locally. The model is called <strong style="color:var(--ink)">once</strong> — the wiring, layout and grouping happen at native speed on your machine.</p>
+      </div>
+      <div class="codeframe reveal">
+        <div class="cf-bar"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span></div>
+        <pre><span class="c"># Rhino-MCP — agentic, per-action</span>
+→ add_component("Loft")      <span class="c">…wait</span>
+→ add_component("Series")    <span class="c">…wait</span>
+→ connect(a,b)               <span class="c">…wait</span>
+→ read_canvas()              <span class="c">…wait</span>
+   <span class="a">× 20 more round-trips</span>
+
+<span class="c"># MANTIS — one spec → local build</span>
+→ <span class="g">one streamed plan + spec</span>
+→ <span class="g">deterministic builder places all 20</span>
+→ <span class="g">reads back · heals warnings · done</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMPARE TABLE ═══ -->
+<section class="section">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:40px">
+      <div class="kicker reveal">Head to head</div>
+      <h2 class="reveal">MANTIS vs the alternatives</h2>
+    </div>
+    <div class="reveal" style="overflow-x:auto">
+      <table class="cmp">
+        <thead><tr>
+          <th></th><th class="us">MANTIS</th><th>Rhino-MCP agents</th><th>Cloud AI-CAD</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>Output</td><td class="us"><span class="yes">Native, wired GH definition</span></td><td><span class="meh">Native, built action-by-action</span></td><td><span class="no">Opaque mesh / script</span></td></tr>
+          <tr><td>Speed</td><td class="us"><span class="yes">One model call → local build</span></td><td><span class="no">N sequential round-trips</span></td><td><span class="meh">One call, cloud compute</span></td></tr>
+          <tr><td>Editable after</td><td class="us"><span class="yes">Every node, fully</span></td><td><span class="yes">Yes</span></td><td><span class="no">Rarely</span></td></tr>
+          <tr><td>Runs where</td><td class="us"><span class="yes">Your machine</span></td><td><span class="yes">Your machine</span></td><td><span class="no">Their servers</span></td></tr>
+          <tr><td>Your model / key</td><td class="us"><span class="yes">BYO key or fully local</span></td><td><span class="meh">Varies</span></td><td><span class="no">Their model only</span></td></tr>
+          <tr><td>Self-heals warnings</td><td class="us"><span class="yes">Reads back &amp; repairs</span></td><td><span class="meh">Sometimes</span></td><td><span class="no">No graph to heal</span></td></tr>
+          <tr><td>Cost</td><td class="us"><span class="yes">Free · open source</span></td><td><span class="meh">Free / DIY</span></td><td><span class="no">Subscription</span></td></tr>
+          <tr><td>Reasoning shown</td><td class="us"><span class="yes">Streamed plan, learn as it builds</span></td><td><span class="meh">Tool log</span></td><td><span class="no">Black box</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOVEREIGNTY ═══ -->
+<section class="section tight">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:44px">
+      <div class="kicker reveal">The honest part</div>
+      <h2 class="reveal">No black boxes. No lock-in.</h2>
+    </div>
+    <div class="grid cols-3">
+      <div class="card reveal"><div class="ic">⌂</div><h3>On your machine</h3><p>The plugin runs inside Rhino. Geometry stays local; only your prompt and chosen context go to the model you picked.</p></div>
+      <div class="card reveal"><div class="ic">🔑</div><h3>Your provider</h3><p>Claude, OpenAI, Gemini, OpenRouter — or fully offline with Ollama and the Claude CLI. Swap any time.</p></div>
+      <div class="card reveal"><div class="ic">↺</div><h3>Yours to keep</h3><p>When MANTIS finishes, you own a real GH file. Extend it, version it, ship it — with or without MANTIS installed.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <h2 class="reveal">See the speed for yourself.</h2>
+    <p class="lead reveal">Install free and watch a 20-component definition land in one pass.</p>
+    <div class="reveal"><a class="btn btn-p" href="setup.html">Get started</a></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="fbrand"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a><p>The AI layer for Grasshopper. Native nodes, streamed reasoning, runs on your machine.</p></div>
+      <div><h4>Product</h4><a href="why.html">Why Mantis</a><a href="product.html">Product</a><a href="setup.html">Get started</a></div>
+      <div><h4>Learn</h4><a href="story.html">Story</a><a href="product.html#demo">Demo</a><a href="https://www.food4rhino.com/" target="_blank" rel="noopener">food4rhino</a></div>
+      <div><h4>Open source</h4><a href="https://github.com/blang99/mantis" target="_blank" rel="noopener">GitHub</a><a href="https://github.com/blang99/mantis/issues" target="_blank" rel="noopener">Issues</a><a href="https://github.com/blang99/mantis/blob/main/LICENSE" target="_blank" rel="noopener">License</a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 MANTIS · MIT licensed</span><span>Built for Rhino 8 · Mac &amp; Windows</span></div>
+  </div>
+</footer>
+</div>
+<script src="mantis-site.js"></script>
+</body>
+</html>

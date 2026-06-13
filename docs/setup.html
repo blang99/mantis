@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MANTIS — Get started in Rhino 8</title>
+<meta name="description" content="Install MANTIS in Rhino 8 via Package Manager, set a model (BYO key or fully local), and build your first Grasshopper definition in two minutes."/>
+<link rel="canonical" href="https://blang99.github.io/mantis/setup.html"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Space+Grotesk:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="mantis.css"/>
+</head>
+<body>
+<canvas id="field"></canvas>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a>
+    <button class="nav-burger" aria-label="Menu">☰</button>
+    <div class="nav-links">
+      <a href="why.html">Why Mantis</a>
+      <a href="product.html">Product</a>
+      <a href="story.html">Story</a>
+      <a href="https://github.com/blang99/mantis" target="_blank" rel="noopener">GitHub</a>
+      <a href="setup.html" class="nav-cta active">Get started</a>
+    </div>
+  </div>
+</nav>
+<div class="page">
+
+<header class="page-hero">
+  <div class="hero-aurora"></div>
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span>Get started</span>
+    <h1>Up and building<br/>in two minutes.</h1>
+    <p class="lead">Three steps: install from Rhino's Package Manager, pick a model, and describe your first definition. Free, open source, Mac &amp; Windows.</p>
+  </div>
+</header>
+
+<!-- ═══ STEPS ═══ -->
+<section class="section tight">
+  <div class="wrap">
+    <div class="grid cols-3">
+      <div class="card step reveal">
+        <span class="num">01</span><h3>Install</h3>
+        <p>In Rhino 8, run <code style="color:var(--green);font-family:var(--font-mono)">_PackageManager</code>, search <strong style="color:var(--ink)">MANTIS</strong>, and click Install. Restart Rhino.</p>
+        <div class="install-cmd" style="margin-top:16px;width:100%">
+          <div><div class="lbl">Rhino command</div><span class="cmd">_PackageManager</span></div>
+          <button onclick="mantisCopy(this,'_PackageManager')" title="Copy">⧉</button>
+        </div>
+      </div>
+      <div class="card step reveal">
+        <span class="num">02</span><h3>Pick a model</h3>
+        <p>Open the MANTIS panel. The welcome shows your model &amp; status. Click <strong style="color:var(--ink)">Models</strong> to paste an API key — or choose Ollama / Claude CLI to run fully local with no key.</p>
+      </div>
+      <div class="card step reveal">
+        <span class="num">03</span><h3>Build</h3>
+        <p>Type intent in the composer — <em>"diagrid facade on this surface"</em> — and watch MANTIS stream its plan and place native components on your canvas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MODEL OPTIONS ═══ -->
+<section class="section">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:44px">
+      <div class="kicker reveal">Choose your engine</div>
+      <h2 class="reveal">Bring a key, or stay fully local.</h2>
+    </div>
+    <div class="grid cols-2">
+      <div class="card reveal">
+        <span class="tag">Bring your own key</span><h3>Cloud models</h3>
+        <p>Paste a key from any provider and pick the latest model. Your geometry stays local — only your prompt and chosen context are sent.</p>
+        <p style="margin-top:14px;font-family:var(--font-mono);font-size:.8rem;color:var(--dim)">Claude · OpenAI · Gemini (free tier) · OpenRouter</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag">No key needed</span><h3>Fully local</h3>
+        <p>Run an open model with <strong style="color:var(--ink)">Ollama</strong>, or stream from the <strong style="color:var(--ink)">Claude CLI</strong> with your local login. Nothing leaves your machine.</p>
+        <p style="margin-top:14px;font-family:var(--font-mono);font-size:.8rem;color:var(--dim)">Ollama · Claude CLI</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FIRST PROMPTS ═══ -->
+<section class="section tight">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:40px">
+      <div class="kicker reveal">First builds</div>
+      <h2 class="reveal">Try one of these.</h2>
+    </div>
+    <div class="grid cols-3">
+      <div class="card reveal"><p style="font-family:var(--font-mono);font-size:.86rem;color:var(--ink)">"parametric tower with tapering floors"</p></div>
+      <div class="card reveal"><p style="font-family:var(--font-mono);font-size:.86rem;color:var(--ink)">"voronoi facade panel on this surface"</p></div>
+      <div class="card reveal"><p style="font-family:var(--font-mono);font-size:.86rem;color:var(--ink)">"spiral staircase, adjustable rise"</p></div>
+      <div class="card reveal"><p style="font-family:var(--font-mono);font-size:.86rem;color:var(--ink)">"diagrid skin, density on a slider"</p></div>
+      <div class="card reveal"><p style="font-family:var(--font-mono);font-size:.86rem;color:var(--ink)">"waffle structure from this surface"</p></div>
+      <div class="card reveal"><p style="font-family:var(--font-mono);font-size:.86rem;color:var(--ink)">"hexagonal screen with an attractor"</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ REQUIREMENTS ═══ -->
+<section class="section tight">
+  <div class="wrap" style="max-width:760px">
+    <div class="card reveal">
+      <h3>Requirements</h3>
+      <p style="margin-top:10px">Rhino 8 (Mac or Windows) with Grasshopper. MANTIS ships as a single cross-platform plugin — one install works on both. A cloud model needs an API key; local models (Ollama / Claude CLI) need neither key nor network.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <h2 class="reveal">Install MANTIS now.</h2>
+    <p class="lead reveal">Free · open source · two minutes to your first build.</p>
+    <div class="reveal" style="display:flex;flex-direction:column;align-items:center;gap:20px">
+      <div class="cta-row" style="justify-content:center">
+        <a class="btn btn-p" href="https://www.food4rhino.com/" target="_blank" rel="noopener">Download on food4rhino</a>
+        <a class="btn btn-s" href="https://github.com/blang99/mantis" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+      <div class="install-cmd">
+        <div><div class="lbl">In Rhino command line</div><span class="cmd">_PackageManager</span> <span style="color:var(--dim)">→ search</span> <span class="cmd">"MANTIS"</span></div>
+        <button onclick="mantisCopy(this,'_PackageManager')" title="Copy">⧉</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="fbrand"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a><p>The AI layer for Grasshopper. Native nodes, streamed reasoning, runs on your machine.</p></div>
+      <div><h4>Product</h4><a href="why.html">Why Mantis</a><a href="product.html">Product</a><a href="setup.html">Get started</a></div>
+      <div><h4>Learn</h4><a href="story.html">Story</a><a href="product.html#demo">Demo</a><a href="https://www.food4rhino.com/" target="_blank" rel="noopener">food4rhino</a></div>
+      <div><h4>Open source</h4><a href="https://github.com/blang99/mantis" target="_blank" rel="noopener">GitHub</a><a href="https://github.com/blang99/mantis/issues" target="_blank" rel="noopener">Issues</a><a href="https://github.com/blang99/mantis/blob/main/LICENSE" target="_blank" rel="noopener">License</a></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 MANTIS · MIT licensed</span><span>Built for Rhino 8 · Mac &amp; Windows</span></div>
+  </div>
+</footer>
+</div>
+<script src="mantis-site.js"></script>
+</body>
+</html>

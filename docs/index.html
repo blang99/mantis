@@ -1,1479 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MANTIS — AI-Powered Grasshopper Scripting for Rhino 8</title>
-    <meta name="description" content="Convert natural language into native Grasshopper components. Free, open source, multi-model AI plugin for Rhino 8.">
-    <link rel="canonical" href="https://blang99.github.io/mantis/">
-    <meta name="theme-color" content="#0E1610">
-
-    <!-- ── Open Graph (Facebook, LinkedIn, Discord, etc.) ── -->
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="MANTIS">
-    <meta property="og:title" content="MANTIS — AI-Powered Grasshopper Scripting for Rhino 8">
-    <meta property="og:description" content="Describe what you want in plain language; watch native Grasshopper components appear on your canvas — live. Free, open source, 5 AI providers.">
-    <meta property="og:url" content="https://blang99.github.io/mantis/">
-    <meta property="og:image" content="https://blang99.github.io/mantis/og-image.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-
-    <!-- ── Twitter / X card ── -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="MANTIS — AI-Powered Grasshopper Scripting for Rhino 8">
-    <meta name="twitter:description" content="Describe what you want in plain language; watch native Grasshopper components appear on your canvas — live. Free, open source, 5 AI providers.">
-    <meta name="twitter:image" content="https://blang99.github.io/mantis/og-image.png">
-
-    <!-- ── Favicon: the MANTIS constellation mark, inline so no extra request ── -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230E1610'/%3E%3Cline x1='18' y1='5' x2='18' y2='18' stroke='%235CDB7A' stroke-width='1.2' opacity='0.4'/%3E%3Cline x1='5' y1='15' x2='18' y2='18' stroke='%235CDB7A' stroke-width='1.2' opacity='0.4'/%3E%3Cline x1='31' y1='15' x2='18' y2='18' stroke='%235CDB7A' stroke-width='1.2' opacity='0.4'/%3E%3Cline x1='10' y1='28' x2='18' y2='18' stroke='%235CDB7A' stroke-width='1.2' opacity='0.4'/%3E%3Cline x1='26' y1='28' x2='18' y2='18' stroke='%235CDB7A' stroke-width='1.2' opacity='0.4'/%3E%3Ccircle cx='18' cy='5' r='3.5' fill='%235CDB7A'/%3E%3Ccircle cx='5' cy='15' r='2.5' fill='%235CDB7A' opacity='0.7'/%3E%3Ccircle cx='31' cy='15' r='2.5' fill='%235CDB7A' opacity='0.7'/%3E%3Ccircle cx='10' cy='28' r='2.5' fill='%235CDB7A' opacity='0.7'/%3E%3Ccircle cx='26' cy='28' r='2.5' fill='%235CDB7A' opacity='0.7'/%3E%3Ccircle cx='18' cy='18' r='4' fill='%235CDB7A'/%3E%3C/svg%3E">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --mantis: #5CDB7A;
-            --mantis-bright: #7AE99A;
-            --mantis-dim: #3a9b55;
-            --mantis-glow: rgba(92,219,122,0.25);
-            --mantis-glow-strong: rgba(92,219,122,0.45);
-            --bg-deep: #040a06;
-            --bg-card: #0a120d;
-            --bg-surface: #0f1a13;
-            --bg-elevated: #152019;
-            --text-primary: #e8f0ea;
-            --text-secondary: #8fa898;
-            --text-dim: #405848;
-            --border: #152a1d;
-            --border-light: #1e3828;
-            --amber: #e8b84d;
-            --red: #e85454;
-            --blue: #54a8e8;
-            --cyan: #5ED6DC;
-            --cyan-bg: rgba(14,28,30,0.85);
-            --font-display: 'Orbitron', sans-serif;
-            --font-body: 'Space Grotesk', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: var(--font-body);
-            background: var(--bg-deep);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-        .mono { font-family: var(--font-mono); }
-
-        /* ── Scroll reveal + directional variants ── */
-        .reveal { opacity: 0; transform: translateY(48px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
-        .reveal.visible { opacity: 1; transform: none; }
-        .reveal-left { opacity: 0; transform: translateX(-60px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
-        .reveal-left.visible { opacity: 1; transform: none; }
-        .reveal-right { opacity: 0; transform: translateX(60px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
-        .reveal-right.visible { opacity: 1; transform: none; }
-        .reveal-scale { opacity: 0; transform: scale(0.9); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
-        .reveal-scale.visible { opacity: 1; transform: none; }
-        .reveal-clip { opacity: 0; clip-path: inset(0 100% 0 0); transition: opacity 0.6s ease, clip-path 1s var(--ease-out); }
-        .reveal-clip.visible { opacity: 1; clip-path: inset(0 0 0 0); }
-        .reveal-delay-1 { transition-delay: 0.1s; }
-        .reveal-delay-2 { transition-delay: 0.2s; }
-        .reveal-delay-3 { transition-delay: 0.3s; }
-        .reveal-delay-4 { transition-delay: 0.4s; }
-
-        /* ── Reduced-motion: honor the OS "minimize animation" setting ── */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.001ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.001ms !important;
-                scroll-behavior: auto !important;
-            }
-            .reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-clip {
-                opacity: 1 !important; transform: none !important; clip-path: none !important;
-            }
-            #cursor-glow { display: none !important; }
-        }
-
-        /* ── Unified effects canvas (clouds + grid + swarm) ── */
-        #fx-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-
-        /* ── Cursor glow ── */
-        #cursor-glow {
-            position: fixed; top: 0; left: 0; width: 540px; height: 540px;
-            margin: -270px 0 0 -270px; border-radius: 50%;
-            background: radial-gradient(circle, rgba(92,219,122,0.10) 0%, transparent 60%);
-            mix-blend-mode: screen; pointer-events: none; z-index: 1;
-            opacity: 0; transition: opacity 0.5s ease;
-            will-change: transform;
-        }
-
-        /* ── Scanline overlay ── */
-        .scanlines {
-            position: fixed; inset: 0; z-index: 9998; pointer-events: none;
-            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-        }
-
-        /* ── Scroll progress bar ── */
-        #scroll-progress {
-            position: fixed; top: 0; left: 0; height: 2px; width: 0;
-            background: linear-gradient(90deg, var(--mantis-dim), var(--mantis), var(--mantis-bright));
-            box-shadow: 0 0 12px var(--mantis-glow-strong); z-index: 200;
-            transition: width 0.1s linear;
-        }
-
-        /* ── Chapter rail ── */
-        .chapter-rail {
-            position: fixed; right: 26px; top: 50%; transform: translateY(-50%);
-            z-index: 150; display: flex; flex-direction: column; gap: 18px;
-        }
-        .chapter-dot {
-            position: relative; width: 9px; height: 9px; border-radius: 50%;
-            border: 1px solid var(--border-light); background: transparent;
-            cursor: pointer; transition: all 0.35s var(--ease-out); padding: 0;
-        }
-        .chapter-dot::after {
-            content: attr(data-label); position: absolute; right: 20px; top: 50%;
-            transform: translateY(-50%) translateX(8px);
-            font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.1em;
-            text-transform: uppercase; color: var(--text-secondary); white-space: nowrap;
-            opacity: 0; pointer-events: none; transition: all 0.3s ease;
-        }
-        .chapter-dot:hover::after { opacity: 1; transform: translateY(-50%) translateX(0); }
-        .chapter-dot.active {
-            background: var(--mantis); border-color: var(--mantis);
-            box-shadow: 0 0 14px var(--mantis-glow-strong); transform: scale(1.35);
-        }
-        .chapter-dot.active::after { opacity: 1; color: var(--mantis); transform: translateY(-50%) translateX(0); }
-
-        /* ═══ NAV ═══ */
-        nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            transition: background 0.3s, backdrop-filter 0.3s, border-color 0.3s;
-            border-bottom: 1px solid transparent;
-        }
-        nav.scrolled { background: rgba(4,10,6,0.92); backdrop-filter: blur(24px); border-bottom-color: var(--border); }
-        .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 72px; display: flex; align-items: center; justify-content: space-between; }
-        .nav-logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
-        .nav-logo-mark { width: 36px; height: 36px; flex-shrink: 0; }
-        /* Two-line lockup: wordmark primary, tagline secondary beneath — clear hierarchy, no cramped divider */
-        .nav-wordmark { display: flex; flex-direction: column; line-height: 1; }
-        .nav-name { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; letter-spacing: 0.24em; color: var(--mantis); }
-        .nav-tagline { font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-secondary); margin-top: 6px; white-space: nowrap; }
-        .nav-links { display: flex; gap: 2.1rem; align-items: center; }
-        .nav-links a:not(.btn-nav) { position: relative; color: var(--text-secondary); text-decoration: none; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; padding: 8px 0; transition: color 0.25s var(--ease-out); }
-        .nav-links a:not(.btn-nav)::after { content: ''; position: absolute; left: 0; right: 100%; bottom: 0; height: 1.5px; background: var(--mantis); transition: right 0.3s var(--ease-out); }
-        .nav-links a:not(.btn-nav):hover { color: var(--text-primary); }
-        .nav-links a:not(.btn-nav):hover::after { right: 0; }
-        .nav-links a:focus-visible { outline: 2px solid var(--mantis); outline-offset: 5px; border-radius: 3px; }
-        .nav-divider { width: 1px; height: 24px; background: var(--border-light); margin: 0 0.4rem; }
-        .btn-nav {
-            background: var(--mantis) !important; color: var(--bg-deep) !important;
-            padding: 10px 22px !important; border-radius: 6px;
-            font-family: var(--font-display) !important; font-weight: 700 !important;
-            font-size: 0.75rem !important; letter-spacing: 0.1em !important;
-            white-space: nowrap !important;
-            transition: transform 0.2s, box-shadow 0.2s !important;
-        }
-        .btn-nav:hover { transform: translateY(-2px) !important; box-shadow: 0 6px 30px var(--mantis-glow-strong) !important; }
-
-        /* ═══ HERO ═══ */
-        .hero {
-            position: relative; z-index: 2; min-height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            text-align: center; padding: 100px 2rem 60px;
-        }
-        .hero-glow {
-            position: absolute; width: 900px; height: 900px; border-radius: 50%;
-            background: radial-gradient(circle, var(--mantis-glow-strong) 0%, rgba(92,219,122,0.08) 38%, transparent 64%);
-            top: 42%; left: 50%; transform: translate(-50%, -50%);
-            animation: glowPulse 7s ease-in-out infinite; pointer-events: none;
-        }
-        @keyframes glowPulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
-            50% { transform: translate(-50%, -52%) scale(1.12); opacity: 0.72; }
-        }
-        .hero-content { position: relative; max-width: 950px; }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: rgba(92,219,122,0.06); border: 1px solid rgba(92,219,122,0.15);
-            padding: 8px 20px; border-radius: 100px; font-family: var(--font-mono);
-            font-size: 0.8rem; color: var(--mantis); margin-bottom: 2.5rem; letter-spacing: 0.05em;
-        }
-        .hero-badge .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mantis); animation: pulseDot 2s ease-in-out infinite; }
-        @keyframes pulseDot {
-            0%, 100% { box-shadow: 0 0 0 0 var(--mantis-glow-strong); }
-            50% { box-shadow: 0 0 0 8px transparent; }
-        }
-        .hero h1 {
-            font-family: var(--font-display); font-size: clamp(2.8rem, 6.5vw, 5rem);
-            font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem;
-            letter-spacing: 0.02em; text-transform: uppercase;
-        }
-        .hero h1 .line2 {
-            display: block;
-            background: linear-gradient(135deg, var(--mantis) 0%, var(--mantis-bright) 50%, #a0f0b0 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; position: relative;
-        }
-        /* kinetic word reveal */
-        .kinetic { display: inline-block; }
-        .kinetic .word { display: inline-block; opacity: 0; transform: translateY(0.5em) rotateX(40deg); transform-origin: bottom; animation: wordIn 0.8s var(--ease-out) forwards; }
-        @keyframes wordIn { to { opacity: 1; transform: none; } }
-        /* Glitch effect */
-        .glitch { position: relative; display: inline-block; }
-        .glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
-        .glitch::before { color: var(--mantis-bright); z-index: -1; animation: glitch1 3s infinite linear alternate-reverse; }
-        .glitch::after { color: var(--blue); z-index: -2; animation: glitch2 2.5s infinite linear alternate-reverse; }
-        @keyframes glitch1 {
-            0%, 95% { clip-path: inset(0 0 0 0); transform: translate(0); }
-            96% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 1px); }
-            97% { clip-path: inset(50% 0 30% 0); transform: translate(3px, -1px); }
-            98% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 0); }
-            100% { clip-path: inset(0 0 0 0); transform: translate(0); }
-        }
-        @keyframes glitch2 {
-            0%, 93% { clip-path: inset(0 0 0 0); transform: translate(0); }
-            94% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
-            96% { clip-path: inset(30% 0 40% 0); transform: translate(-2px, 1px); }
-            98% { clip-path: inset(0 0 0 0); transform: translate(0); }
-        }
-        .hero-sub { font-size: 1.2rem; color: var(--text-secondary); max-width: 650px; margin: 0 auto 3rem; line-height: 1.7; font-weight: 300; }
-        .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2.2rem; }
-        .btn-hero { padding: 16px 36px; border-radius: 8px; font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; text-decoration: none; border: none; cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase; transition: all 0.3s; }
-        .btn-hero-primary { background: var(--mantis); color: var(--bg-deep); box-shadow: 0 0 30px rgba(92,219,122,0.2); }
-        .btn-hero-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 50px var(--mantis-glow-strong); }
-        .btn-hero-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border-light); }
-        .btn-hero-secondary:hover { border-color: var(--mantis-dim); box-shadow: 0 0 20px rgba(92,219,122,0.1); }
-        .hero-install { display: inline-flex; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 24px; font-family: var(--font-mono); font-size: 0.85rem; }
-        .hero-install .cmd-label { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; }
-        .hero-install .cmd-text { color: var(--mantis); }
-        .hero-install .cmd-copy { background: none; border: none; cursor: pointer; color: var(--text-dim); padding: 4px; transition: color 0.2s; font-size: 1rem; }
-        .hero-install .cmd-copy:hover { color: var(--mantis); }
-        .scroll-cue {
-            position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
-            font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.2em;
-            text-transform: uppercase; color: var(--text-dim);
-        }
-        .scroll-cue .mouse { width: 22px; height: 34px; border: 1px solid var(--border-light); border-radius: 12px; position: relative; }
-        .scroll-cue .mouse::after { content: ''; position: absolute; top: 6px; left: 50%; width: 3px; height: 6px; border-radius: 2px; background: var(--mantis); transform: translateX(-50%); animation: scrollWheel 1.8s ease-in-out infinite; }
-        @keyframes scrollWheel { 0%,100% { opacity: 0; transform: translate(-50%, 0); } 40% { opacity: 1; } 80% { opacity: 0; transform: translate(-50%, 10px); } }
-
-        /* ── Prompt ticker ── */
-        .ticker-wrap { position: relative; z-index: 2; overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: rgba(10,18,13,0.55); backdrop-filter: blur(8px); padding: 12px 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
-        .ticker { display: flex; gap: 2.5rem; width: max-content; animation: tickerScroll 38s linear infinite; }
-        .ticker:hover { animation-play-state: paused; }
-        .ticker span { font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-secondary); white-space: nowrap; display: inline-flex; align-items: center; gap: 0.7rem; }
-        .ticker span::before { content: '›'; color: var(--mantis); font-weight: 700; }
-        @keyframes tickerScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-        /* ═══ STATS BAR ═══ */
-        .stats-bar { position: relative; z-index: 2; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: rgba(10,18,13,0.8); backdrop-filter: blur(10px); }
-        .stats-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); padding: 2.5rem 2rem; }
-        .stat-item { text-align: center; }
-        .stat-num { font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; color: var(--mantis); text-shadow: 0 0 30px rgba(92,219,122,0.3); }
-        .stat-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.12em; margin-top: 0.3rem; }
-
-        /* ═══ PROBLEM → CLARITY (pinned narrative act) ═══ */
-        .problem-section { position: relative; z-index: 2; height: 240vh; }
-        .problem-sticky { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; text-align: center; }
-        .problem-stage { position: relative; width: 100%; max-width: 900px; padding: 0 2rem; }
-        /* The wall of nodes — chaotic, fades/blurs as you scroll */
-        .node-wall { position: absolute; inset: -40% -10%; display: grid; grid-template-columns: repeat(10, 1fr); gap: 14px; opacity: 0.5; filter: blur(0px); transition: none; pointer-events: none; }
-        .wall-node { height: 26px; border-radius: 5px; background: var(--bg-elevated); border: 1px solid var(--border-light); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-        .wall-node::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--mantis-dim); margin: 9px 0 0 6px; opacity: 0.5; }
-        /* The story text layers */
-        .problem-line { position: relative; z-index: 3; }
-        .problem-eyebrow { font-family: var(--font-display); font-size: 0.7rem; color: var(--mantis); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 1.5rem; }
-        .problem-headline { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.8rem, 4.5vw, 3.4rem); line-height: 1.15; letter-spacing: 0.01em; }
-        .problem-headline .muted { color: var(--text-dim); }
-        .problem-headline .accent { background: linear-gradient(135deg, var(--mantis), var(--mantis-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .problem-sub { margin-top: 1.4rem; font-size: 1.15rem; color: var(--text-secondary); font-weight: 300; max-width: 620px; margin-left: auto; margin-right: auto; }
-        /* the typed sentence that "assembles" */
-        .problem-typed { font-family: var(--font-mono); font-size: clamp(1rem, 2.4vw, 1.5rem); color: var(--mantis); margin-top: 2rem; min-height: 1.6em; }
-        .problem-typed .caret { display: inline-block; width: 2px; height: 1.1em; background: var(--mantis); margin-left: 2px; vertical-align: text-bottom; animation: caretBlink 1s step-end infinite; }
-        @keyframes caretBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-
-        /* ═══ DEMO ═══ */
-        .demo-section { position: relative; z-index: 2; padding: 6rem 2rem; }
-        .demo-browser { max-width: 1100px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 1px rgba(92,219,122,0.1); }
-        .demo-chrome { display: flex; align-items: center; gap: 8px; padding: 12px 18px; background: var(--bg-surface); border-bottom: 1px solid var(--border); }
-        .demo-dot { width: 12px; height: 12px; border-radius: 50%; }
-        .demo-dot.r { background: #ff5f57; } .demo-dot.y { background: #febc2e; } .demo-dot.g { background: #28c840; }
-        .demo-chrome-title { margin-left: auto; font-size: 0.75rem; color: var(--text-dim); font-family: var(--font-mono); }
-        .demo-layout { display: grid; grid-template-columns: 1fr 340px; min-height: 460px; }
-        .demo-canvas { position: relative; padding: 2rem; background: radial-gradient(ellipse at 30% 50%, rgba(92,219,122,0.03) 0%, transparent 60%), linear-gradient(rgba(21,42,29,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(21,42,29,0.3) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; }
-        .gh-node { position: absolute; background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 6px; padding: 8px 14px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-primary); box-shadow: 0 4px 12px rgba(0,0,0,0.3); opacity: 0; transform: scale(0.8) translateY(8px); transition: opacity 0.5s ease, transform 0.5s ease; white-space: nowrap; }
-        .gh-node.placed { opacity: 1; transform: scale(1) translateY(0); box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 15px rgba(92,219,122,0.08); }
-        .gh-node.flash { box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 22px var(--mantis-glow-strong); border-color: var(--mantis); }
-        .gh-node .gh-cat { font-size: 0.6rem; color: var(--mantis-dim); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 2px; }
-        .gh-ports { display: flex; justify-content: space-between; margin-top: 6px; gap: 20px; }
-        .gh-port { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--text-dim); }
-        .gh-port-dot { width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--mantis-dim); }
-        .gh-port-dot.out { background: var(--mantis-dim); }
-        .demo-wires { position: absolute; inset: 0; width: 100%; height: 100%; }
-        .demo-wires path { fill: none; stroke: var(--mantis); stroke-width: 1.5; opacity: 0; stroke-dasharray: 200; stroke-dashoffset: 200; transition: stroke-dashoffset 0.8s ease, opacity 0.3s; }
-        .demo-wires path.drawn { opacity: 0.4; stroke-dashoffset: 0; }
-        .demo-chat { border-left: 1px solid var(--border); background: var(--bg-deep); padding: 1.5rem; display: flex; flex-direction: column; }
-        .demo-chat-header { font-family: var(--font-display); font-size: 0.7rem; color: var(--mantis); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
-        .demo-msgs { flex: 1; display: flex; flex-direction: column; gap: 12px; }
-        .demo-msg { padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; opacity: 0; transform: translateY(10px); transition: opacity 0.4s, transform 0.4s; }
-        .demo-msg.show { opacity: 1; transform: translateY(0); }
-        .demo-msg-user { background: rgba(92,219,122,0.08); border: 1px solid rgba(92,219,122,0.15); align-self: flex-end; max-width: 90%; }
-        .demo-msg-ai { background: var(--bg-surface); border: 1px solid var(--border); max-width: 90%; }
-        .demo-msg-sender { font-family: var(--font-display); font-size: 0.6rem; color: var(--mantis); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
-        .demo-typing { display: flex; gap: 4px; padding: 12px; opacity: 0; transition: opacity 0.3s; }
-        .demo-typing.show { opacity: 1; }
-        .demo-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--mantis-dim); animation: typingBounce 1.2s infinite; }
-        .demo-typing span:nth-child(2) { animation-delay: 0.15s; }
-        .demo-typing span:nth-child(3) { animation-delay: 0.3s; }
-        @keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
-        .demo-status-bar { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim); }
-
-        /* ═══ SECTION HEADERS ═══ */
-        .section-label { font-family: var(--font-display); font-size: 0.7rem; color: var(--mantis); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem; }
-        .section-title { font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; letter-spacing: 0.02em; margin-bottom: 1rem; line-height: 1.2; }
-        .section-desc { font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; line-height: 1.7; font-weight: 300; }
-        /* ═══ HOW IT WORKS ═══ */
-        .how-section { position: relative; z-index: 2; padding: 8rem 0; }
-        .how-section .section-desc { margin: 0 auto; }
-        .how-header { text-align: center; margin-bottom: 4rem; }
-        .how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-        .how-step { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s; }
-        .how-step:hover { border-color: var(--mantis-dim); box-shadow: 0 0 40px rgba(92,219,122,0.08); transform: translateY(-4px); }
-        .how-step-num { font-family: var(--font-display); font-size: 2.5rem; font-weight: 900; color: var(--mantis); opacity: 0.2; margin-bottom: 0.5rem; text-shadow: 0 0 20px rgba(92,219,122,0.3); }
-        .how-step h3 { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.04em; margin-bottom: 0.8rem; }
-        .how-step p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem; }
-        .how-step-code { font-family: var(--font-mono); font-size: 0.78rem; color: var(--mantis); background: rgba(92,219,122,0.05); border: 1px solid rgba(92,219,122,0.1); border-radius: 6px; padding: 10px 14px; line-height: 1.6; }
-        .how-step-code .dim { color: var(--text-dim); }
-
-        /* ═══ FEATURES BENTO ═══ */
-        .features-section { position: relative; z-index: 2; padding: 4rem 0 8rem; }
-        .features-header { text-align: center; margin-bottom: 3rem; }
-        .features-header .section-desc { margin: 0 auto; }
-        .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.2rem; }
-        .bento-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s; position: relative; overflow: hidden; }
-        .bento-card::after { content: ''; position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(92,219,122,0.10), transparent 60%); top: var(--my, 50%); left: var(--mx, 50%); transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.4s; pointer-events: none; }
-        .bento-card:hover::after { opacity: 1; }
-        .bento-card:hover { border-color: var(--mantis-dim); box-shadow: 0 0 40px rgba(92,219,122,0.06), inset 0 0 40px rgba(92,219,122,0.02); transform: translateY(-3px); }
-        .b-1 { grid-column: span 7; } .b-2 { grid-column: span 5; } .b-3 { grid-column: span 5; }
-        .b-4 { grid-column: span 7; } .b-5 { grid-column: span 6; } .b-6 { grid-column: span 6; }
-        .b-7 { grid-column: span 6; } .b-8 { grid-column: span 6; }
-        .bento-card.is-cyan { border-color: rgba(94,214,220,0.18); }
-        .bento-card.is-cyan:hover { border-color: var(--cyan); box-shadow: 0 0 40px rgba(94,214,220,0.08), inset 0 0 40px rgba(94,214,220,0.02); }
-        .bento-card.is-cyan .bento-icon { background: rgba(94,214,220,0.08); border-color: rgba(94,214,220,0.18); }
-        .bento-card.is-cyan::after { background: radial-gradient(circle, rgba(94,214,220,0.10), transparent 60%); }
-        .bento-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(92,219,122,0.08); border: 1px solid rgba(92,219,122,0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; position: relative; z-index: 1; }
-        .bento-card h3 { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.04em; margin-bottom: 0.6rem; position: relative; z-index: 1; }
-        .bento-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; position: relative; z-index: 1; }
-        .stream-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.2rem; position: relative; z-index: 1; }
-        .stream-chip { font-family: var(--font-mono); font-size: 0.72rem; padding: 6px 12px; border-radius: 6px; background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-secondary); animation: chipFade 3.5s infinite; }
-        .stream-chip.active { border-color: var(--mantis-dim); color: var(--mantis); box-shadow: 0 0 12px rgba(92,219,122,0.15); }
-        @keyframes chipFade { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-
-        /* ═══ MODELS ═══ */
-        .models-section { position: relative; z-index: 2; padding: 8rem 0; background: linear-gradient(180deg, transparent 0%, rgba(92,219,122,0.02) 50%, transparent 100%); }
-        .models-header { text-align: center; margin-bottom: 3rem; }
-        .models-header .section-desc { margin: 0 auto; }
-        .provider-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.2rem; }
-        .provider-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.8rem; transition: all 0.3s; }
-        .provider-card:hover { border-color: var(--mantis-dim); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 30px rgba(92,219,122,0.05); }
-        .provider-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; }
-        .provider-card-head h4 { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; }
-        .provider-badge { font-family: var(--font-mono); font-size: 0.6rem; padding: 3px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
-        .badge-free { background: rgba(92,219,122,0.12); color: var(--mantis); border: 1px solid rgba(92,219,122,0.2); }
-        .badge-local { background: rgba(84,168,232,0.12); color: var(--blue); border: 1px solid rgba(84,168,232,0.2); }
-        .badge-paid { background: rgba(232,184,77,0.12); color: var(--amber); border: 1px solid rgba(232,184,77,0.2); }
-        .provider-card .desc { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.5; }
-        .provider-models { list-style: none; }
-        .provider-models li { font-family: var(--font-mono); font-size: 0.78rem; padding: 6px 0; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; color: var(--text-secondary); }
-        .model-tag { font-size: 0.58rem; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.08em; font-weight: 600; }
-        .tag-free { background: rgba(92,219,122,0.1); color: var(--mantis); }
-        .tag-paid { background: rgba(232,184,77,0.1); color: var(--amber); }
-
-        /* ═══ CAPABILITIES (MANTIS capability showcase) ═══ */
-        .compare-section { position: relative; z-index: 2; padding: 4rem 0 8rem; }
-        .compare-header { text-align: center; margin-bottom: 3.5rem; }
-        .compare-header .section-desc { margin: 0 auto; }
-        .cap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
-        .cap-card { position: relative; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; transition: transform 0.35s var(--ease-out), border-color 0.3s, background 0.3s; }
-        .cap-card:hover { transform: translateY(-4px); border-color: var(--border-light); background: var(--bg-surface); }
-        .cap-icon { width: 44px; height: 44px; border-radius: 11px; display: flex; align-items: center; justify-content: center; background: rgba(92,219,122,0.08); border: 1px solid rgba(92,219,122,0.18); margin-bottom: 1.15rem; }
-        .cap-icon svg { width: 22px; height: 22px; stroke: var(--mantis); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-        .cap-card h3 { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.02em; color: var(--text-primary); margin-bottom: 0.6rem; line-height: 1.35; }
-        .cap-tag { display: inline-block; font-family: var(--font-mono); font-size: 0.55rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mantis); background: rgba(92,219,122,0.1); border: 1px solid rgba(92,219,122,0.22); border-radius: 100px; padding: 2px 8px; margin-left: 8px; vertical-align: middle; }
-        .cap-card p { font-size: 0.875rem; line-height: 1.65; color: var(--text-secondary); }
-        @media (max-width: 860px) { .cap-grid { grid-template-columns: repeat(2, 1fr); } }
-
-        /* ═══ INSTALL CTA ═══ */
-        .install-section { position: relative; z-index: 2; padding: 4rem 0 8rem; }
-        .install-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 4rem; text-align: center; position: relative; overflow: hidden; }
-        .install-card::before { content: ''; position: absolute; inset: -1px; border-radius: 17px; padding: 1px; background: linear-gradient(135deg, rgba(92,219,122,0.2), transparent 50%, rgba(92,219,122,0.1)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
-        .install-card .section-desc { margin: 0 auto 3rem; }
-        .install-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 3rem; text-align: left; }
-        .install-step { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; }
-        .install-step-num { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; color: var(--mantis); opacity: 0.3; margin-bottom: 0.5rem; }
-        .install-step h4 { font-family: var(--font-display); font-size: 0.8rem; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
-        .install-step p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem; }
-        .install-step code { display: block; font-family: var(--font-mono); font-size: 0.78rem; color: var(--mantis); background: rgba(92,219,122,0.05); border: 1px solid rgba(92,219,122,0.1); border-radius: 6px; padding: 8px 12px; }
-        .install-links { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
-        .install-links a { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
-        .install-links a:hover { color: var(--mantis); }
-
-        /* ═══ FOOTER ═══ */
-        footer { position: relative; z-index: 2; border-top: 1px solid var(--border); padding: 2.5rem 2rem; }
-        .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .footer-left span { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; color: var(--mantis); letter-spacing: 0.15em; }
-        .footer-left p { font-size: 0.8rem; color: var(--text-dim); margin-top: 4px; }
-        .footer-links { display: flex; gap: 2rem; }
-        .footer-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
-        .footer-links a:hover { color: var(--mantis); }
-
-        /* ═══ WAYS (tabbed capability showcase) ═══ */
-        .ways-section { position: relative; z-index: 2; padding: 8rem 0 6rem; }
-        .ways-header { text-align: center; margin-bottom: 3rem; }
-        .ways-header .section-desc { margin: 0 auto; }
-        .ways-tabs { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 3rem; flex-wrap: wrap; }
-        .ways-tab { position: relative; display: flex; align-items: center; gap: 10px; padding: 0.85rem 1.6rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: border-color 0.3s, background 0.3s, transform 0.2s; font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); }
-        .ways-tab .tab-idx { font-family: var(--font-mono); font-size: 0.62rem; color: var(--mantis-dim); }
-        .ways-tab:hover { border-color: var(--mantis-dim); color: var(--text-primary); transform: translateY(-2px); }
-        .ways-tab.active { background: rgba(92,219,122,0.06); border-color: var(--mantis); color: var(--mantis); box-shadow: 0 0 30px rgba(92,219,122,0.10); }
-        .ways-tab.active .tab-idx { color: var(--mantis); }
-        .ways-panels { position: relative; max-width: 1100px; margin: 0 auto; }
-        .ways-panel { display: none; grid-template-columns: 1.05fr 0.95fr; gap: 2.5rem; align-items: center; }
-        .ways-panel.active { display: grid; animation: panelFade 0.5s ease; }
-        @keyframes panelFade { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-        .ways-copy .ways-eyebrow { font-family: var(--font-mono); font-size: 0.72rem; color: var(--mantis); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1rem; }
-        .ways-copy h3 { font-family: var(--font-display); font-size: clamp(1.4rem, 2.4vw, 1.9rem); font-weight: 700; line-height: 1.25; margin-bottom: 1.1rem; letter-spacing: 0.01em; }
-        .ways-copy p { font-size: 1rem; color: var(--text-secondary); line-height: 1.75; margin-bottom: 1.4rem; font-weight: 300; }
-        .ways-points { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
-        .ways-points li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
-        .ways-points li svg { flex-shrink: 0; margin-top: 2px; }
-        .ways-visual { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.6rem; min-height: 340px; position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
-        .ways-visual::before { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(21,42,29,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(21,42,29,0.25) 1px, transparent 1px); background-size: 34px 34px; pointer-events: none; opacity: 0.6; }
-        .ways-visual-title { position: relative; font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.1rem; display: flex; align-items: center; gap: 8px; }
-        .ways-visual-title::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--mantis); box-shadow: 0 0 10px var(--mantis-glow-strong); }
-
-        /* Wire & Group visual — labelled stage boxes + thought-process card */
-        .stage-map { position: relative; display: flex; flex-direction: column; gap: 10px; }
-        .stage-box { position: relative; border-radius: 8px; padding: 10px 12px 12px; border: 1px solid; }
-        .stage-box .stage-name { font-family: var(--font-display); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; opacity: 0.95; }
-        .stage-nodes { display: flex; flex-wrap: wrap; gap: 6px; }
-        .stage-pill { font-family: var(--font-mono); font-size: 0.64rem; padding: 4px 9px; border-radius: 5px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); color: var(--text-primary); white-space: nowrap; }
-        .stage-s1 { background: rgba(92,219,122,0.07); border-color: rgba(92,219,122,0.30); }
-        .stage-s1 .stage-name { color: var(--mantis); }
-        .stage-s2 { background: rgba(84,168,232,0.07); border-color: rgba(84,168,232,0.30); }
-        .stage-s2 .stage-name { color: var(--blue); }
-        .stage-s3 { background: rgba(232,184,77,0.07); border-color: rgba(232,184,77,0.30); }
-        .stage-s3 .stage-name { color: var(--amber); }
-        .think-card { position: relative; margin-top: 14px; background: var(--cyan-bg); border: 1px solid rgba(94,214,220,0.28); border-left: 3px solid var(--cyan); border-radius: 8px; padding: 12px 14px; }
-        .think-card .think-label { font-family: var(--font-display); font-size: 0.58rem; font-weight: 700; letter-spacing: 0.14em; color: var(--cyan); text-transform: uppercase; margin-bottom: 8px; }
-        .think-card .think-line { font-size: 0.74rem; color: var(--text-secondary); line-height: 1.5; padding: 3px 0; }
-        .think-card .think-line b { color: var(--text-primary); font-weight: 600; }
-        .think-card .think-line .tn { color: var(--cyan); font-family: var(--font-mono); font-size: 0.66rem; }
-
-        /* Generate visual — streaming chips cascade */
-        .gen-stream { position: relative; display: flex; flex-direction: column; gap: 8px; }
-        .gen-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 7px; opacity: 0; animation: genIn 0.5s ease forwards; }
-        .gen-row .gen-tick { width: 16px; height: 16px; border-radius: 4px; background: rgba(92,219,122,0.12); border: 1px solid var(--mantis-dim); display: flex; align-items: center; justify-content: center; color: var(--mantis); font-size: 0.6rem; flex-shrink: 0; }
-        .gen-row .gen-cat { font-family: var(--font-mono); font-size: 0.6rem; color: var(--mantis-dim); text-transform: uppercase; }
-        .gen-row .gen-name { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-primary); }
-        .gen-row .gen-wire { margin-left: auto; font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-dim); }
-        @keyframes genIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
-
-        /* Self-Heal visual — error → fix */
-        .heal-row { display: flex; align-items: center; gap: 12px; padding: 11px 13px; border-radius: 8px; margin-bottom: 10px; border: 1px solid; }
-        .heal-row.err { background: rgba(255,95,87,0.06); border-color: rgba(255,95,87,0.3); }
-        .heal-row.fix { background: rgba(92,219,122,0.06); border-color: rgba(92,219,122,0.3); }
-        .heal-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-        .heal-row.err .heal-dot { background: #ff5f57; box-shadow: 0 0 10px rgba(255,95,87,0.5); }
-        .heal-row.fix .heal-dot { background: var(--mantis); box-shadow: 0 0 10px var(--mantis-glow-strong); }
-        .heal-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45; }
-        .heal-text b { color: var(--text-primary); font-weight: 600; }
-        .heal-text .hc { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); }
-        .heal-arrow { text-align: center; color: var(--cyan); font-size: 1.1rem; margin: 2px 0 8px; opacity: 0.7; }
-        .heal-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; font-family: var(--font-display); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mantis); background: rgba(92,219,122,0.08); border: 1px solid var(--mantis-dim); border-radius: 6px; padding: 6px 12px; }
-
-        /* ═══ BRAND STATEMENT BAND ═══ */
-        .brand-band { position: relative; z-index: 2; padding: 7rem 2rem; text-align: center; overflow: hidden; }
-        .brand-band::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(92,219,122,0.06) 0%, transparent 60%); pointer-events: none; }
-        .brand-band-inner { position: relative; max-width: 900px; margin: 0 auto; }
-        .brand-band h2 { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 900; line-height: 1.12; letter-spacing: 0.01em; }
-        .brand-band h2 .muted { color: var(--text-dim); display: block; }
-        .brand-band h2 .accent { background: linear-gradient(90deg, var(--mantis), var(--mantis-bright)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 40px rgba(92,219,122,0.25); }
-        .brand-band p { margin-top: 1.8rem; font-size: 1.1rem; color: var(--text-secondary); line-height: 1.7; font-weight: 300; max-width: 640px; margin-left: auto; margin-right: auto; }
-
-        /* ═══ RESPONSIVE ═══ */
-        @media (max-width: 1100px) { .chapter-rail { display: none; } }
-        @media (max-width: 900px) {
-            .how-steps { grid-template-columns: 1fr; }
-            .bento { grid-template-columns: 1fr; }
-            .b-1,.b-2,.b-3,.b-4,.b-5,.b-6,.b-7,.b-8 { grid-column: span 1; }
-            .provider-grid { grid-template-columns: repeat(2, 1fr); }
-            .install-steps { grid-template-columns: 1fr; }
-            .demo-layout { grid-template-columns: 1fr; }
-            .demo-chat { border-left: none; border-top: 1px solid var(--border); }
-            .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
-            .problem-section { height: 200vh; }
-            .ways-panel.active { grid-template-columns: 1fr; }
-            .ways-visual { order: -1; }
-        }
-        @media (max-width: 600px) {
-            .nav-tagline { display: none; }
-            .nav-name { letter-spacing: 0.16em; }
-            .nav-links a:not(.btn-nav) { display: none; }
-            .nav-divider { display: none; }
-            .cap-grid { grid-template-columns: 1fr; }
-            .provider-grid { grid-template-columns: 1fr; }
-            .stats-inner { grid-template-columns: repeat(2, 1fr); }
-            .footer-inner { flex-direction: column; gap: 1rem; text-align: center; }
-        }
-    </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MANTIS — It watches. It almost never speaks.</title>
+<meta name="description" content="MANTIS is the always-on design partner inside Grasshopper. It watches your canvas silently and only speaks when it's caught a real, verified failure — then fixes it in one click. No black boxes. No subscriptions. Your key, your machine."/>
+<link rel="canonical" href="https://blang99.github.io/mantis/"/>
+<meta property="og:title" content="MANTIS — It watches. It almost never speaks."/>
+<meta property="og:description" content="The always-on design partner in Grasshopper. Watches your canvas, catches silent failures, fixes them in one click. Runs on your machine."/>
+<meta property="og:url" content="https://blang99.github.io/mantis/"/>
+<meta property="og:image" content="https://blang99.github.io/mantis/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Space+Grotesk:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="mantis.css"/>
 </head>
 <body>
 
-<canvas id="fx-canvas"></canvas>
-<div id="cursor-glow"></div>
-<div class="scanlines"></div>
-<div id="scroll-progress"></div>
-
-<div class="chapter-rail" id="chapter-rail">
-    <button class="chapter-dot active" data-target="#top" data-label="Promise"></button>
-    <button class="chapter-dot" data-target="#problem" data-label="The Wall"></button>
-    <button class="chapter-dot" data-target="#demo" data-label="The Build"></button>
-    <button class="chapter-dot" data-target="#ways" data-label="The Method"></button>
-    <button class="chapter-dot" data-target="#how" data-label="The Flow"></button>
-    <button class="chapter-dot" data-target="#features" data-label="The Edge"></button>
-    <button class="chapter-dot" data-target="#models" data-label="The Engine"></button>
-    <button class="chapter-dot" data-target="#compare" data-label="The Verdict"></button>
-    <button class="chapter-dot" data-target="#install" data-label="Begin"></button>
+<!-- ═══ PRELOADER ═══ -->
+<div id="intro">
+  <canvas id="intro-canvas"></canvas>
+  <div class="sweep-line"></div>
+  <div class="intro-center">
+    <div class="intro-build-stage">
+      <div class="intro-glow"></div>
+      <div class="intro-bloom"></div>
+      <svg class="intro-build" viewBox="0 0 60 60" fill="none" aria-hidden="true">
+        <circle class="cal-ring" cx="30" cy="30" r="24"/>
+        <line class="ln l1" x1="30" y1="30" x2="30" y2="17"/>
+        <line class="ln l2" x1="30" y1="30" x2="43" y2="27"/>
+        <line class="ln l3" x1="30" y1="30" x2="38" y2="40"/>
+        <line class="ln l4" x1="30" y1="30" x2="22" y2="40"/>
+        <line class="ln l5" x1="30" y1="30" x2="17" y2="27"/>
+        <circle class="ping p1" cx="30" cy="17" r="3"/>
+        <circle class="ping p2" cx="43" cy="27" r="3"/>
+        <circle class="ping p3" cx="38" cy="40" r="3"/>
+        <circle class="ping p4" cx="22" cy="40" r="3"/>
+        <circle class="ping p5" cx="17" cy="27" r="3"/>
+        <circle class="bn s1" cx="30" cy="17" r="3.5"/>
+        <circle class="bn s2" cx="43" cy="27" r="2.5"/>
+        <circle class="bn s3" cx="38" cy="40" r="2.5"/>
+        <circle class="bn s4" cx="22" cy="40" r="2.5"/>
+        <circle class="bn s5" cx="17" cy="27" r="2.5"/>
+        <circle class="bc" cx="30" cy="30" r="4"/>
+      </svg>
+    </div>
+    <div id="intro-logo">MANTI<span class="x">S</span></div>
+    <div class="intro-tag">The design partner in the room</div>
+  </div>
+  <div class="intro-bar">
+    <div class="intro-bar-track"><div id="intro-bar-fill"></div></div>
+    <div class="intro-bar-label"><span>Initializing</span><span><i id="intro-pct">0</i>%</span></div>
+  </div>
 </div>
+
+<!-- ═══ NODE-FIELD BG ═══ -->
+<canvas id="field"></canvas>
 
 <!-- ═══ NAV ═══ -->
-<nav id="nav">
-    <div class="nav-inner">
-        <a href="#top" class="nav-logo" aria-label="MANTIS — home">
-            <svg class="nav-logo-mark" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-                <circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/>
-                <circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/>
-                <circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/>
-                <circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/>
-                <circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/>
-                <circle cx="18" cy="18" r="4" fill="#5CDB7A"/>
-                <line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
-                <line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
-                <line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
-                <line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
-                <line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/>
-            </svg>
-            <span class="nav-wordmark">
-                <span class="nav-name">MANTIS</span>
-                <span class="nav-tagline">The AI layer for Grasshopper</span>
-            </span>
-        </a>
-        <div class="nav-links">
-            <a href="#ways">Workflow</a>
-            <a href="#features">Features</a>
-            <a href="#models">Models</a>
-            <a href="#compare">Capabilities</a>
-            <span class="nav-divider" aria-hidden="true"></span>
-            <a href="#install" class="btn-nav">Install Free</a>
-        </div>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a>
+    <button class="nav-burger" aria-label="Menu">☰</button>
+    <div class="nav-links">
+      <a href="why.html">Why Mantis</a>
+      <a href="product.html">Product</a>
+      <a href="story.html">Story</a>
+      <a href="https://github.com/blang99/mantis" target="_blank" rel="noopener">GitHub</a>
+      <a href="setup.html" class="nav-cta">Get started</a>
     </div>
+  </div>
 </nav>
 
+<div class="page">
+
 <!-- ═══ HERO ═══ -->
-<section class="hero" id="top">
-    <div class="hero-glow"></div>
-    <div class="hero-content">
-        <div class="hero-badge">
-            <div class="pulse-dot"></div>
-            Open source &middot; Free to start &middot; Rhino 8
-        </div>
+<header class="hero">
+  <div class="hero-aurora"></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <span class="eyebrow"><span class="dot"></span>Always on · Silent by default · Runs on your machine</span>
         <h1>
-            <span class="glitch" data-text="Talk to Grasshopper.">Talk to Grasshopper.</span><br/>
-            <span class="line2">Build anything.</span>
+          <span class="line line-1">It watches.</span>
+          <span class="line line-2">It almost never <span class="x">speaks.</span></span>
         </h1>
-        <p class="hero-sub">Describe what you want in plain English. MANTIS places native Grasshopper components on your canvas — wired, laid out, and editable — exactly as an expert would build them.</p>
-        <div class="hero-actions">
-            <a href="#install" class="btn-hero btn-hero-primary">Install in Rhino</a>
-            <a href="#demo" class="btn-hero btn-hero-secondary">Watch it build</a>
+        <p class="hero-sub">MANTIS sits quietly beside you while you model in Grasshopper — reading your canvas the whole time. It stays out of your way until something silently breaks or you get stuck. Then it's already there, with the reason and the one-click fix. A partner in the room, not a box you talk to.</p>
+        <div class="cta-row">
+          <a class="btn btn-p" href="setup.html">Install in Rhino
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="btn btn-s" href="#day">See how it works</a>
         </div>
-        <div class="hero-install">
-            <div>
-                <div class="cmd-label">In Rhino command line</div>
-                <span class="cmd-text">_PackageManager</span> <span style="color:var(--text-dim)">&rarr; search</span> <span class="cmd-text">"MANTIS"</span>
+      </div>
+
+      <!-- the orb -->
+      <div class="hero-right">
+        <div class="orb-wrap">
+          <div class="hero-3d-bar">
+            <span class="term-dots"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span></span>
+            <span class="term-title">facade_v3.gh</span>
+            <span class="term-live" id="orb-live"><span class="live-dot"></span>WATCHING</span>
+          </div>
+          <div class="orb-stage" id="orb-stage" aria-label="MANTIS ambient presence — a quiet dot that watches your canvas and only speaks when it catches a verified problem">
+            <div class="orb" id="orb">
+              <span class="orb-ring r1"></span>
+              <span class="orb-ring r2"></span>
+              <span class="orb-ring r3"></span>
+              <span class="orb-core"></span>
             </div>
-            <button class="cmd-copy" onclick="navigator.clipboard.writeText('_PackageManager');this.textContent='Done';setTimeout(()=>this.textContent='Copy',1500)" title="Copy command">Copy</button>
+            <div class="orb-caption" id="orb-caption">watching · all clear</div>
+
+            <div class="fix-card" id="fix-card" role="status">
+              <div class="fix-head"><span class="fix-spark"></span>Caught a silent break</div>
+              <p class="fix-body">Your panel grid went <b>empty</b> when you rewired the <b>Divide</b> component — its surface input lost its connection.</p>
+              <div class="fix-actions">
+                <button class="fix-btn primary" id="fix-do">Fix it</button>
+                <button class="fix-btn ghost">Show the plan</button>
+              </div>
+            </div>
+
+            <div class="fix-receipt" id="fix-receipt">
+              <span class="rcheck">✓</span> Fixed — now produces <b>96 panels.</b>
+            </div>
+          </div>
+          <div class="orb-legend">
+            <span class="ol"><i class="dot-clean"></i>Clean</span>
+            <span class="ol"><i class="dot-aware"></i>Noticed</span>
+            <span class="ol"><i class="dot-active"></i>Caught &amp; fixed</span>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="scroll-cue"><div class="mouse"></div>Scroll</div>
+  </div>
+</header>
+
+<!-- ═══ THE PROBLEM ═══ -->
+<section class="section">
+  <div class="wrap center">
+    <div class="kicker reveal">The 20 minutes nobody sees</div>
+    <h2 class="reveal">The pain isn't the question.<br/>It's the silence before it.</h2>
+    <p class="lead reveal">Most of the time you lose in Grasshopper isn't the moment you ask for help — it's the twenty minutes a definition is quietly broken and you don't know yet. It turns <strong style="color:var(--ink)">green</strong>, looks fine, and produces <em>nothing</em> — because three components upstream, a wire is feeding the wrong kind of data. Grasshopper doesn't warn you. The AI in the side-panel doesn't know, because you didn't ask. <strong style="color:var(--ink)">Nobody is actually watching the work with you.</strong></p>
+  </div>
 </section>
 
-<!-- ═══ PROMPT TICKER ═══ -->
-<div class="ticker-wrap">
-    <div class="ticker" id="ticker">
-        <span>parametric tower with tapering floors</span>
-        <span>voronoi facade panel</span>
-        <span>spiral staircase, adjustable rise</span>
-        <span>waffle structure from a surface</span>
-        <span>hexagonal screen with attractor</span>
-        <span>diagrid skin on a tower</span>
-        <span>twisted ribbon canopy</span>
-        <span>parametric tower with tapering floors</span>
-        <span>voronoi facade panel</span>
-        <span>spiral staircase, adjustable rise</span>
-        <span>waffle structure from a surface</span>
-        <span>hexagonal screen with attractor</span>
-        <span>diagrid skin on a tower</span>
-        <span>twisted ribbon canopy</span>
-    </div>
-</div>
-
-<!-- ═══ STATS BAR ═══ -->
-<div class="stats-bar reveal">
-    <div class="stats-inner">
-        <div class="stat-item">
-            <div class="stat-num" data-target="5">0</div>
-            <div class="stat-label">AI Providers</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-num" data-target="15">0</div>
-            <div class="stat-label">AI Models</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-num" data-target="200">0</div>
-            <div class="stat-label">GH Components</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-num" data-target="0">0</div>
-            <div class="stat-label">Cost to Start</div>
-        </div>
-    </div>
-</div>
-
-<!-- ═══ PROBLEM → CLARITY (scroll narrative) ═══ -->
-<section class="problem-section" id="problem">
-    <div class="problem-sticky">
-        <div class="node-wall" id="node-wall"></div>
-        <div class="problem-stage">
-            <div class="problem-line">
-                <div class="problem-eyebrow">The wall every designer hits</div>
-                <h2 class="problem-headline">
-                    <span class="muted">Grasshopper can build anything.</span><br/>
-                    <span class="accent">Learning how is the hard part.</span>
-                </h2>
-                <p class="problem-sub">Hundreds of components. Cryptic names. A canvas that punishes a single wrong wire. The idea in your head is simple — the graph is not.</p>
-                <div class="problem-typed" id="problem-typed"><span class="caret"></span></div>
-            </div>
-        </div>
-    </div>
+<!-- ═══ THE SHIFT ═══ -->
+<section class="section tight">
+  <div class="wrap center">
+    <div class="kicker reveal">The difference</div>
+    <h2 class="reveal">Not a box you talk to.<br/>A partner in the room.</h2>
+    <p class="lead reveal">Every AI tool for Grasshopper — and the old MANTIS too — works the same way: a panel you turn to, type at, and wait on. A good human assistant doesn't wait to be asked. They're <em>in the room</em>, glance over, and say "oh — your loft is empty because that curve isn't closed." Quiet 95% of the time; right when they speak. <strong style="color:var(--ink)">That's the product.</strong></p>
+  </div>
 </section>
 
-<!-- ═══ DEMO ═══ -->
-<section class="demo-section reveal" id="demo">
-    <div class="demo-browser">
-        <div class="demo-chrome">
-            <div class="demo-dot r"></div>
-            <div class="demo-dot y"></div>
-            <div class="demo-dot g"></div>
-            <span class="demo-chrome-title">Grasshopper &mdash; parametric-tower.gh</span>
-        </div>
-        <div class="demo-layout">
-            <div class="demo-canvas" id="demo-canvas">
-                <svg class="demo-wires" id="demo-wires">
-                    <path id="wire1" d="M160,65 C200,65 200,100 245,100"/>
-                    <path id="wire2" d="M160,150 C200,150 200,140 245,140"/>
-                    <path id="wire3" d="M160,235 C200,235 200,185 245,185"/>
-                    <path id="wire4" d="M360,125 C420,125 420,120 460,120"/>
-                    <path id="wire5" d="M360,175 C420,175 420,165 460,165"/>
-                </svg>
-                <div class="gh-node" id="n1" style="top:35px; left:25px;">
-                    <span class="gh-cat">Params</span>Number Slider
-                    <div class="gh-ports"><span></span><span class="gh-port"><span class="gh-port-dot out"></span>20.0</span></div>
-                </div>
-                <div class="gh-node" id="n2" style="top:120px; left:25px;">
-                    <span class="gh-cat">Params</span>Number Slider
-                    <div class="gh-ports"><span></span><span class="gh-port"><span class="gh-port-dot out"></span>8.0</span></div>
-                </div>
-                <div class="gh-node" id="n3" style="top:205px; left:25px;">
-                    <span class="gh-cat">Params</span>Number Slider
-                    <div class="gh-ports"><span></span><span class="gh-port"><span class="gh-port-dot out"></span>15</span></div>
-                </div>
-                <div class="gh-node" id="n4" style="top:80px; left:240px;">
-                    <span class="gh-cat">Curve</span>Circle CNR
-                    <div class="gh-ports"><span class="gh-port"><span class="gh-port-dot"></span>R</span><span class="gh-port"><span class="gh-port-dot out"></span>C</span></div>
-                </div>
-                <div class="gh-node" id="n5" style="top:95px; left:455px;">
-                    <span class="gh-cat">Surface</span>Loft
-                    <div class="gh-ports"><span class="gh-port"><span class="gh-port-dot"></span>C</span><span class="gh-port"><span class="gh-port-dot out"></span>S</span></div>
-                </div>
-                <div class="gh-node" id="n6" style="top:200px; left:455px;">
-                    <span class="gh-cat">Transform</span>Move
-                    <div class="gh-ports"><span class="gh-port"><span class="gh-port-dot"></span>G</span><span class="gh-port"><span class="gh-port-dot out"></span>G</span></div>
-                </div>
-            </div>
-            <div class="demo-chat">
-                <div class="demo-chat-header">MANTIS Chat</div>
-                <div class="demo-msgs">
-                    <div class="demo-msg demo-msg-user" id="msg1">
-                        <div class="demo-msg-sender">You</div>
-                        Create a parametric tower with circular floors that taper from 20m at base to 8m at top, 15 floors
-                    </div>
-                    <div class="demo-typing" id="demo-typing">
-                        <span></span><span></span><span></span>
-                    </div>
-                    <div class="demo-msg demo-msg-ai" id="msg2">
-                        <div class="demo-msg-sender">MANTIS</div>
-                        Building tower with 3 sliders (base radius, top radius, floors), Circle CNR for floor plates, Loft for surface...
-                    </div>
-                </div>
-                <div class="demo-status-bar">
-                    <span id="demo-status">Waiting...</span>
-                </div>
-            </div>
-        </div>
+<!-- ═══ A DAY WITH THE ORB ═══ -->
+<section class="section" id="day">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:48px">
+      <div class="kicker reveal">A day with MANTIS</div>
+      <h2 class="reveal">Quiet, aware, present.</h2>
     </div>
+    <div class="day-track">
+      <div class="day-step reveal">
+        <span class="day-dot"><i class="dot-clean"></i></span>
+        <h3>A small dot, breathing</h3>
+        <p>Open Rhino + Grasshopper and a calm green dot appears in the corner. Not a panel demanding attention — more like the light that says something's on and working. It reads your canvas the whole time. You never explain your file. You forget it's there.</p>
+      </div>
+      <div class="day-step reveal">
+        <span class="day-dot"><i class="dot-aware"></i></span>
+        <h3>Something goes quiet</h3>
+        <p>An hour in, you rewire a cluster. What you don't notice: an output just went empty. The dot shifts — quietly — to amber. No popup, no interruption. You keep working. Maybe you'll catch it. You don't.</p>
+      </div>
+      <div class="day-step reveal">
+        <span class="day-dot"><i class="dot-active"></i></span>
+        <h3>One glance, one fix</h3>
+        <p>You're jiggling a slider, confused why nothing updates. You glance at the dot and hover. A small card: <em>"Your panel grid went empty when you rewired Divide. Want me to fix it, or show the plan?"</em> You click <b>Fix.</b> It reconnects on your actual graph — not a rebuild — and shows a receipt: <em>"Fixed. Now produces 96 panels."</em> Fifteen minutes saved.</p>
+      </div>
+      <div class="day-step reveal">
+        <span class="day-dot"><i class="dot-clean"></i></span>
+        <h3>It remembers</h3>
+        <p>At day's end you close Grasshopper. MANTIS leaves two lines: <em>"Today: parametric façade, 96 panels, verified clean. One fix applied to the Divide cluster."</em> Tomorrow it picks up where you left off.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ═══ WAYS (tabbed capability showcase) ═══ -->
-<section class="ways-section container" id="ways">
-    <div class="ways-header reveal">
-        <div class="section-label">The Workflow</div>
-        <h2 class="section-title">Three ways MANTIS works the canvas</h2>
-        <p class="section-desc">It doesn't just dump components. It reasons out the build, wires it, groups it by intent, and repairs it &mdash; the way an expert would.</p>
+<!-- ═══ AND YES — IT STILL BUILDS ═══ -->
+<section class="section" id="build">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:46px">
+      <div class="kicker reveal">It didn't forget how to build</div>
+      <h2 class="reveal">And when you <span class="x">do</span> want it to build — it builds.</h2>
+      <p class="lead reveal" style="margin-left:auto;margin-right:auto">Ask in plain English and MANTIS stages the graph, then places <strong style="color:var(--ink)">native, editable</strong> Grasshopper components on your canvas — wired and grouped, exactly as an expert would. It reads the result back and heals its own warnings. The same engine that watches is the one that builds.</p>
     </div>
 
-    <div class="ways-tabs reveal" id="ways-tabs">
-        <button class="ways-tab active" data-panel="generate"><span class="tab-idx">01</span> Generate</button>
-        <button class="ways-tab" data-panel="wire"><span class="tab-idx">02</span> Wire &amp; Group</button>
-        <button class="ways-tab" data-panel="heal"><span class="tab-idx">03</span> Self-Heal</button>
+    <div class="build-demo">
+      <!-- chat side -->
+      <div class="build-chat" id="build-chat">
+        <div class="bchat-bar">
+          <span class="term-dots"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span></span>
+          <span class="term-title">MANTIS · chat</span>
+        </div>
+        <div class="bchat-body" id="bchat-body">
+          <div class="bmsg user" id="bmsg-user"><span class="btyped" id="btyped"></span><span class="bcaret" id="bcaret"></span></div>
+          <div class="bmsg ai thinking" id="bmsg-think">
+            <span class="bthink-dots"><i></i><i></i><i></i></span>
+            <span class="bthink-label" id="bthink-label">staging the graph…</span>
+          </div>
+          <div class="bmsg ai plan" id="bmsg-plan">
+            <div class="bplan-row"><span class="bp-ic">→</span>Lofted tower surface → diagrid skin</div>
+            <div class="bplan-row"><span class="bp-ic">→</span>14 native components, 3 groups</div>
+            <div class="bplan-row"><span class="bp-ic">→</span>Read-back: 24 floors, solid valid</div>
+            <div class="bplan-row verdict"><span class="bp-ic">✓</span>Built &amp; verified · 0 warnings</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- tower side -->
+      <div class="build-stage hero-3d-wrap">
+        <div class="hero-3d-bar">
+          <span class="term-dots"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span></span>
+          <span class="term-title">diagrid_tower.gh</span>
+          <span class="term-live" id="build-live"><span class="live-dot"></span>BUILDING</span>
+        </div>
+        <div class="hero-3d-stage">
+          <canvas id="build-canvas"></canvas>
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <div class="hero-3d-hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 3v4M12 12l4-2"/></svg>
+            Drag to orbit
+          </div>
+          <div class="hero-3d-coord" id="build-coord">rot <b>x</b> 17° <b>y</b> 0°</div>
+        </div>
+        <div class="hero-3d-sliders">
+          <div class="slider-cell"><div class="slider-head"><label>Twist</label><span class="sval" id="val-twist">1.2</span></div><input id="sl-twist" type="range" min="0" max="100" value="40"/></div>
+          <div class="slider-cell"><div class="slider-head"><label>Density</label><span class="sval" id="val-density">8</span></div><input id="sl-density" type="range" min="0" max="100" value="40"/></div>
+          <div class="slider-cell"><div class="slider-head"><label>Height</label><span class="sval" id="val-height">12</span></div><input id="sl-height" type="range" min="0" max="100" value="43"/></div>
+        </div>
+      </div>
     </div>
 
-    <div class="ways-panels reveal">
-        <!-- PANEL 1: GENERATE -->
-        <div class="ways-panel active" data-panel="generate">
-            <div class="ways-copy">
-                <div class="ways-eyebrow">01 &mdash; Generate</div>
-                <h3>From a sentence to a working graph.</h3>
-                <p>Describe the outcome in plain language. MANTIS streams native Grasshopper components onto your canvas one-by-one &mdash; placed, named, and laid out left-to-right exactly as a seasoned modeller would.</p>
-                <ul class="ways-points">
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Live streaming &mdash; you watch it build, not wait on a spinner</li>
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> 100% native components &mdash; no GHPython black boxes</li>
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Every value on a slider &mdash; editable the moment it lands</li>
-                </ul>
-            </div>
-            <div class="ways-visual">
-                <div class="ways-visual-title">Streaming onto canvas</div>
-                <div class="gen-stream">
-                    <div class="gen-row" style="animation-delay:0.0s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Params</span><span class="gen-name">Number Slider &mdash; radius</span><span class="gen-wire">placed</span></div>
-                    <div class="gen-row" style="animation-delay:0.25s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Params</span><span class="gen-name">Number Slider &mdash; height</span><span class="gen-wire">placed</span></div>
-                    <div class="gen-row" style="animation-delay:0.5s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Curve</span><span class="gen-name">Circle CNR</span><span class="gen-wire">placed</span></div>
-                    <div class="gen-row" style="animation-delay:0.75s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Vector</span><span class="gen-name">Unit Z</span><span class="gen-wire">placed</span></div>
-                    <div class="gen-row" style="animation-delay:1.0s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Surface</span><span class="gen-name">Extrude</span><span class="gen-wire">placed</span></div>
-                    <div class="gen-row" style="animation-delay:1.25s"><span class="gen-tick">&#10003;</span><span class="gen-cat">Wires</span><span class="gen-name">4 connections drawn</span><span class="gen-wire">solved</span></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL 2: WIRE & GROUP (signature feature) -->
-        <div class="ways-panel" data-panel="wire">
-            <div class="ways-copy">
-                <div class="ways-eyebrow">02 &mdash; Wire &amp; Group</div>
-                <h3>Watch it think &mdash; then watch it organize.</h3>
-                <p>Before a single wire is drawn, MANTIS explains its plan stage by stage. Then it wires the graph and wraps each logical stage in a labelled, colour-tinted group &mdash; so the canvas reads like an expert built it, not a machine.</p>
-                <ul class="ways-points">
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5ED6DC" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> <b style="color:var(--text-primary)">Thought-process narration</b> &mdash; the reasoning behind every stage</li>
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Auto-grouped workflow &mdash; tinted, named stage boxes on canvas</li>
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Readable data flow &mdash; understand it, edit it, learn from it</li>
-                </ul>
-            </div>
-            <div class="ways-visual">
-                <div class="ways-visual-title">Grouped by intent</div>
-                <div class="stage-map">
-                    <div class="stage-box stage-s1"><div class="stage-name">Parameters</div><div class="stage-nodes"><span class="stage-pill">Slider: base R</span><span class="stage-pill">Slider: top R</span><span class="stage-pill">Slider: floors</span></div></div>
-                    <div class="stage-box stage-s2"><div class="stage-name">Base Geometry</div><div class="stage-nodes"><span class="stage-pill">Circle CNR</span></div></div>
-                    <div class="stage-box stage-s3"><div class="stage-name">Vertical Array</div><div class="stage-nodes"><span class="stage-pill">Series</span><span class="stage-pill">Move</span><span class="stage-pill">Loft</span></div></div>
-                </div>
-                <div class="think-card">
-                    <div class="think-label">&#9670; Thought Process</div>
-                    <div class="think-line"><span class="tn">1.</span> <b>Parameters</b> &mdash; three sliders expose base radius, top radius and floor count so the whole tower stays adjustable.</div>
-                    <div class="think-line"><span class="tn">2.</span> <b>Base Geometry</b> &mdash; a Circle CNR turns the base radius into the ground-floor plate that feeds the array.</div>
-                    <div class="think-line"><span class="tn">3.</span> <b>Vertical Array</b> &mdash; Series + Move stack the floors; Loft skins them into a single tapering surface.</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL 3: SELF-HEAL -->
-        <div class="ways-panel" data-panel="heal">
-            <div class="ways-copy">
-                <div class="ways-eyebrow">03 &mdash; Self-Heal</div>
-                <h3>Errors that resolve themselves.</h3>
-                <p>A red component never makes it to you unnoticed. MANTIS reads the runtime error, traces the data flow that caused it, and offers a one-click fix &mdash; and it back-fills sensible defaults so the graph resolves clean, with zero warnings.</p>
-                <ul class="ways-points">
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Reads real runtime errors &mdash; not guesses</li>
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Auto-fills required inputs &mdash; ships a working file every time</li>
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> One-click apply &mdash; wrapped in undo, always reversible</li>
-                </ul>
-            </div>
-            <div class="ways-visual">
-                <div class="ways-visual-title">Detect &rarr; diagnose &rarr; fix</div>
-                <div class="heal-row err"><span class="heal-dot"></span><span class="heal-text"><b>Extrude</b> &mdash; <span class="hc">1. Solution exception: no direction vector</span></span></div>
-                <div class="heal-arrow">&darr;</div>
-                <div class="heal-row fix"><span class="heal-dot"></span><span class="heal-text"><b>Diagnosis</b> &mdash; the extrude has no Z direction. Add a Unit Z vector into input <span class="hc">D</span>.</span></div>
-                <div class="heal-row fix"><span class="heal-dot"></span><span class="heal-text"><b>Resolved</b> &mdash; Unit Z wired, graph recomputed. <span class="hc">0 errors &middot; 0 warnings</span></span></div>
-                <span class="heal-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Fix applied</span>
-            </div>
-        </div>
+    <!-- the four ways it acts, demoted to a supporting strip -->
+    <div class="modes-strip">
+      <div class="ms-cell reveal"><span class="tag">Build</span><p>Describe a design — it plans, then streams grouped native components onto the canvas.</p></div>
+      <div class="ms-cell reveal"><span class="tag">Agent</span><p>Acts across Rhino <em>and</em> Grasshopper. Asks before it deletes.</p></div>
+      <div class="ms-cell reveal"><span class="tag">Ask</span><p>A conversational answer about GH or your current canvas — explains, doesn't build.</p></div>
+      <div class="ms-cell reveal"><span class="tag">Iterate</span><p>Builds on what's there — panelization, thickness, mullions — nothing dropped.</p></div>
     </div>
+  </div>
 </section>
 
-<!-- ═══ HOW IT WORKS ═══ -->
-<section class="how-section container" id="how">
-    <div class="how-header reveal">
-        <div class="section-label">How It Works</div>
-        <h2 class="section-title">Three steps. Zero complexity.</h2>
-        <p class="section-desc">From idea to parametric model in the time it takes to describe it.</p>
+<!-- ═══ WHY ONLY MANTIS (THE MOAT) ═══ -->
+<section class="section tight">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:46px">
+      <div class="kicker reveal">Why only MANTIS can do this</div>
+      <h2 class="reveal">To be in the room, you have to watch all day.</h2>
     </div>
-    <div class="how-steps">
-        <div class="how-step reveal">
-            <div class="how-step-num">01</div>
-            <h3>Install from Package Manager</h3>
-            <p>Open Rhino, type the command, search MANTIS. One click install.</p>
-            <div class="how-step-code"><span class="dim">Rhino:</span> _PackageManager<br><span class="dim">Search:</span> MANTIS</div>
-        </div>
-        <div class="how-step reveal reveal-delay-1">
-            <div class="how-step-num">02</div>
-            <h3>Choose your AI model</h3>
-            <p>5 providers, 15+ models. Start free with Gemini or go local with Ollama.</p>
-            <div class="how-step-code"><span class="dim">Free:</span> Gemini Flash, Ollama<br><span class="dim">Pro:</span> Claude Opus, Gemini Pro</div>
-        </div>
-        <div class="how-step reveal reveal-delay-2">
-            <div class="how-step-num">03</div>
-            <h3>Describe what you want</h3>
-            <p>Type in plain language. Watch native components appear on your canvas — live.</p>
-            <div class="how-step-code"><span class="dim">"</span>Voronoi facade with<br>adjustable cell size<span class="dim">"</span></div>
-        </div>
+    <div class="grid cols-2 moat-grid">
+      <div class="card reveal">
+        <div class="ic">∞</div>
+        <h3>Watching costs them money. It costs us nothing.</h3>
+        <p>Every competitor — Raven, Ant, Reer — runs on metered cloud AI: every look at your model is billed, so they <em>can't afford</em> to watch continuously. MANTIS runs on your key or a local model, where watching is free. The always-on partner is the one shape their pricing forbids them from building.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ic">◴</div>
+        <h3>It learns where people get stuck.</h3>
+        <p>Because MANTIS is the only one actually watching, it sees what no panel can: not what you <em>ask</em>, but where you <em>struggle</em> — silently, before you'd ever ask. Opt-in and anonymous, geometry never shared, that becomes a living map of how to get unstuck. Competitors start that map at zero.</p>
+      </div>
     </div>
+  </div>
 </section>
 
-<!-- ═══ FEATURES ═══ -->
-<section class="features-section container" id="features">
-    <div class="features-header reveal">
-        <div class="section-label">Features</div>
-        <h2 class="section-title">Built for how you actually design</h2>
-        <p class="section-desc">Every feature designed for architects and computational designers.</p>
+<!-- ═══ NOT CLIPPY (TRUST) ═══ -->
+<section class="section">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:46px">
+      <div class="kicker reveal">Why it isn't Clippy</div>
+      <h2 class="reveal">Silent by default. Right when it speaks.</h2>
+      <p class="lead reveal" style="margin-left:auto;margin-right:auto">Clippy failed because it talked too much and was usually wrong. MANTIS is the opposite by design.</p>
     </div>
-    <div class="bento">
-        <div class="bento-card b-1 reveal">
-            <div class="bento-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            </div>
-            <h3>Live Streaming Build</h3>
-            <p>Components appear one-by-one as the AI generates them. Not a code dump — a live build process you can follow and learn from.</p>
-            <div class="stream-preview" id="stream-chips">
-                <div class="stream-chip" style="animation-delay:0s">Slider: radius</div>
-                <div class="stream-chip" style="animation-delay:0.3s">Slider: height</div>
-                <div class="stream-chip active" style="animation-delay:0.6s">Circle CNR</div>
-                <div class="stream-chip" style="animation-delay:0.9s">Unit Z</div>
-                <div class="stream-chip" style="animation-delay:1.2s">Extrude</div>
-                <div class="stream-chip" style="animation-delay:1.5s">Wire: 4 conn.</div>
-            </div>
-        </div>
-        <div class="bento-card b-2 reveal reveal-delay-1">
-            <div class="bento-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><rect x="2" y="3" width="8" height="8" rx="1"/><rect x="14" y="3" width="8" height="8" rx="1"/><rect x="8" y="13" width="8" height="8" rx="1"/></svg>
-            </div>
-            <h3>Multi-Solution Explore</h3>
-            <p>Generate 2-3 alternative approaches at once. Loft vs. Extrude vs. Sweep — compare and pick the best.</p>
-        </div>
-        <div class="bento-card b-3 reveal">
-            <div class="bento-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
-            </div>
-            <h3>Error Self-Healing</h3>
-            <p>Red components? MANTIS reads the errors, traces data flow, and offers AI-powered one-click fixes.</p>
-        </div>
-        <div class="bento-card b-4 reveal reveal-delay-1">
-            <div class="bento-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-            </div>
-            <h3>Explain Mode</h3>
-            <p>Click any component chain. Get a plain-language explanation of what it does, why each piece matters, and how data flows.</p>
-        </div>
-        <div class="bento-card b-5 reveal">
-            <div class="bento-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            </div>
-            <h3>100% Native Components</h3>
-            <p>No GHPython black boxes. Every output is real Grasshopper components — editable, modifiable, learnable.</p>
-        </div>
-        <div class="bento-card b-6 reveal reveal-delay-1">
-            <div class="bento-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <h3>Multi-Model Freedom</h3>
-            <p>Claude, OpenAI, Gemini, OpenRouter, Ollama. 5 providers, 15+ models. Start free, go pro when ready.</p>
-        </div>
-        <div class="bento-card b-7 is-cyan reveal">
-            <div class="bento-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5ED6DC" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96.44A2.5 2.5 0 014 17.5v-1a2.5 2.5 0 01-1.04-4.55A2.5 2.5 0 014 7.5 2.5 2.5 0 015.04 4.5 2.5 2.5 0 019.5 2z"/><path d="M14.5 2A2.5 2.5 0 0012 4.5"/></svg>
-            </div>
-            <h3>Thought-Process Narration</h3>
-            <p>Before it wires anything, MANTIS explains the plan stage by stage &mdash; what each stage produces and how it feeds the next. You don't just get a graph; you get the reasoning behind it.</p>
-        </div>
-        <div class="bento-card b-8 reveal reveal-delay-1">
-            <div class="bento-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5CDB7A" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-            </div>
-            <h3>Auto-Grouped Workflow</h3>
-            <p>Every logical stage &mdash; parameters, base geometry, transforms, output &mdash; is wrapped in a labelled, colour-tinted group. The generated canvas reads like an expert organized it, not a machine.</p>
-        </div>
+    <div class="grid cols-4">
+      <div class="card reveal"><div class="ic">⌁</div><h3>Earns every interruption</h3><p>It speaks only when it caught something real <em>and</em> you're genuinely stuck — you tried, it didn't work, you paused. Dismiss it once and it backs off.</p></div>
+      <div class="card reveal"><div class="ic">✓</div><h3>Verified before spoken</h3><p>It reads the real result of your live solve, so "this is empty and here's why" is a fact it machine-checked — not a guess.</p></div>
+      <div class="card reveal"><div class="ic">↺</div><h3>Always reversible</h3><p>Every fix touches your actual graph and is a single Ctrl-Z. Anything destructive asks first.</p></div>
+      <div class="card reveal"><div class="ic">⌂</div><h3>Your machine, your model</h3><p>Local, on your own key or a local model. Your geometry never leaves; only opt-in, anonymous, corroborated lessons do.</p></div>
     </div>
+  </div>
 </section>
 
-<!-- ═══ MODELS ═══ -->
-<section class="models-section" id="models">
-    <div class="container">
-        <div class="models-header reveal">
-            <div class="section-label">AI Models</div>
-            <h2 class="section-title">Choose your engine</h2>
-            <p class="section-desc">5 providers. 15+ models. Start free, switch anytime.</p>
-        </div>
-        <div class="provider-grid">
-            <div class="provider-card reveal">
-                <div class="provider-card-head"><h4>Gemini</h4><span class="provider-badge badge-free">Free</span></div>
-                <p class="desc">Google's fastest models. Free tier with generous limits.</p>
-                <ul class="provider-models">
-                    <li>Gemini 2.0 Flash <span class="model-tag tag-free">FREE</span></li>
-                    <li>Gemini 2.5 Flash <span class="model-tag tag-free">FREE</span></li>
-                    <li>Gemini 2.5 Pro <span class="model-tag tag-paid">PAID</span></li>
-                </ul>
-            </div>
-            <div class="provider-card reveal reveal-delay-1">
-                <div class="provider-card-head"><h4>Ollama</h4><span class="provider-badge badge-local">Local</span></div>
-                <p class="desc">Run AI entirely on your machine. Zero cost, full privacy.</p>
-                <ul class="provider-models">
-                    <li>Llama 3.1 8B <span class="model-tag tag-free">FREE</span></li>
-                    <li>Qwen 2.5 14B <span class="model-tag tag-free">FREE</span></li>
-                    <li>Mistral 7B <span class="model-tag tag-free">FREE</span></li>
-                </ul>
-            </div>
-            <div class="provider-card reveal reveal-delay-2">
-                <div class="provider-card-head"><h4>OpenRouter</h4><span class="provider-badge badge-free">Free+</span></div>
-                <p class="desc">One key, 200+ models. Free models or pay-per-token premium.</p>
-                <ul class="provider-models">
-                    <li>Gemini Flash <span class="model-tag tag-free">FREE</span></li>
-                    <li>Llama 4 Maverick <span class="model-tag tag-free">FREE</span></li>
-                    <li>Claude, GPT, more <span class="model-tag tag-paid">PAID</span></li>
-                </ul>
-            </div>
-            <div class="provider-card reveal reveal-delay-3">
-                <div class="provider-card-head"><h4>Claude</h4><span class="provider-badge badge-paid">Pro</span></div>
-                <p class="desc">Anthropic's flagship. Best for complex parametric scripts.</p>
-                <ul class="provider-models">
-                    <li>Claude Sonnet 4.7 <span class="model-tag tag-paid">PAID</span></li>
-                    <li>Claude Opus 4.7 <span class="model-tag tag-paid">PAID</span></li>
-                    <li>Claude Haiku 4.7 <span class="model-tag tag-paid">PAID</span></li>
-                </ul>
-            </div>
-            <div class="provider-card reveal reveal-delay-4">
-                <div class="provider-card-head"><h4>OpenAI</h4><span class="provider-badge badge-paid">Pro</span></div>
-                <p class="desc">GPT-4o and the o-series reasoning models. Reliable, widely available.</p>
-                <ul class="provider-models">
-                    <li>GPT-4o <span class="model-tag tag-paid">PAID</span></li>
-                    <li>GPT-4o mini <span class="model-tag tag-paid">PAID</span></li>
-                    <li>o3-mini <span class="model-tag tag-paid">PAID</span></li>
-                </ul>
-            </div>
-        </div>
+<!-- ═══ SOVEREIGNTY TEASER ═══ -->
+<section class="section tight">
+  <div class="wrap">
+    <div class="grid cols-3">
+      <div class="card reveal"><div class="ic">⌂</div><h3>Runs on your machine</h3><p>The plugin lives in Rhino. Your geometry never leaves unless you send it. No cloud lock-in.</p></div>
+      <div class="card reveal"><div class="ic">🔑</div><h3>Your key, or fully local</h3><p>Bring your own API key, or run a local model with Ollama / Claude CLI. No MANTIS subscription, ever.</p></div>
+      <div class="card reveal"><div class="ic">↻</div><h3>Everything is editable</h3><p>It's a real GH definition — every node Ctrl-Z-able, inspectable, and yours to extend.</p></div>
     </div>
+    <div class="center" style="margin-top:40px">
+      <a class="btn btn-s reveal" href="why.html">See how it compares to Reer &amp; the cloud tools
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
 </section>
 
-<!-- ═══ CAPABILITIES ═══ -->
-<section class="compare-section container" id="compare">
-    <div class="compare-header reveal">
-        <div class="section-label">Capabilities</div>
-        <h2 class="section-title">What MANTIS Does</h2>
-        <p class="section-desc">One assistant that builds, sees, explains, repairs, and adapts — natively on your Grasshopper canvas.</p>
+<!-- ═══ CTA BAND ═══ -->
+<section class="band">
+  <div class="wrap">
+    <h2 class="reveal">Put a partner in the room.</h2>
+    <p class="lead reveal">Free, open source, and watching your canvas inside Rhino 8 in two minutes.</p>
+    <div class="reveal" style="display:flex;flex-direction:column;align-items:center;gap:20px">
+      <a class="btn btn-p" href="setup.html">Get started</a>
+      <div class="install-cmd">
+        <div><div class="lbl">In Rhino command line</div><span class="cmd">_PackageManager</span> <span style="color:var(--dim)">→ search</span> <span class="cmd">"MANTIS"</span></div>
+        <button onclick="mantisCopy(this,'_PackageManager')" title="Copy">⧉</button>
+      </div>
     </div>
-    <div class="cap-grid">
-        <div class="cap-card reveal">
-            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="6" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M8.3 10.9l7.4-3.6M8.3 13.1l7.4 3.6"/></svg></div>
-            <h3>Native components</h3>
-            <p>Real Grasshopper components, wired and laid out on your canvas — editable, readable, never a black box.</p>
-        </div>
-        <div class="cap-card reveal">
-            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg></div>
-            <h3>Live streaming build</h3>
-            <p>Watch the graph assemble component by component, exactly as an expert would wire it.</p>
-        </div>
-        <div class="cap-card reveal">
-            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg></div>
-            <h3>Image-to-script <span class="cap-tag">New</span></h3>
-            <p>Attach a reference photo or sketch and MANTIS reconstructs it as an adjustable parametric definition.</p>
-        </div>
-        <div class="cap-card reveal">
-            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
-            <h3>Self-healing builds</h3>
-            <p>Component names and wires are validated before the canvas paints — and red errors get fixed on request.</p>
-        </div>
-        <div class="cap-card reveal">
-            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 12.5 3 8.5 8.5 0 0 1 21 11.5z"/></svg></div>
-            <h3>Ask mode <span class="cap-tag">New</span></h3>
-            <p>Ask about Grasshopper or your current canvas and get a clear answer — no build, just guidance.</p>
-        </div>
-        <div class="cap-card reveal">
-            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-            <h3>Multi-solution explore</h3>
-            <p>Generate two or three distinct approaches at once, compare them, and build the one that fits.</p>
-        </div>
-        <div class="cap-card reveal">
-            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h11M4 17h7"/></svg></div>
-            <h3>Explained &amp; grouped</h3>
-            <p>Every build is organised into labelled stages with the reasoning shown, so you learn the logic.</p>
-        </div>
-        <div class="cap-card reveal">
-            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></div>
-            <h3>Five AI providers</h3>
-            <p>Claude, OpenAI, Gemini, OpenRouter, or local Ollama — switch models to match the task and budget.</p>
-        </div>
-        <div class="cap-card reveal">
-            <div class="cap-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12v8M8.5 16.5 12 20l3.5-3.5"/><path d="M20 16.2A4.5 4.5 0 0 0 17.5 8h-1.26A7 7 0 1 0 4 14.9"/></svg></div>
-            <h3>Free, open &amp; offline</h3>
-            <p>Free to start, open source, and fully offline with local models — your designs never leave your machine.</p>
-        </div>
-    </div>
+  </div>
 </section>
 
-<!-- ═══ BRAND STATEMENT BAND ═══ -->
-<section class="brand-band">
-    <div class="brand-band-inner reveal">
-        <h2>
-            <span class="muted">Native to Grasshopper.</span>
-            <span class="accent">Not a black box.</span>
-        </h2>
-        <p>Every component MANTIS places is real, editable, and yours. No opaque scripts, no lock-in &mdash; just a graph you can read, reshape, and learn from. The AI does the heavy lifting; you keep the control.</p>
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="fbrand">
+        <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a>
+        <p>The design partner in the room. Always-on, silent by default, runs on your machine.</p>
+      </div>
+      <div><h4>Product</h4><a href="why.html">Why Mantis</a><a href="product.html">Product</a><a href="setup.html">Get started</a></div>
+      <div><h4>Learn</h4><a href="story.html">Story</a><a href="#build">Watch it build</a><a href="https://www.food4rhino.com/" target="_blank" rel="noopener">food4rhino</a></div>
+      <div><h4>Open source</h4><a href="https://github.com/blang99/mantis" target="_blank" rel="noopener">GitHub</a><a href="https://github.com/blang99/mantis/issues" target="_blank" rel="noopener">Issues</a><a href="https://github.com/blang99/mantis/blob/main/LICENSE" target="_blank" rel="noopener">License</a></div>
     </div>
-</section>
-
-<!-- ═══ INSTALL CTA ═══ -->
-<section class="install-section container" id="install">
-    <div class="install-card reveal">
-        <div class="section-label">Begin</div>
-        <h2 class="section-title">Describe your intent. MANTIS builds the logic.</h2>
-        <p class="section-desc">Install in 30 seconds &mdash; no zip files, no folder copying. One command in Rhino, and the canvas starts thinking with you.</p>
-        <div class="install-steps">
-            <div class="install-step">
-                <div class="install-step-num">01</div>
-                <h4>Open Package Manager</h4>
-                <p>Type in the Rhino command line:</p>
-                <code>_PackageManager</code>
-            </div>
-            <div class="install-step">
-                <div class="install-step-num">02</div>
-                <h4>Search &amp; Install</h4>
-                <p>Search "MANTIS", click Install. Restart Rhino.</p>
-                <code>Search: MANTIS &rarr; Install</code>
-            </div>
-            <div class="install-step">
-                <div class="install-step-num">03</div>
-                <h4>Start Building</h4>
-                <p>Open Grasshopper. MANTIS auto-launches. Pick a model. Go.</p>
-                <code>Grasshopper &rarr; MANTIS panel</code>
-            </div>
-        </div>
-        <div class="install-links">
-            <a href="https://github.com/blang99/mantis">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                Star on GitHub
-            </a>
-            <a href="https://www.food4rhino.com/">View on food4rhino</a>
-            <a href="https://discourse.mcneel.com/c/grasshopper">Grasshopper Forum</a>
-        </div>
+    <div class="footer-bottom">
+      <span>© 2026 MANTIS · MIT licensed</span>
+      <span>Built for Rhino 8 · Mac &amp; Windows</span>
     </div>
-</section>
-
-<footer>
-    <div class="footer-inner">
-        <div class="footer-left">
-            <span>MANTIS</span>
-            <p>Open source AI for Grasshopper &middot; MIT License</p>
-        </div>
-        <div class="footer-links">
-            <a href="https://github.com/blang99/mantis">GitHub</a>
-            <a href="https://www.food4rhino.com/">food4rhino</a>
-            <a href="https://discourse.mcneel.com/c/grasshopper">Forum</a>
-        </div>
-    </div>
+  </div>
 </footer>
 
-<script>
-// Respect the user's reduced-motion preference across every animation.
-const PREFERS_REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
-let scrollPos = window.scrollY || 0;      // shared scroll value (updated by controller)
-
-// ════════════════════════════════════════════════════════════════
-//  Unified FX canvas:  volumetric clouds + parallax grid + swarm
-//  The swarm periodically self-organises into the MANTIS constellation
-//  behind the hero, then disperses — the signature brand motion.
-// ════════════════════════════════════════════════════════════════
-(function() {
-    const c = document.getElementById('fx-canvas');
-    if (!c) return;
-    const ctx = c.getContext('2d');
-    let W = 0, H = 0;
-    const DPR = Math.min(devicePixelRatio || 1, 2);
-
-    // Pre-render a soft "puff" sprite once — cheap to stamp many times.
-    const puff = document.createElement('canvas');
-    puff.width = puff.height = 256;
-    (function() {
-        const p = puff.getContext('2d');
-        const g = p.createRadialGradient(128, 128, 0, 128, 128, 128);
-        g.addColorStop(0, 'rgba(92,219,122,0.55)');
-        g.addColorStop(0.4, 'rgba(92,219,122,0.16)');
-        g.addColorStop(1, 'rgba(92,219,122,0)');
-        p.fillStyle = g; p.fillRect(0, 0, 256, 256);
-    })();
-
-    let clouds = [], parts = [], homes = [], links = [];
-    const SW = 64, LINK = 150;
-
-    function buildClouds() {
-        clouds = [];
-        const n = Math.round(Math.min(18, Math.max(8, W / 110)));
-        for (let i = 0; i < n; i++) clouds.push({
-            x: Math.random() * W, y: Math.random() * H,
-            r: 120 + Math.random() * 260, a: 0.04 + Math.random() * 0.06,
-            vx: (Math.random() - 0.5) * 0.06, vy: (Math.random() - 0.5) * 0.04,
-            ph: Math.random() * Math.PI * 2, sp: 0.004 + Math.random() * 0.008,
-            depth: 0.1 + Math.random() * 0.5
-        });
-    }
-    function buildParts() {
-        parts = [];
-        for (let i = 0; i < SW; i++) parts.push({
-            x: Math.random() * W, y: Math.random() * H,
-            vx: (Math.random() - 0.5) * 0.32, vy: (Math.random() - 0.5) * 0.32,
-            r: Math.random() * 1.8 + 0.7
-        });
-    }
-    function buildHomes() {
-        const cx = W / 2, cy = H * 0.40, s = Math.min(W, H) * 0.16 / 18;
-        const pts = [[18,5],[5,15],[31,15],[10,28],[26,28],[18,18]];
-        homes = pts.map(p => ({ x: cx + (p[0]-18)*s, y: cy + (p[1]-18)*s }));
-        links = [[0,5],[1,5],[2,5],[3,5],[4,5]];
-    }
-    function resize() {
-        W = innerWidth; H = innerHeight;
-        c.width = W * DPR; c.height = H * DPR;
-        c.style.width = W + 'px'; c.style.height = H + 'px';
-        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-        buildClouds(); buildHomes();
-        if (!parts.length) buildParts();
-    }
-
-    const t0 = performance.now();
-    function formationStrength(now) {
-        if (scrollPos > H * 0.85) return 0;          // only while the hero is in view
-        const t = ((now - t0) % 11000) / 11000;
-        if (t < 0.45) return 0;                       // roam
-        if (t < 0.62) return (t - 0.45) / 0.17;       // converge
-        if (t < 0.80) return 1;                       // hold the constellation
-        if (t < 0.93) return 1 - (t - 0.80) / 0.13;   // disperse
-        return 0;
-    }
-
-    let running = false, raf = null;
-    function frame(now) {
-        ctx.clearRect(0, 0, W, H);
-        const par = scrollPos;
-
-        // 1) Volumetric clouds (additive glow, slow parallax)
-        ctx.globalCompositeOperation = 'lighter';
-        for (const cl of clouds) {
-            if (running) {
-                cl.x += cl.vx; cl.y += cl.vy; cl.ph += cl.sp;
-                if (cl.x < -cl.r) cl.x = W + cl.r; else if (cl.x > W + cl.r) cl.x = -cl.r;
-                if (cl.y < -cl.r) cl.y = H + cl.r; else if (cl.y > H + cl.r) cl.y = -cl.r;
-            }
-            const pulse = 0.85 + Math.sin(cl.ph) * 0.15;
-            const r = cl.r * pulse;
-            const y = cl.y - par * cl.depth * 0.15;
-            ctx.globalAlpha = cl.a * pulse;
-            ctx.drawImage(puff, cl.x - r, y - r, r * 2, r * 2);
-        }
-        ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
-
-        // 2) Parallax grid
-        const g = 84, off = (-(par * 0.3) % g + g) % g;
-        ctx.strokeStyle = 'rgba(92,219,122,0.035)'; ctx.lineWidth = 0.5;
-        for (let x = off - g; x < W + g; x += g) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-        for (let y = off - g; y < H + g; y += g) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-
-        // 3) Swarm + constellation formation
-        const fs = formationStrength(now);
-        const py = -par * 0.5;
-        for (let i = 0; i < parts.length; i++) {
-            const p = parts[i];
-            if (running) {
-                if (fs > 0 && i < homes.length) {
-                    p.x += (homes[i].x - p.x) * 0.06 * fs;
-                    p.y += (homes[i].y - p.y) * 0.06 * fs;
-                }
-                p.x += p.vx * (1 - fs); p.y += p.vy * (1 - fs);
-                if (p.x < 0 || p.x > W) p.vx *= -1;
-                if (p.y < 0 || p.y > H) p.vy *= -1;
-            }
-        }
-        ctx.lineWidth = 0.8;
-        for (let i = 0; i < parts.length; i++) for (let j = i + 1; j < parts.length; j++) {
-            const dx = parts[i].x - parts[j].x, dy = parts[i].y - parts[j].y;
-            const d = Math.hypot(dx, dy);
-            if (d < LINK) {
-                ctx.strokeStyle = 'rgba(92,219,122,' + ((1 - d / LINK) * 0.13) + ')';
-                ctx.beginPath(); ctx.moveTo(parts[i].x, parts[i].y + py); ctx.lineTo(parts[j].x, parts[j].y + py); ctx.stroke();
-            }
-        }
-        if (fs > 0.02) {
-            ctx.strokeStyle = 'rgba(122,233,154,' + (fs * 0.55) + ')'; ctx.lineWidth = 1.2;
-            for (const l of links) { const a = parts[l[0]], b = parts[l[1]]; ctx.beginPath(); ctx.moveTo(a.x, a.y + py); ctx.lineTo(b.x, b.y + py); ctx.stroke(); }
-        }
-        for (let i = 0; i < parts.length; i++) {
-            const p = parts[i], home = (fs > 0 && i < homes.length);
-            ctx.fillStyle = home ? 'rgba(122,233,154,' + (0.4 + fs * 0.5) + ')' : 'rgba(92,219,122,0.4)';
-            const rr = home ? p.r + fs * 1.6 : p.r;
-            ctx.beginPath(); ctx.arc(p.x, p.y + py, rr, 0, Math.PI * 2); ctx.fill();
-            if (home && fs > 0.5) { ctx.fillStyle = 'rgba(122,233,154,' + (fs * 0.18) + ')'; ctx.beginPath(); ctx.arc(p.x, p.y + py, rr + 5, 0, Math.PI * 2); ctx.fill(); }
-        }
-        if (running) raf = requestAnimationFrame(frame);
-    }
-    function start() { if (!running) { running = true; raf = requestAnimationFrame(frame); } }
-    function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
-
-    resize(); addEventListener('resize', resize);
-    if (PREFERS_REDUCED_MOTION) { frame(performance.now()); }
-    else { start(); document.addEventListener('visibilitychange', () => document.hidden ? stop() : start()); }
-})();
-// ── Cursor glow (pointer-following light; desktop + fine pointers only) ──
-(function() {
-    const glow = document.getElementById('cursor-glow');
-    if (!glow || PREFERS_REDUCED_MOTION) return;
-    if (!matchMedia('(pointer: fine)').matches) return;
-    let x = innerWidth / 2, y = innerHeight / 2, tx = x, ty = y, shown = false;
-    addEventListener('pointermove', e => {
-        tx = e.clientX; ty = e.clientY;
-        if (!shown) { shown = true; glow.style.opacity = '1'; }
-    });
-    (function loop() {
-        x += (tx - x) * 0.12; y += (ty - y) * 0.12;
-        glow.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-        requestAnimationFrame(loop);
-    })();
-})();
-
-// ── Master scroll controller: progress bar, nav, chapter rail, parallax ──
-(function() {
-    const nav = document.getElementById('nav');
-    const bar = document.getElementById('scroll-progress');
-    const dots = Array.from(document.querySelectorAll('.chapter-dot'));
-    const sections = dots.map(d => document.querySelector(d.dataset.target)).filter(Boolean);
-    let ticking = false;
-
-    function update() {
-        ticking = false;
-        const y = window.scrollY || 0;
-        scrollPos = y;                                   // feed the FX canvas
-        const docH = document.documentElement.scrollHeight - innerHeight;
-        if (bar) bar.style.width = (docH > 0 ? (y / docH) * 100 : 0) + '%';
-        if (nav) nav.classList.toggle('scrolled', y > 40);
-
-        // active chapter = last section whose top is above the viewport mid-line
-        const mid = y + innerHeight * 0.4;
-        let active = 0;
-        sections.forEach((s, i) => { if (s.offsetTop <= mid) active = i; });
-        dots.forEach((d, i) => d.classList.toggle('active', i === active));
-    }
-    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
-    addEventListener('resize', update);
-    dots.forEach(d => d.addEventListener('click', () => {
-        const t = document.querySelector(d.dataset.target);
-        if (t) t.scrollIntoView({ behavior: PREFERS_REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
-    }));
-    update();
-})();
-
-// ── Scroll reveal (all directional variants) ──
-const revealObs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
-}, { threshold: 0.12 });
-document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-clip').forEach(el => revealObs.observe(el));
-
-// ── Tabbed capability showcase (Generate / Wire & Group / Self-Heal) ──
-(function() {
-    const tabs = Array.from(document.querySelectorAll('.ways-tab'));
-    const panels = Array.from(document.querySelectorAll('.ways-panel'));
-    if (!tabs.length) return;
-    function select(name) {
-        tabs.forEach(t => t.classList.toggle('active', t.dataset.panel === name));
-        panels.forEach(p => p.classList.toggle('active', p.dataset.panel === name));
-    }
-    tabs.forEach(t => t.addEventListener('click', () => select(t.dataset.panel)));
-    // Auto-advance through the three tabs until the user interacts
-    let userTouched = false;
-    tabs.forEach(t => t.addEventListener('click', () => { userTouched = true; }));
-    const order = ['generate', 'wire', 'heal'];
-    let idx = 0;
-    if (!PREFERS_REDUCED_MOTION) {
-        const section = document.getElementById('ways');
-        let started = false;
-        const obs = new IntersectionObserver(es => {
-            es.forEach(e => {
-                if (e.isIntersecting && !started) {
-                    started = true;
-                    setInterval(() => {
-                        if (userTouched) return;
-                        idx = (idx + 1) % order.length;
-                        select(order[idx]);
-                    }, 3800);
-                }
-            });
-        }, { threshold: 0.3 });
-        if (section) obs.observe(section);
-    }
-})();
-
-// ── Animated stat counters ──
-let statsCounted = false;
-const statsObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        if (e.isIntersecting && !statsCounted) {
-            statsCounted = true;
-            document.querySelectorAll('.stat-num').forEach(el => {
-                const target = parseInt(el.dataset.target);
-                const prefix = target === 0 ? '$' : '';
-                const start = Date.now();
-                (function tick() {
-                    const progress = Math.min((Date.now() - start) / 1500, 1);
-                    const eased = 1 - Math.pow(1 - progress, 3);
-                    el.textContent = prefix + Math.round(eased * target) + (target >= 100 ? '+' : '');
-                    if (progress < 1) requestAnimationFrame(tick);
-                })();
-            });
-        }
-    });
-}, { threshold: 0.5 });
-const statsBar = document.querySelector('.stats-bar');
-if (statsBar) statsObs.observe(statsBar);
-// ── Build the "wall of nodes" backdrop for the narrative act ──
-(function() {
-    const wall = document.getElementById('node-wall');
-    if (!wall) return;
-    const frag = document.createDocumentFragment();
-    for (let i = 0; i < 90; i++) {
-        const n = document.createElement('div');
-        n.className = 'wall-node';
-        n.style.opacity = (0.35 + Math.random() * 0.5).toFixed(2);
-        frag.appendChild(n);
-    }
-    wall.appendChild(frag);
-})();
-
-// ── Scroll-scrubbed narrative: wall dissolves as the sentence assembles ──
-(function() {
-    const section = document.getElementById('problem');
-    const wall = document.getElementById('node-wall');
-    const typed = document.getElementById('problem-typed');
-    if (!section || !typed) return;
-    const SENTENCE = '"a tower that tapers as it rises"   →   built in seconds';
-
-    if (PREFERS_REDUCED_MOTION) {
-        typed.innerHTML = SENTENCE.replace(/→/g, '&rarr;');
-        if (wall) wall.style.opacity = '0.12';
-        return;
-    }
-
-    let ticking = false;
-    function update() {
-        ticking = false;
-        const rect = section.getBoundingClientRect();
-        const total = section.offsetHeight - innerHeight;
-        const p = Math.min(Math.max(-rect.top / total, 0), 1);   // 0 → 1 through the act
-
-        if (wall) {
-            wall.style.opacity = (0.5 * (1 - p)).toFixed(3);
-            wall.style.filter = 'blur(' + (p * 16).toFixed(1) + 'px)';
-            wall.style.transform = 'scale(' + (1 + p * 0.08).toFixed(3) + ')';
-        }
-        // Type the sentence across the first 75% of the scroll.
-        const n = Math.round(Math.min(p / 0.75, 1) * SENTENCE.length);
-        typed.innerHTML = SENTENCE.slice(0, n).replace(/→/g, '&rarr;') + '<span class="caret"></span>';
-    }
-    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
-    addEventListener('resize', update);
-    update();
-})();
-
-// ── Demo build animation ──
-(function() {
-    const nodes = ['n1','n2','n3','n4','n5','n6'];
-    const wires = ['wire1','wire2','wire3','wire4','wire5'];
-    let triggered = false;
-    const demoObs = new IntersectionObserver(entries => {
-        entries.forEach(e => { if (e.isIntersecting && !triggered) { triggered = true; runDemo(); } });
-    }, { threshold: 0.3 });
-    const dc = document.getElementById('demo-canvas');
-    if (dc) demoObs.observe(dc);
-
-    function runDemo() {
-        const status = document.getElementById('demo-status');
-        const typing = document.getElementById('demo-typing');
-        setTimeout(() => { document.getElementById('msg1').classList.add('show'); }, 200);
-        setTimeout(() => { typing.classList.add('show'); status.textContent = 'Generating...'; }, 800);
-        setTimeout(() => {
-            typing.classList.remove('show');
-            document.getElementById('msg2').classList.add('show');
-            status.textContent = 'Building...';
-        }, 2000);
-        nodes.forEach((id, i) => {
-            setTimeout(() => {
-                const el = document.getElementById(id);
-                el.classList.add('placed', 'flash');
-                setTimeout(() => el.classList.remove('flash'), 450);
-                status.textContent = 'Placed: ' + el.querySelector('.gh-cat').nextSibling.textContent.trim();
-            }, 2500 + i * 400);
-        });
-        wires.forEach((id, i) => {
-            setTimeout(() => { document.getElementById(id).classList.add('drawn'); }, 4800 + i * 300);
-        });
-        setTimeout(() => { status.textContent = '6 components, 5 wires'; status.style.color = '#5CDB7A'; }, 6500);
-    }
-})();
-
-// ── Bento cards: glow tracks the pointer ──
-if (!PREFERS_REDUCED_MOTION) {
-    document.querySelectorAll('.bento-card').forEach(card => {
-        card.addEventListener('pointermove', e => {
-            const r = card.getBoundingClientRect();
-            card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-            card.style.setProperty('--my', (e.clientY - r.top) + 'px');
-        });
-    });
-}
-
-// ── Smooth scroll for in-page anchors ──
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', e => {
-        const href = a.getAttribute('href');
-        if (href === '#') return;
-        const t = document.querySelector(href);
-        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: PREFERS_REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' }); }
-    });
-});
-</script>
+</div>
+<script src="mantis-site.js"></script>
 </body>
 </html>
