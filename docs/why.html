@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Why MANTIS — vs Rhino-MCP &amp; cloud CAD tools</title>
-<meta name="description" content="Why MANTIS beats Rhino-MCP and cloud AI-CAD tools: one-shot native definitions, runs on your machine, your key, fully editable. No per-action round-trips, no black boxes."/>
+<title>Why MANTIS — the partner metered cloud can't build</title>
+<meta name="description" content="Why MANTIS is the one always-on partner in Grasshopper: it watches your canvas and catches silent failures because it runs on your key or a local model — something metered-cloud tools (Raven, Ant, Reer) can't afford to do. And it still builds native, editable definitions fast."/>
 <link rel="canonical" href="https://blang99.github.io/mantis/why.html"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -32,17 +32,42 @@
   <div class="hero-aurora"></div>
   <div class="wrap">
     <span class="eyebrow"><span class="dot"></span>Why Mantis</span>
-    <h1>Faster than MCP.<br/>More honest than the cloud.</h1>
-    <p class="lead">MANTIS isn't another agent that pokes Rhino one action at a time, and it isn't a cloud box that returns a mesh you can't edit. It writes the whole native Grasshopper definition in one pass — on your machine, with your key.</p>
+    <h1>The partner the cloud<br/>can't afford to be.</h1>
+    <p class="lead">Every AI tool for Grasshopper — Raven, Ant, Reer — is a box you stop and talk to. MANTIS is the one that stays in the room: watching your canvas, catching the silent break, fixing it before you've lost the afternoon. The reason no one else does this isn't taste — it's economics. And when you do ask it to build, it builds native definitions in one fast pass.</p>
   </div>
 </header>
+
+<!-- ═══ THE MOAT (always-on) ═══ -->
+<section class="section">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <div class="kicker reveal">The thing they can't copy</div>
+        <h2 class="reveal">To be in the room,<br/>you have to watch all day.</h2>
+        <p class="lead reveal">A real partner doesn't wait to be asked — it notices the silent break (a graph that turns green and produces <em>nothing</em>) the moment it happens. To do that, you have to watch the canvas continuously.</p>
+        <p class="lead reveal">Every competitor runs on <strong style="color:var(--ink)">metered cloud AI</strong>: every glance at your model is billed, so their unit economics <em>forbid</em> watching all day. MANTIS runs on your own key or a local model, where watching costs ~nothing. The always-on partner is the one product shape their pricing can't follow you into. They can clone a feature in a weekend — they can't clone their way out of their own meter.</p>
+      </div>
+      <div class="codeframe reveal">
+        <div class="cf-bar"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span></div>
+        <pre><span class="c"># metered cloud — pay per glance</span>
+watch the canvas all day  <span class="a">→ $$$  (so: don't)</span>
+you ask → it answers → meter stops
+
+<span class="c"># MANTIS — your key / local model</span>
+watch the canvas all day  <span class="g">→ ~free</span>
+<span class="g">notices the silent break before you ask</span>
+<span class="g">verifies on the live solve · one-click fix</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ═══ THE SPEED STORY (vs MCP) ═══ -->
 <section class="section tight">
   <div class="wrap">
-    <div class="split">
+    <div class="split rev">
       <div>
-        <div class="kicker reveal">Why it's faster than Rhino-MCP</div>
+        <div class="kicker reveal">And it still builds fast</div>
         <h2 class="reveal">One spec, one build —<br/>not N round-trips.</h2>
         <p class="lead reveal">An MCP agent works the canvas like a remote control: place a component, wait, read the result, decide the next action, repeat. Every step is a full model round-trip. A 20-component definition is 20+ sequential calls.</p>
         <p class="lead reveal">MANTIS emits the entire definition as one structured spec, then a deterministic builder lays it down locally. The model is called <strong style="color:var(--ink)">once</strong> — the wiring, layout and grouping happen at native speed on your machine.</p>
@@ -75,17 +100,20 @@
     <div class="reveal" style="overflow-x:auto">
       <table class="cmp">
         <thead><tr>
-          <th></th><th class="us">MANTIS</th><th>Rhino-MCP agents</th><th>Cloud AI-CAD</th>
+          <th></th><th class="us">MANTIS</th><th>Cloud GH-AI<br/><span style="font-weight:400;color:var(--dim);font-size:.78em">Raven · Ant · Reer</span></th><th>Rhino-MCP agents</th>
         </tr></thead>
         <tbody>
-          <tr><td>Output</td><td class="us"><span class="yes">Native, wired GH definition</span></td><td><span class="meh">Native, built action-by-action</span></td><td><span class="no">Opaque mesh / script</span></td></tr>
-          <tr><td>Speed</td><td class="us"><span class="yes">One model call → local build</span></td><td><span class="no">N sequential round-trips</span></td><td><span class="meh">One call, cloud compute</span></td></tr>
-          <tr><td>Editable after</td><td class="us"><span class="yes">Every node, fully</span></td><td><span class="yes">Yes</span></td><td><span class="no">Rarely</span></td></tr>
-          <tr><td>Runs where</td><td class="us"><span class="yes">Your machine</span></td><td><span class="yes">Your machine</span></td><td><span class="no">Their servers</span></td></tr>
-          <tr><td>Your model / key</td><td class="us"><span class="yes">BYO key or fully local</span></td><td><span class="meh">Varies</span></td><td><span class="no">Their model only</span></td></tr>
-          <tr><td>Self-heals warnings</td><td class="us"><span class="yes">Reads back &amp; repairs</span></td><td><span class="meh">Sometimes</span></td><td><span class="no">No graph to heal</span></td></tr>
-          <tr><td>Cost</td><td class="us"><span class="yes">Free · open source</span></td><td><span class="meh">Free / DIY</span></td><td><span class="no">Subscription</span></td></tr>
-          <tr><td>Reasoning shown</td><td class="us"><span class="yes">Streamed plan, learn as it builds</span></td><td><span class="meh">Tool log</span></td><td><span class="no">Black box</span></td></tr>
+          <tr><td>Watches your canvas</td><td class="us"><span class="yes">Always-on, silent</span></td><td><span class="no">No — a box you visit</span></td><td><span class="no">No — per command</span></td></tr>
+          <tr><td>Catches silent failures</td><td class="us"><span class="yes">Yes — verified on the solve</span></td><td><span class="no">Only if you ask</span></td><td><span class="no">Only if you ask</span></td></tr>
+          <tr><td>Fixes in place</td><td class="us"><span class="yes">One-click, one undo</span></td><td><span class="meh">Re-generates</span></td><td><span class="meh">Per-action</span></td></tr>
+          <tr><td>Output</td><td class="us"><span class="yes">Native, wired GH definition</span></td><td><span class="meh">Native nodes</span></td><td><span class="meh">Native, action-by-action</span></td></tr>
+          <tr><td>Editable after</td><td class="us"><span class="yes">Every node, fully</span></td><td><span class="yes">Native nodes</span></td><td><span class="yes">Yes</span></td></tr>
+          <tr><td>Runs where</td><td class="us"><span class="yes">Your machine</span></td><td><span class="no">Their servers</span></td><td><span class="yes">Your machine</span></td></tr>
+          <tr><td>Your model / key</td><td class="us"><span class="yes">BYO key or fully local</span></td><td><span class="no">Their model + meter</span></td><td><span class="meh">Varies</span></td></tr>
+          <tr><td>Build speed</td><td class="us"><span class="yes">One call → local build</span></td><td><span class="meh">One call, cloud compute</span></td><td><span class="no">N sequential round-trips</span></td></tr>
+          <tr><td>Self-heals warnings</td><td class="us"><span class="yes">Reads back &amp; repairs</span></td><td><span class="meh">Sometimes</span></td><td><span class="meh">Sometimes</span></td></tr>
+          <tr><td>Cost</td><td class="us"><span class="yes">Free · open source</span></td><td><span class="no">Subscription (~$50/mo)</span></td><td><span class="meh">Free / DIY</span></td></tr>
+          <tr><td>Reasoning shown</td><td class="us"><span class="yes">Streamed plan, learn as it builds</span></td><td><span class="meh">Varies</span></td><td><span class="meh">Tool log</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -118,7 +146,7 @@
 <footer class="footer">
   <div class="wrap">
     <div class="footer-grid">
-      <div class="fbrand"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a><p>The AI layer for Grasshopper. Native nodes, streamed reasoning, runs on your machine.</p></div>
+      <div class="fbrand"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><line x1="18" y1="5" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="5" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="31" y1="15" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="10" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><line x1="26" y1="28" x2="18" y2="18" stroke="#5CDB7A" stroke-width="1.2" opacity="0.4"/><circle cx="5" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="31" cy="15" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="10" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="26" cy="28" r="2.5" fill="#5CDB7A" opacity="0.7"/><circle cx="18" cy="5" r="3.5" fill="#5CDB7A"/><circle cx="18" cy="18" r="4" fill="#5CDB7A"/></svg>MANTIS</a><p>The design partner in the room. Always-on, silent by default, runs on your machine.</p></div>
       <div><h4>Product</h4><a href="why.html">Why Mantis</a><a href="product.html">Product</a><a href="setup.html">Get started</a></div>
       <div><h4>Learn</h4><a href="story.html">Story</a><a href="product.html#demo">Demo</a><a href="https://www.food4rhino.com/" target="_blank" rel="noopener">food4rhino</a></div>
       <div><h4>Open source</h4><a href="https://github.com/blang99/mantis" target="_blank" rel="noopener">GitHub</a><a href="https://github.com/blang99/mantis/issues" target="_blank" rel="noopener">Issues</a><a href="https://github.com/blang99/mantis/blob/main/LICENSE" target="_blank" rel="noopener">License</a></div>
