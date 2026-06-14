@@ -95,44 +95,16 @@
         </div>
       </div>
 
-      <!-- the docked companion — frameless: a bead of light, a floating quick-ask, panel on demand -->
+      <!-- the frameless companion — an ephemeral bubble stream (Reer model): messages build up and
+           fade in the corner, notifications surface on their own, a thinking pulse pops when done.
+           No panel, no window, no chrome. -->
       <div class="hero-right">
-        <div class="orb-scene" id="orb-stage" aria-label="MANTIS — a docked companion in Grasshopper: a quiet bead of light that watches your canvas, a floating bubble to ask quick questions, and a full panel that opens only when you ask">
-          <div class="orb-aura"></div>
-
-          <!-- floating conversation (quick ask — no window) -->
-          <div class="ask-thread" id="ask-thread">
-            <div class="ask-bubble user"><span id="ask-typed"></span><span class="ask-caret" id="ask-caret"></span></div>
-            <div class="ask-bubble ai" id="ask-ai">On it — taper's on a slider now. Want it steeper?</div>
-          </div>
-
-          <!-- the ambient catch (surfaces on its own, no asking) -->
-          <div class="whisper" id="fix-card" role="status">
-            <div class="whisper-head"><span class="fix-spark"></span>Caught a silent break</div>
-            <p class="whisper-body">Your panel grid went <b>empty</b> when you rewired the <b>Divide</b> component — its surface input lost its connection.</p>
-            <div class="whisper-actions">
-              <button class="fix-btn primary" id="fix-do">Fix it</button>
-              <button class="fix-btn ghost">Show the plan</button>
-            </div>
-          </div>
-          <div class="fix-receipt" id="fix-receipt"><span class="rcheck">✓</span> Fixed — now produces <b>96 panels.</b></div>
-
-          <!-- the bead of light: the docked presence -->
-          <div class="orb" id="orb">
-            <span class="orb-ring r1"></span>
-            <span class="orb-ring r2"></span>
-            <span class="orb-ring r3"></span>
-            <span class="orb-bead"></span>
-          </div>
-          <div class="orb-caption" id="orb-caption">watching · all clear</div>
-
-          <!-- the dock: a frameless quick-ask bubble; the full panel opens only on ⤢ -->
-          <div class="ask-dock" id="ask-dock">
-            <span class="ask-mini"></span>
-            <span class="ask-ph" id="ask-ph">Ask Mantis…</span>
-            <button class="ask-expand" id="ask-expand" aria-label="Open the full panel" title="Open the full panel">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 2H2v4M10 14h4v-4M2 10v4h4M14 6V2h-4"/></svg>
-            </button>
+        <div class="reer-scene" id="orb-stage" aria-label="MANTIS — a frameless companion: messages build up and fade as ephemeral bubbles, notifications surface what's wrong on their own, and a thinking pulse pops when it's done. No window, no panel.">
+          <div class="r-aura"></div>
+          <div class="r-stream" id="r-stream" aria-live="polite"></div>
+          <div class="r-dock">
+            <span class="r-orb" id="r-orb"></span>
+            <div class="r-ask"><span class="r-ph" id="r-ph">Ask Mantis…</span></div>
           </div>
         </div>
       </div>
